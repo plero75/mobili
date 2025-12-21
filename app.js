@@ -288,7 +288,7 @@ async function refreshRoad() {
 async function refreshEventsCirculation() {
   try {
     const url = PROXY + encodeURIComponent(
-      "https://opendata.paris.fr/api/records/1.0/search/?dataset=circulation_evenement&sort=-datedebut&rows=5"
+      "https://opendata.paris.fr/api/records/1.0/search/?dataset=circulation_evenement&sort=-starttime&rows=5"
     );
     const data = await fetchJSON(url, 15000);
     const cont = document.getElementById("events-list");
@@ -430,3 +430,4 @@ setInterval(refreshEventsCirculation, 5 * 60 * 1000);
   startLoops();
 
 })();
+
