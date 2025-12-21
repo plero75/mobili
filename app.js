@@ -1,7 +1,7 @@
 // === Constantes & endpoints ===
 const PROXY = "https://ratp-proxy.hippodrome-proxy42.workers.dev/?url=";
 const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=48.835&longitude=2.45&current_weather=true";
-const RSS_URL = "https://www.francetvinfo.fr/titres.rss";
+const RSS_URL = "https://www.lemonde.fr/rss/une.xml";
 
 const STOP_IDS = {
   RER_A: "STIF:StopArea:SP:43135:",
@@ -428,4 +428,5 @@ setInterval(refreshEventsCirculation, 5 * 60 * 1000);
   updateTicker();
   setLastUpdate();
   startLoops();
+
 })();
