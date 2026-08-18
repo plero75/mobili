@@ -2,10 +2,11 @@ const PROXY = "https://ratp-proxy.hippodrome-proxy42.workers.dev/?url=";
 const PRIM = "https://prim.iledefrance-mobilites.fr/marketplace";
 const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=48.835&longitude=2.440&current_weather=true&timezone=Europe%2FParis";
 const RSS_URL = "https://www.francetvinfo.fr/titres.rss";
+const GTFS_TIMETABLE_URL = "https://raw.githubusercontent.com/plero75/VHPRATP/main/static/horaires_export.json";
 
 const RER_STOP = { name: "Joinville-le-Pont", refs: ["STIF:StopArea:SP:43135:"] };
 const BUS_STOPS = [
-  { name: "Joinville-le-Pont – Bus", lines: [
+  { name: "Joinville-le-Pont – Bus", scheduleName: "Joinville-le-Pont", lines: [
     { code: "77", color: "#0071bc", refs: ["STIF:StopPoint:Q:22452:"] },
     { code: "101", color: "#f0a500", refs: ["STIF:StopPoint:Q:21252:"] },
     { code: "106", color: "#e4002b", refs: ["STIF:StopPoint:Q:27560:"] },
@@ -15,7 +16,7 @@ const BUS_STOPS = [
     { code: "281", color: "#d9a300", refs: ["STIF:StopPoint:Q:28033:"] },
     { code: "N33", color: "#ff5a00", refs: ["STIF:StopPoint:Q:39406:"] }
   ]},
-  { name: "École du Breuil", lines: [
+  { name: "École du Breuil", scheduleName: "École du Breuil", lines: [
     { code: "201", color: "#6E491E", refs: ["STIF:StopPoint:Q:39406:", "STIF:StopPoint:Q:22452:"] }
   ]}
 ];
@@ -26,7 +27,14 @@ const VELIB_STATIONS = {
 };
 const WEATHER_CODES = {0:"Ciel dégagé",1:"Principalement clair",2:"Partiellement nuageux",3:"Couvert",45:"Brouillard",48:"Brouillard givrant",51:"Bruine faible",53:"Bruine",55:"Bruine forte",61:"Pluie faible",63:"Pluie modérée",65:"Pluie forte",80:"Averses faibles",81:"Averses modérées",82:"Fortes averses",95:"Orages",96:"Orages avec grêle",99:"Orages avec grêle"};
 
-let newsItems=[]; let currentNews=0; let tickerIndex=0; let tickerData={weather:"",traffic:""}; let lastGoodTransportUpdate=null; let cachedVelib=null;
+let newsItems=[];
+let currentNews=0;
+let tickerIndex=0;
+let tickerData={weather:"",traffic:""};
+let lastGoodTransportUpdate=null;
+let cachedVelib=null;
+let timetableCache=null;
+
 const $=id=>document.getElementById(id);
 function text(v=""){return String(v??"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();}
 function esc(v=""){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
@@ -36,18 +44,92 @@ function minUntil(iso){if(!iso)return null;const d=new Date(iso);if(Number.isNaN
 function signedMinutes(expected,aimed){if(!expected||!aimed)return null;const a=new Date(aimed),e=new Date(expected);if(Number.isNaN(a.getTime())||Number.isNaN(e.getTime()))return null;return Math.round((e-a)/60000);}
 function primUrl(path){return PROXY+encodeURIComponent(PRIM+path);}
 function uniqueBy(arr,keyFn){const seen=new Set();return arr.filter(x=>{const k=keyFn(x);if(!k||seen.has(k))return false;seen.add(k);return true;});}
+function normaliseName(v=""){return text(v).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();}
+function localDateKey(date=new Date()){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;}
+function nextDateKey(date=new Date(),days=1){const d=new Date(date);d.setDate(d.getDate()+days);return localDateKey(d);}
+function gtfsTimeToDate(dateKey,time){
+  if(!dateKey||!time)return null;
+  const [rawH,rawM]=String(time).split(":").map(Number);
+  if(!Number.isFinite(rawH)||!Number.isFinite(rawM))return null;
+  const [y,m,d]=dateKey.split("-").map(Number);
+  const dt=new Date(y,m-1,d,rawH%24,rawM,0,0);
+  if(rawH>=24)dt.setDate(dt.getDate()+Math.floor(rawH/24));
+  return dt;
+}
+function displayGtfsTime(time){
+  if(!time)return"—";
+  const [h,m]=String(time).split(":").map(Number);
+  if(!Number.isFinite(h)||!Number.isFinite(m))return time;
+  return `${String(h%24).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+}
+
 async function fetchJSON(url,timeout=12000){const c=new AbortController(),timer=setTimeout(()=>c.abort(),timeout);try{const r=await fetch(url,{signal:c.signal,cache:"no-store"});if(!r.ok)throw new Error(`HTTP ${r.status}`);return await r.json();}catch(e){console.error("fetchJSON",url,e);return null;}finally{clearTimeout(timer);}}
 async function fetchText(url,timeout=12000){const c=new AbortController(),timer=setTimeout(()=>c.abort(),timeout);try{const r=await fetch(url,{signal:c.signal,cache:"no-store"});if(!r.ok)throw new Error(`HTTP ${r.status}`);return await r.text();}catch(e){console.error("fetchText",url,e);return"";}finally{clearTimeout(timer);}}
 function setClock(){if($("clock"))$("clock").textContent=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});}
 function setLastUpdate(){if(!$("lastUpdate"))return;const base=lastGoodTransportUpdate||new Date();$("lastUpdate").textContent=`Maj ${base.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}`;}
 
+async function loadTimetable(){
+  const data=await fetchJSON(GTFS_TIMETABLE_URL,15000);
+  if(data)timetableCache=data;
+  return timetableCache;
+}
+function timetableRows(stopName,lineCode,dateKey){
+  if(!timetableCache)return[];
+  const lineKey=lineCode==="A"?"RER A":lineCode;
+  return timetableCache?.[stopName]?.[lineKey]?.[dateKey]||[];
+}
+function rowsForDestination(rows,destination){
+  const target=normaliseName(destination);
+  const exact=rows.filter(r=>normaliseName(r.destination)===target);
+  if(exact.length)return exact;
+  return rows.filter(r=>{const d=normaliseName(r.destination);return d&&target&&(d.includes(target)||target.includes(d));});
+}
+function serviceSummary(stopName,lineCode,destination,dateKey=localDateKey()){
+  const rows=timetableRows(stopName,lineCode,dateKey);
+  if(!rows.length)return null;
+  const selected=destination?rowsForDestination(rows,destination):rows;
+  const list=selected.length?selected:rows;
+  if(!list.length)return null;
+  return {first:list[0],last:list[list.length-1],dateKey};
+}
+function nextServiceStart(stopName,lineCode,destination){
+  for(let offset=1;offset<=2;offset++){
+    const dateKey=nextDateKey(new Date(),offset);
+    const summary=serviceSummary(stopName,lineCode,destination,dateKey);
+    if(summary?.first)return {dateKey,time:summary.first.time};
+  }
+  return null;
+}
+function serviceMetaHTML(stopName,lineCode,destination){
+  const summary=serviceSummary(stopName,lineCode,destination);
+  if(!summary)return"";
+  return `<div class="service-meta"><span>Premier <strong>${esc(displayGtfsTime(summary.first.time))}</strong></span><span>Dernier <strong>${esc(displayGtfsTime(summary.last.time))}</strong></span></div>`;
+}
+function serviceEndedHTML(stopName,lineCode,destination){
+  const today=serviceSummary(stopName,lineCode,destination);
+  if(!today)return emptyHTML("Aucun horaire théorique disponible");
+  const lastDt=gtfsTimeToDate(today.dateKey,today.last.time);
+  const firstDt=gtfsTimeToDate(today.dateKey,today.first.time);
+  const now=Date.now();
+  if(firstDt&&now<firstDt.getTime())return `<div class="service-ended"><strong>SERVICE NON COMMENCÉ</strong><span>Premier passage prévu à ${esc(displayGtfsTime(today.first.time))}</span></div>`;
+  if(lastDt&&now>lastDt.getTime()){
+    const next=nextServiceStart(stopName,lineCode,destination);
+    return `<div class="service-ended"><strong>SERVICE TERMINÉ</strong><span>${next?`Reprise prévue à ${esc(displayGtfsTime(next.time))}`:"Heure de reprise indisponible"}</span></div>`;
+  }
+  return emptyHTML("Aucun passage temps réel reçu de PRIM");
+}
+function isLastScheduledPassage(v,stopName,lineCode){
+  const summary=serviceSummary(stopName,lineCode,v.destination);
+  if(!summary?.last)return false;
+  const lastDt=gtfsTimeToDate(summary.dateKey,summary.last.time);
+  const liveDt=new Date(v.aimed||v.expected||0);
+  if(!lastDt||Number.isNaN(liveDt.getTime()))return false;
+  return Math.abs(liveDt.getTime()-lastDt.getTime())<=10*60*1000;
+}
+
 function parseOnward(mv,call){
   const raw=[...(Array.isArray(mv?.OnwardCalls?.OnwardCall)?mv.OnwardCalls.OnwardCall:[]),...(Array.isArray(call?.OnwardCalls?.OnwardCall)?call.OnwardCalls.OnwardCall:[])];
-  return uniqueBy(raw.map(c=>({
-    name:text(valueOf(c?.StopPointName?.[0])||valueOf(c?.DestinationDisplay?.[0])||valueOf(c?.StopPointRef)),
-    expected:c?.ExpectedDepartureTime||c?.ExpectedArrivalTime||null,
-    aimed:c?.AimedDepartureTime||c?.AimedArrivalTime||null
-  })).filter(x=>x.name),x=>x.name).slice(0,14);
+  return uniqueBy(raw.map(c=>({name:text(valueOf(c?.StopPointName?.[0])||valueOf(c?.DestinationDisplay?.[0])||valueOf(c?.StopPointRef)),expected:c?.ExpectedDepartureTime||c?.ExpectedArrivalTime||null,aimed:c?.AimedDepartureTime||c?.AimedArrivalTime||null})).filter(x=>x.name),x=>x.name).slice(0,14);
 }
 function parseVisits(data){
   const deliveries=data?.Siri?.ServiceDelivery?.StopMonitoringDelivery||[];
@@ -56,20 +138,10 @@ function parseVisits(data){
     const mv=v?.MonitoredVehicleJourney||{},call=mv?.MonitoredCall||{};
     const expected=call.ExpectedDepartureTime||call.ExpectedArrivalTime||null;
     const aimed=call.AimedDepartureTime||call.AimedArrivalTime||null;
-    return {
-      lineRef:String(valueOf(mv.LineRef)||""),
-      published:text(valueOf(mv?.PublishedLineName?.[0])||""),
-      destination:text(valueOf(call?.DestinationDisplay?.[0])||valueOf(mv?.DestinationName?.[0])||valueOf(mv?.DirectionName?.[0])||"Destination non communiquée"),
-      expected,aimed,status:String(call.DepartureStatus||call.ArrivalStatus||"onTime"),monitored:mv?.Monitored!==false,
-      wait:minUntil(expected||aimed),delay:signedMinutes(expected,aimed),vehicleAtStop:Boolean(call.VehicleAtStop),onward:parseOnward(mv,call)
-    };
+    return {lineRef:String(valueOf(mv.LineRef)||""),published:text(valueOf(mv?.PublishedLineName?.[0])||""),destination:text(valueOf(call?.DestinationDisplay?.[0])||valueOf(mv?.DestinationName?.[0])||valueOf(mv?.DirectionName?.[0])||"Destination non communiquée"),expected,aimed,status:String(call.DepartureStatus||call.ArrivalStatus||"onTime"),monitored:mv?.Monitored!==false,wait:minUntil(expected||aimed),delay:signedMinutes(expected,aimed),vehicleAtStop:Boolean(call.VehicleAtStop),onward:parseOnward(mv,call)};
   }).filter(v=>v.destination||v.expected||v.aimed);
 }
-function isRelevantPassage(v){
-  const t=new Date(v.expected||v.aimed||0).getTime(); if(!Number.isFinite(t))return false;
-  if(v.vehicleAtStop)return t>=Date.now()-90000;
-  return t>=Date.now()-5000;
-}
+function isRelevantPassage(v){const t=new Date(v.expected||v.aimed||0).getTime();if(!Number.isFinite(t))return false;if(v.vehicleAtStop)return t>=Date.now()-90000;return t>=Date.now()-5000;}
 function statusInfo(v){
   const s=(v.status||"").toLowerCase();
   if(s==="cancelled")return{label:"SUPPRIMÉ",cls:"cancelled"};
@@ -89,16 +161,17 @@ function routeDiagramHTML(v){
   return `<div class="route-diagram" aria-label="Gares desservies"><div class="route-track">${stops.map(s=>`<div class="route-stop ${s.current?"current":""} ${s.terminus?"terminus":""}"><span class="route-dot"></span><span class="route-stop-name">${esc(s.name)}</span></div>`).join("")}</div></div>`;
 }
 function rerPassageHTML(v){
-  const st=statusInfo(v),cancelled=st.cls==="cancelled";
+  const st=statusInfo(v),cancelled=st.cls==="cancelled",last=isLastScheduledPassage(v,"Joinville-le-Pont","A");
   return `<article class="train-card ${v.wait!=null&&v.wait<=1&&!cancelled?"imminent":""}">
+    ${last?'<div class="last-passage-badge">DERNIER PASSAGE</div>':''}
     <div class="train-main"><div><div class="wait">${cancelled?"—":waitLabel(v)}</div><div class="train-destination">→ ${esc(v.destination)}</div></div><div class="train-time"><div class="exact">${esc(fmtTime(cancelled?v.aimed:(v.expected||v.aimed)))}</div><div class="status ${st.cls}">${esc(st.label)}</div></div></div>
     ${routeDiagramHTML(v)}
   </article>`;
 }
-function busPassageHTML(v){
-  const st=statusInfo(v),cancelled=st.cls==="cancelled";
+function busPassageHTML(v,stopName,lineCode){
+  const st=statusInfo(v),cancelled=st.cls==="cancelled",last=isLastScheduledPassage(v,stopName,lineCode);
   const onward=v.onward?.length?`<div class="bus-onward">Puis : ${v.onward.slice(0,5).map(s=>esc(s.name)).join(" • ")}</div>`:"";
-  return `<div class="passage ${v.wait!=null&&v.wait<=1&&!cancelled?"imminent":""}"><div class="wait">${cancelled?"—":waitLabel(v)}</div><div class="exact">${esc(fmtTime(cancelled?v.aimed:(v.expected||v.aimed)))}</div><div class="status ${st.cls}">${esc(st.label)}</div>${onward}</div>`;
+  return `<div class="passage ${v.wait!=null&&v.wait<=1&&!cancelled?"imminent":""}">${last?'<div class="last-passage-badge">DERNIER PASSAGE</div>':''}<div class="wait">${cancelled?"—":waitLabel(v)}</div><div class="exact">${esc(fmtTime(cancelled?v.aimed:(v.expected||v.aimed)))}</div><div class="status ${st.cls}">${esc(st.label)}</div>${onward}</div>`;
 }
 function emptyHTML(label="Information indisponible"){return`<div class="empty-state">— ${esc(label)}</div>`;}
 function groupByDirection(visits){const map=new Map();visits.forEach(v=>{const k=v.destination||"Destination non communiquée";if(!map.has(k))map.set(k,[]);map.get(k).push(v);});for(const rows of map.values())rows.sort((a,b)=>new Date(a.expected||a.aimed)-new Date(b.expected||b.aimed));return map;}
@@ -108,15 +181,31 @@ async function renderRer(){
   const cont=$("rer-body");if(!cont)return false;const all=[];
   for(const ref of RER_STOP.refs){const d=await fetchStop(ref);if(d)all.push(...parseVisits(d));}
   const rer=all.filter(v=>(!v.published||/(^|\s)A($|\s)/i.test(v.published)||/C01742|Line::A/i.test(v.lineRef))&&isRelevantPassage(v));
-  if(!rer.length){cont.innerHTML=emptyHTML("Aucun passage RER A futur reçu de PRIM");return false;}
+  if(!rer.length){cont.innerHTML=`<div class="stop-block rer-stop"><div class="stop-title">📍 ${esc(RER_STOP.name)}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div>${serviceEndedHTML("Joinville-le-Pont","A",null)}</div></div>`;return false;}
   const dirs=groupByDirection(rer);
-  cont.innerHTML=`<div class="stop-block rer-stop"><div class="stop-title">📍 ${esc(RER_STOP.name)}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div>${[...dirs.entries()].map(([dest,rows])=>`<div class="direction">→ ${esc(dest)}</div><div class="train-list">${rows.slice(0,4).map(rerPassageHTML).join("")}</div>`).join("")}</div></div>`;
+  cont.innerHTML=`<div class="stop-block rer-stop"><div class="stop-title">📍 ${esc(RER_STOP.name)}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div>${[...dirs.entries()].map(([dest,rows])=>`<div class="direction">→ ${esc(dest)}</div>${serviceMetaHTML("Joinville-le-Pont","A",dest)}<div class="train-list">${rows.slice(0,4).map(rerPassageHTML).join("")}</div>`).join("")}</div></div>`;
   return true;
 }
 function matchesLine(v,code){const p=(v.published||"").toUpperCase().replace(/\s/g,"");const lr=(v.lineRef||"").toUpperCase();return p===code.toUpperCase()||lr.includes(`::${code.toUpperCase()}:`)||lr.endsWith(`:${code.toUpperCase()}:`);}
 async function renderBus(){
   const cont=$("bus-blocks");if(!cont)return false;let any=false;const stopHtml=[];
-  for(const stop of BUS_STOPS){const linesHtml=[];for(const line of stop.lines){const merged=[];for(const ref of line.refs){const d=await fetchStop(ref);if(d)merged.push(...parseVisits(d));}let visits=merged.filter(v=>matchesLine(v,line.code)&&isRelevantPassage(v));if(!visits.length&&merged.length&&stop.lines.length===1)visits=merged.filter(isRelevantPassage);if(visits.length)any=true;const dirs=groupByDirection(visits);linesHtml.push(`<div class="line-block"><div class="line-head"><span class="line-pill" style="background:${line.color}">${esc(line.code)}</span><span class="line-name">Ligne ${esc(line.code)}</span></div>${visits.length?[...dirs.entries()].map(([dest,rows])=>`<div class="direction">→ ${esc(dest)}</div><div class="passages">${rows.slice(0,4).map(busPassageHTML).join("")}</div>`).join(""):emptyHTML("Aucun passage futur communiqué")}</div>`);}stopHtml.push(`<div class="stop-block"><div class="stop-title">🚏 ${esc(stop.name)}</div>${linesHtml.join("")}</div>`);}cont.innerHTML=stopHtml.join("");return any;
+  for(const stop of BUS_STOPS){
+    const linesHtml=[];
+    for(const line of stop.lines){
+      const merged=[];
+      for(const ref of line.refs){const d=await fetchStop(ref);if(d)merged.push(...parseVisits(d));}
+      let visits=merged.filter(v=>matchesLine(v,line.code)&&isRelevantPassage(v));
+      if(!visits.length&&merged.length&&stop.lines.length===1)visits=merged.filter(isRelevantPassage);
+      if(visits.length)any=true;
+      const dirs=groupByDirection(visits);
+      let body="";
+      if(visits.length){body=[...dirs.entries()].map(([dest,rows])=>`<div class="direction">→ ${esc(dest)}</div>${serviceMetaHTML(stop.scheduleName,line.code,dest)}<div class="passages">${rows.slice(0,4).map(v=>busPassageHTML(v,stop.scheduleName,line.code)).join("")}</div>`).join("");}
+      else{body=serviceEndedHTML(stop.scheduleName,line.code,null);}
+      linesHtml.push(`<div class="line-block"><div class="line-head"><span class="line-pill" style="background:${line.color}">${esc(line.code)}</span><span class="line-name">Ligne ${esc(line.code)}</span></div>${body}</div>`);
+    }
+    stopHtml.push(`<div class="stop-block"><div class="stop-title">🚏 ${esc(stop.name)}</div>${linesHtml.join("")}</div>`);
+  }
+  cont.innerHTML=stopHtml.join("");return any;
 }
 
 function disruptionText(d){const messages=Array.isArray(d?.messages)?d.messages:[];const msg=messages.find(m=>/title|titre/i.test(m?.channel?.name||m?.channel?.content_type||""))||messages[0];return text(msg?.text||d?.title||d?.cause||d?.severity?.name||"Perturbation en cours");}
@@ -140,5 +229,5 @@ function nextNews(){if(newsItems.length){currentNews=(currentNews+1)%newsItems.l
 async function refreshRoad(){const cont=$("road-list");if(!cont)return;const url=PROXY+encodeURIComponent("https://opendata.paris.fr/api/records/1.0/search/?dataset=comptages-routiers-permanents&sort=-horodate&rows=5"),d=await fetchJSON(url,15000);if(!d?.records?.length){cont.innerHTML=emptyHTML("Trafic routier indisponible");return;}cont.innerHTML=d.records.map(r=>{const f=r.fields||{};return`<div class="road"><strong>${esc(text(f.libelle||"Point de comptage"))}</strong><br><span class="muted">Débit ${f.debit??"—"} véh/h • occupation ${f.taux_occupation??f.taux_occupation_htps??"—"}%</span></div>`;}).join("");}
 function updateTicker(){const el=$("ticker-slot");if(!el)return;const pool=[tickerData.weather,tickerData.traffic].filter(Boolean);el.textContent=pool.length?pool[tickerIndex++%pool.length]:"Informations mobilité en cours de chargement…";}
 async function refreshPassages(){const results=await Promise.allSettled([renderRer(),renderBus()]);const ok=results.some(r=>r.status==="fulfilled"&&r.value===true);if(ok)lastGoodTransportUpdate=new Date();setLastUpdate();}
-async function init(){setClock();await Promise.allSettled([refreshPassages(),refreshTraffic(),refreshVelib(),refreshWeather(),refreshCourses(),refreshNews(),refreshRoad()]);await computeRoute();updateTicker();setLastUpdate();setInterval(setClock,1000);setInterval(refreshPassages,30*1000);setInterval(refreshTraffic,90*1000);setInterval(refreshVelib,60*1000);setInterval(computeRoute,2*60*1000);setInterval(refreshWeather,10*60*1000);setInterval(refreshCourses,60*1000);setInterval(refreshNews,5*60*1000);setInterval(nextNews,12*1000);setInterval(refreshRoad,5*60*1000);setInterval(updateTicker,10*1000);}
+async function init(){setClock();await loadTimetable();await Promise.allSettled([refreshPassages(),refreshTraffic(),refreshVelib(),refreshWeather(),refreshCourses(),refreshNews(),refreshRoad()]);await computeRoute();updateTicker();setLastUpdate();setInterval(setClock,1000);setInterval(refreshPassages,30*1000);setInterval(refreshTraffic,90*1000);setInterval(refreshVelib,60*1000);setInterval(computeRoute,2*60*1000);setInterval(refreshWeather,10*60*1000);setInterval(refreshCourses,60*1000);setInterval(refreshNews,5*60*1000);setInterval(nextNews,12*1000);setInterval(refreshRoad,5*60*1000);setInterval(updateTicker,10*1000);setInterval(loadTimetable,60*60*1000);}
 document.addEventListener("DOMContentLoaded",init);
