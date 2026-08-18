@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a1628">
   <title>Mobilité – Hippodrome Paris-Vincennes</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="tv.css">
+  <link rel="stylesheet" href="styles.css?v=20260819-0115">
+  <link rel="stylesheet" href="tv.css?v=20260819-0115">
+  <style>
+    .data-stage{display:none!important}
+  </style>
 </head>
 <body>
   <header class="topbar tv-topbar">
@@ -99,14 +102,13 @@
     </section>
   </main>
 
-  <!-- Zone technique alimentée par app.js puis répartie dans les cases par layout.js. -->
   <div id="bus-blocks" class="data-stage" aria-hidden="true"></div>
   <div id="ticker-slot" class="data-stage" aria-hidden="true"></div>
   <div id="road-list" class="data-stage" aria-hidden="true"></div>
 
   <footer>Informations indicatives • Sources : Île-de-France Mobilités / PRIM / GTFS</footer>
-  <script src="app.js"></script>
-  <script src="labels.js"></script>
-  <script src="layout.js"></script>
+  <script src="app.js?v=20260819-0115"></script>
+  <script src="labels.js?v=20260819-0115"></script>
+  <script src="layout.js?v=20260819-0115"></script>
 </body>
 </html>
