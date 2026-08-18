@@ -1,27 +1,67 @@
 @media (min-width:1200px) and (orientation:landscape){
   html,body{width:100%;height:100%;overflow:hidden}
-  body{display:grid;grid-template-rows:64px 42px minmax(0,1fr);min-height:0}
-  .topbar{position:relative;top:auto;height:64px;padding:8px 14px;grid-template-columns:minmax(300px,1.1fr) minmax(360px,1.5fr) 150px;gap:12px}
+  body{display:grid;grid-template-rows:62px 38px 34px minmax(0,1fr);min-height:0}
+
+  .topbar{position:relative;top:auto;height:62px;padding:8px 14px;grid-template-columns:minmax(380px,1.4fr) minmax(260px,.7fr) 150px;gap:12px}
   .brand-mark{width:40px;height:40px}.title{font-size:17px}.subtitle{font-size:10px}.now #clock{font-size:26px}
-  .traffic-banner{height:34px;margin:4px 8px;padding:7px 12px;border-radius:8px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px}
-  .dashboard{height:100%;min-height:0;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:minmax(0,1fr) 190px;gap:7px;padding:7px;overflow:hidden}
-  .panel{min-height:0;overflow:hidden;padding:9px;border-radius:10px}
-  .panel-rer{grid-column:1/7;grid-row:1}.panel-bus{grid-column:7/13;grid-row:1}
-  .panel-route{grid-column:1/4;grid-row:2}.panel-context{grid-column:4/7;grid-row:2}.panel-courses{grid-column:7/9;grid-row:2}.panel-news{grid-column:9/11;grid-row:2}.panel-road{grid-column:11/13;grid-row:2}
-  .panel-heading{margin-bottom:6px}.panel h1,.panel h2{font-size:14px}.panel p{font-size:9px;margin-top:1px}.source-badge{font-size:8px;padding:3px 6px}
-  .transport-board{height:calc(100% - 42px);min-height:0;overflow:hidden}
-  .stop-block{margin-bottom:6px;padding:6px;border-radius:8px}.stop-title{font-size:12px;margin-bottom:4px}.line-block{padding-top:4px;margin-top:4px}.line-head{margin-bottom:3px}.line-pill{height:22px;min-width:34px;font-size:11px}.line-name{font-size:11px}.direction{font-size:10px;margin:4px 0 3px}
-  .service-meta{gap:9px;margin-bottom:3px;font-size:8px}.service-ended{padding:8px}.service-ended strong{font-size:10px}.service-ended span{font-size:9px}
-  .panel-rer .stop-block{height:100%;margin:0;overflow:hidden}.panel-rer .line-block{height:calc(100% - 24px);overflow:hidden}
-  .panel-rer .train-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.train-card{padding:6px;border-radius:8px;min-height:0}.train-main{gap:8px}.train-main .wait{font-size:18px}.train-destination{font-size:9px}.train-time .exact{font-size:12px}.train-time .status{font-size:8px;margin-top:2px}.last-passage-badge{font-size:7px;padding:2px 5px;margin-bottom:2px}
-  .route-diagram{margin-top:5px;padding:5px 2px 2px;overflow:hidden}.route-track{min-width:0;width:100%}.route-stop{min-width:0;flex:1;padding:0 1px}.route-stop:not(:last-child)::after{top:5px;height:3px}.route-dot{width:10px;height:10px;border-width:3px}.route-stop-name{font-size:6.5px;line-height:1.05;margin-top:4px;max-width:70px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.route-unavailable{font-size:8px;margin-top:4px}
-  #bus-blocks{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,.85fr);gap:5px;height:100%;overflow:hidden}#bus-blocks>.stop-block{height:100%;overflow:hidden;margin:0}.panel-bus .stop-block{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;column-gap:5px;row-gap:2px}.panel-bus .stop-title{grid-column:1/-1}.panel-bus .line-block{margin:0;padding:3px;border-top:1px solid var(--line);min-width:0}.panel-bus .passages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}.panel-bus .passage{min-width:0;max-width:none;padding:4px 5px;gap:1px 4px}.panel-bus .passage .wait{font-size:12px}.panel-bus .passage .exact{font-size:9px}.panel-bus .passage .status{font-size:7px}.panel-bus .bus-onward{font-size:6.5px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.panel-bus .service-meta{font-size:6.5px;gap:5px}
-  .panel-route .route-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.panel-route .route-option{padding:6px}.panel-route .route-name{font-size:9px}.panel-route .route-time{font-size:15px;margin:2px 0}.panel-route .route-detail{font-size:7px;line-height:1.1}
-  .panel-context .context-grid{grid-template-columns:1.35fr .8fr;gap:5px}.panel-context h2{font-size:11px;margin:0 0 4px}.panel-context .velib-row{gap:4px}.context-card,.weather-card{padding:6px}.velib-name{font-size:7px}.velib-value{font-size:12px}.weather-card{gap:5px}.weather-emoji{font-size:22px}.weather-temp{font-size:18px}.weather-card .muted{font-size:7px}
-  .courses-board,.road-list{gap:3px}.course,.road{padding:4px 5px;font-size:8px;line-height:1.15}.course:nth-child(n+4),.road:nth-child(n+3){display:none}.course-time{margin-right:4px}.news-card{padding:6px}.news-title{font-size:9px;margin-bottom:2px}.news-desc{font-size:7px;line-height:1.15;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
-  footer{display:none}
+  .header-weather{display:flex;align-items:center;justify-content:center;gap:8px;min-width:0}
+  .header-weather .weather-emoji{font-size:26px}.header-weather .weather-temp{font-size:20px}.header-weather .muted{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .news-strip{display:grid;grid-template-columns:92px minmax(0,1fr);align-items:center;gap:8px;height:38px;padding:4px 10px;background:#07111f;border-bottom:1px solid #23415e;overflow:hidden}
+  .news-label{font-size:10px;font-weight:900;letter-spacing:.08em;color:#fff;background:#c5162e;border-radius:5px;padding:5px 7px;text-align:center}
+  .news-strip .news-carousel{min-width:0;height:28px;overflow:hidden}
+  .news-strip .news-card{display:none!important;background:transparent;border:0;padding:2px 0}
+  .news-strip .news-card.active{display:block!important}
+  .news-strip .news-title{font-size:11px;line-height:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+  .news-strip .news-desc{display:none}
+
+  .traffic-banner{height:30px;margin:2px 8px;padding:6px 10px;border-radius:7px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:10px}
+
+  .location-dashboard{height:100%;min-height:0;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:minmax(0,1fr) minmax(0,1fr) 178px;gap:7px;padding:7px;overflow:hidden}
+  .panel{min-height:0;overflow:hidden;padding:8px;border-radius:10px}
+  .panel-joinville{grid-column:1/8;grid-row:1/3}
+  .panel-hippodrome{grid-column:8/13;grid-row:1}
+  .panel-breuil{grid-column:8/13;grid-row:2}
+  .panel-velib{grid-column:1/6;grid-row:3}
+  .panel-courses{grid-column:6/13;grid-row:3}
+
+  .panel-heading{margin-bottom:5px}.panel h1,.panel h2{font-size:14px}.panel p{font-size:9px;margin-top:1px}.source-badge{font-size:8px;padding:3px 6px}.theoretical-badge{background:#303b48;color:#e5e7eb}
+  .location-heading{border-bottom:1px solid #23415e;padding-bottom:5px}
+  .subhead{display:flex;align-items:center;gap:6px;font-size:10px;margin-bottom:4px;color:#dce7f5}.rer-pill{background:#e41e26}
+
+  .joinville-grid{height:calc(100% - 42px);display:grid;grid-template-rows:minmax(0,1fr) 138px 72px;gap:5px;overflow:hidden}
+  .joinville-rer,.joinville-bus,.joinville-route{min-height:0;overflow:hidden;background:#0c1a2e;border:1px solid #1f3b5c;border-radius:8px;padding:5px}
+  .joinville-rer .transport-board{height:calc(100% - 20px);overflow:hidden}
+  .joinville-rer .stop-title,.joinville-rer .line-head{display:none}
+  .joinville-rer .stop-block{height:100%;margin:0;padding:3px;border-left:0;background:transparent;overflow:hidden}
+  .joinville-rer .line-block{height:100%;margin:0;padding:0;border:0;overflow:hidden}
+  .joinville-rer .train-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+  .joinville-rer .train-list .train-card:nth-child(n+3){display:none}
+  .joinville-rer .train-list .train-card:nth-child(n+2) .route-diagram{display:none}
+  .train-card{padding:5px;border-radius:7px}.train-main{gap:6px}.train-main .wait{font-size:17px}.train-destination{font-size:8px}.train-time .exact{font-size:11px}.train-time .status{font-size:7px;margin-top:1px}
+  .route-diagram{margin-top:4px;padding:4px 1px 1px;overflow:hidden}.route-track{min-width:0;width:100%}.route-stop{min-width:0;flex:1;padding:0 1px}.route-stop:not(:last-child)::after{top:4px;height:2px}.route-dot{width:9px;height:9px;border-width:2px}.route-stop-name{font-size:6px;line-height:1.02;margin-top:3px;max-width:62px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.route-unavailable{font-size:7px;margin-top:3px}
+
+  .compact-stop-view,.location-stop-view{height:calc(100% - 20px);overflow:hidden}
+  .mirrored-stop>.stop-title{display:none}
+  .compact-stop-view .mirrored-stop{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;height:100%;overflow:hidden}
+  .compact-stop-view .line-block{margin:0;padding:3px;min-width:0;border:1px solid #1c3550;border-radius:6px;overflow:hidden}
+  .compact-stop-view .line-head{margin-bottom:2px}.compact-stop-view .line-pill{height:18px;min-width:28px;font-size:9px}.compact-stop-view .line-name{font-size:8px}
+  .compact-stop-view .direction{font-size:7px;margin:2px 0}.compact-stop-view .service-meta{display:none}.compact-stop-view .passages{display:grid;grid-template-columns:1fr 1fr;gap:2px}.compact-stop-view .passage{min-width:0;max-width:none;padding:3px 4px}.compact-stop-view .passage:nth-child(n+3){display:none}.compact-stop-view .passage .wait{font-size:10px}.compact-stop-view .passage .exact{font-size:7px}.compact-stop-view .passage .status{font-size:6px}.compact-stop-view .bus-onward{display:none}
+  .compact-stop-view .line-block:nth-child(n+9){display:none}
+
+  .location-stop-view .line-block{margin:0;padding:4px;border-top:0}.location-stop-view .line-head{margin-bottom:3px}.location-stop-view .line-pill{height:20px;min-width:30px;font-size:10px}.location-stop-view .line-name{font-size:9px}.mini-source{font-size:6px;color:#9fb0c6;border:1px solid #3b526b;border-radius:4px;padding:2px 4px;margin-left:auto}
+  .direction-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}.theoretical-direction{min-width:0}.location-stop-view .direction{font-size:9px;margin:3px 0}.location-stop-view .service-meta{font-size:7px;gap:6px;margin-bottom:2px}.location-stop-view .passages{display:grid;grid-template-columns:1fr 1fr;gap:3px}.location-stop-view .passage{min-width:0;max-width:none;padding:4px}.location-stop-view .passage .wait{font-size:12px}.location-stop-view .passage .exact{font-size:8px}.location-stop-view .passage .status{font-size:6px}.location-stop-view .bus-onward{font-size:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.location-stop-view .service-ended{padding:6px}.location-stop-view .service-ended strong{font-size:9px}.location-stop-view .service-ended span{font-size:7px}
+
+  .joinville-route .route-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}.joinville-route .route-option{padding:4px}.joinville-route .route-name{font-size:8px}.joinville-route .route-time{font-size:13px;margin:1px 0}.joinville-route .route-detail{font-size:6px;line-height:1.05}
+
+  .panel-velib .velib-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}.panel-velib .context-card{padding:8px}.panel-velib .velib-name{font-size:9px}.panel-velib .velib-value{font-size:16px}.panel-velib .muted{font-size:8px}
+  .panel-courses .courses-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.panel-courses .course{padding:5px 6px;font-size:8px;line-height:1.15}.panel-courses .course:nth-child(n+7){display:none}.course-time{margin-right:4px}
+
+  .data-stage,footer{display:none!important}
 }
 
 @media (min-width:1600px) and (min-height:900px) and (orientation:landscape){
-  .dashboard{grid-template-rows:minmax(0,1fr) 205px}.panel-rer .train-list{gap:6px}.train-main .wait{font-size:20px}.route-stop-name{font-size:7px}.panel-bus .passage .wait{font-size:13px}
+  .location-dashboard{grid-template-rows:minmax(0,1fr) minmax(0,1fr) 190px}
+  .joinville-grid{grid-template-rows:minmax(0,1fr) 150px 78px}
+  .train-main .wait{font-size:19px}.route-stop-name{font-size:6.5px}
 }
