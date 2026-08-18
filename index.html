@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="tv.css">
 </head>
 <body>
-  <header class="topbar">
+  <header class="topbar tv-topbar">
     <div class="brand">
       <div class="brand-mark" aria-hidden="true">VH</div>
       <div>
@@ -17,87 +17,95 @@
         <div class="subtitle">Joinville-le-Pont • Hippodrome • École du Breuil</div>
       </div>
     </div>
-    <div class="ticker" aria-live="polite"><span id="ticker-slot">Chargement des informations…</span></div>
+    <div class="header-weather" aria-label="Météo">
+      <span id="weather-emoji" class="weather-emoji">—</span>
+      <span id="weather-temp" class="weather-temp">--°</span>
+      <span id="weather-desc" class="muted">Indisponible</span>
+    </div>
     <div class="now">
       <div id="clock">--:--</div>
       <div id="lastUpdate" class="muted">Maj --:--</div>
     </div>
   </header>
 
+  <div class="news-strip" aria-label="Actualités France Info">
+    <span class="news-label">FRANCE INFO</span>
+    <div id="news-carousel" class="news-carousel">Chargement des actualités…</div>
+  </div>
+
   <div id="traffic-banner" class="traffic-banner neutral" role="status" aria-live="polite">Vérification des perturbations PRIM…</div>
 
-  <main class="dashboard">
-    <section class="panel panel-rer">
-      <div class="panel-heading">
+  <main class="dashboard location-dashboard">
+    <section class="panel panel-joinville location-card">
+      <div class="panel-heading location-heading">
         <div>
-          <h1>RER A – Joinville-le-Pont</h1>
-          <p>Tous les sens • temps réel • desserte • premier / dernier passage</p>
+          <h1>Joinville-le-Pont</h1>
+          <p>RER A • bus • meilleur trajet depuis l’hippodrome</p>
         </div>
         <span class="source-badge">PRIM</span>
       </div>
-      <div id="rer-body" class="transport-board" aria-live="polite"></div>
+
+      <div class="joinville-grid">
+        <div class="joinville-rer">
+          <div class="subhead"><span class="line-pill rer-pill">A</span><strong>RER A</strong></div>
+          <div id="rer-body" class="transport-board" aria-live="polite"></div>
+        </div>
+
+        <div class="joinville-bus">
+          <div class="subhead"><strong>Bus à Joinville</strong></div>
+          <div id="joinville-bus-view" class="compact-stop-view">Chargement…</div>
+        </div>
+
+        <div class="joinville-route">
+          <div class="subhead"><strong>Le plus rapide depuis l’hippodrome</strong></div>
+          <div id="best-route" class="route-options">Calcul en cours…</div>
+        </div>
+      </div>
     </section>
 
-    <section class="panel panel-bus">
-      <div class="panel-heading">
+    <section class="panel panel-hippodrome location-card">
+      <div class="panel-heading location-heading">
         <div>
-          <h2>Bus autour de l’hippodrome</h2>
-          <p>Passages • directions • retards • fin de service</p>
+          <h2>Arrêt Hippodrome de Vincennes</h2>
+          <p>Ligne 77 • deux sens • horaires du jour</p>
+        </div>
+        <span class="source-badge theoretical-badge">GTFS</span>
+      </div>
+      <div id="hippodrome-stop-view" class="location-stop-view">Chargement…</div>
+    </section>
+
+    <section class="panel panel-breuil location-card">
+      <div class="panel-heading location-heading">
+        <div>
+          <h2>École du Breuil</h2>
+          <p>Deux sens • temps réel quand disponible</p>
         </div>
         <span class="source-badge">PRIM</span>
       </div>
-      <div id="bus-blocks" class="transport-board" aria-live="polite"></div>
+      <div id="breuil-bus-view" class="location-stop-view">Chargement…</div>
     </section>
 
-    <section class="panel panel-route">
-      <div class="panel-heading">
-        <div>
-          <h2>Vers Joinville</h2>
-          <p>Comparaison indicative</p>
-        </div>
-      </div>
-      <div id="best-route" class="route-options">Calcul en cours…</div>
-    </section>
-
-    <section class="panel panel-context">
-      <div class="context-grid">
-        <div>
-          <h2>Vélib’</h2>
-          <div class="velib-row">
-            <div id="velib-vincennes" class="context-card">Chargement…</div>
-            <div id="velib-breuil" class="context-card">Chargement…</div>
-          </div>
-        </div>
-        <div>
-          <h2>Météo</h2>
-          <div class="weather-card">
-            <div id="weather-emoji" class="weather-emoji">—</div>
-            <div>
-              <div id="weather-temp" class="weather-temp">--°</div>
-              <div id="weather-desc" class="muted">Indisponible</div>
-            </div>
-          </div>
-        </div>
+    <section class="panel panel-velib">
+      <div class="panel-heading"><div><h2>Vélib’</h2><p>Disponibilités à proximité</p></div></div>
+      <div class="velib-row">
+        <div id="velib-vincennes" class="context-card">Chargement…</div>
+        <div id="velib-breuil" class="context-card">Chargement…</div>
       </div>
     </section>
 
     <section class="panel panel-courses">
-      <div class="panel-heading"><div><h2>Courses</h2><p>Vincennes</p></div></div>
+      <div class="panel-heading"><div><h2>Courses à Vincennes</h2><p>Prochaines courses du jour</p></div></div>
       <div id="courses-list" class="courses-board"></div>
-    </section>
-
-    <section class="panel panel-news">
-      <div class="panel-heading"><div><h2>Actualités</h2><p>France Info</p></div></div>
-      <div id="news-carousel" class="news-carousel"></div>
-    </section>
-
-    <section class="panel panel-road">
-      <div class="panel-heading"><div><h2>Route</h2><p>Trafic routier</p></div></div>
-      <div id="road-list" class="road-list"></div>
     </section>
   </main>
 
-  <footer>Informations indicatives • Source transport : Île-de-France Mobilités / PRIM</footer>
+  <!-- Zone technique alimentée par app.js puis répartie dans les cases par layout.js. -->
+  <div id="bus-blocks" class="data-stage" aria-hidden="true"></div>
+  <div id="ticker-slot" class="data-stage" aria-hidden="true"></div>
+  <div id="road-list" class="data-stage" aria-hidden="true"></div>
+
+  <footer>Informations indicatives • Sources : Île-de-France Mobilités / PRIM / GTFS</footer>
   <script src="app.js"></script>
+  <script src="layout.js"></script>
 </body>
 </html>
