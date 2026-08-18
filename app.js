@@ -1,433 +1,258 @@
-// === Constantes & endpoints ===
 const PROXY = "https://ratp-proxy.hippodrome-proxy42.workers.dev/?url=";
+const PRIM = "https://prim.iledefrance-mobilites.fr/marketplace";
 const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=48.835&longitude=2.45&current_weather=true";
-const RSS_URL = "https://www.lemonde.fr/rss/une.xml";
+const RSS_URL = "https://www.francetvinfo.fr/titres.rss";
 
-const STOP_IDS = {
-  RER_A: "STIF:StopArea:SP:43135:",
-  JOINVILLE: "STIF:StopArea:SP:70640:",
-  HIPPODROME: "STIF:StopArea:SP:463641:",
-  BREUIL: "STIF:StopArea:SP:463644:"
+const RER_STOP = { name: "Joinville-le-Pont", refs: ["STIF:StopArea:SP:43135:"] };
+
+// Référentiel repris du projet VHPRATP.
+const BUS_STOPS = [
+  {
+    name: "Joinville-le-Pont – Bus",
+    lines: [
+      { code: "77", color: "#0071bc", refs: ["STIF:StopPoint:Q:22452:"] },
+      { code: "101", color: "#f0a500", refs: ["STIF:StopPoint:Q:21252:"] },
+      { code: "106", color: "#e4002b", refs: ["STIF:StopPoint:Q:27560:"] },
+      { code: "108", color: "#d10073", refs: ["STIF:StopPoint:Q:28032:"] },
+      { code: "110", color: "#642580", refs: ["STIF:StopPoint:Q:28032:"] },
+      { code: "112", color: "#ff5a00", refs: ["STIF:StopPoint:Q:28065:", "STIF:StopPoint:Q:39406:"] },
+      { code: "281", color: "#d9a300", refs: ["STIF:StopPoint:Q:28033:"] },
+      { code: "N33", color: "#ff5a00", refs: ["STIF:StopPoint:Q:39406:"] }
+    ]
+  },
+  {
+    name: "École du Breuil",
+    lines: [
+      { code: "201", color: "#6E491E", refs: ["STIF:StopPoint:Q:39406:", "STIF:StopPoint:Q:22452:"] }
+    ]
+  }
+];
+
+const VELIB_STATIONS = {
+  VINCENNES: { id: "12163", label: "Hippodrome / Vincennes" },
+  BREUIL: { id: "12128", label: "École du Breuil" }
 };
-
-// Pour stop-monitoring (horaires dynamiques)
-const LINES_NAVITIA = {
-  RER_A: "C01742",
-  BUS_77: "C02251",
-  BUS_201: "C01219"
-};
-
-// Pour general-message (trafic perturbé)
-const LINES_SIRI = {
-  RER_A: "STIF:Line::A:",
-  BUS_77: "STIF:Line::77:",
-  BUS_201: "STIF:Line::201:"
-};
-
-
-const VELIB_STATIONS = { VINCENNES: "12163", BREUIL: "12128" };
 
 const WEATHER_CODES = {
-  0: "Ciel dégagé", 1: "Principalement clair", 2: "Partiellement nuageux", 3: "Couvert",
-  45: "Brouillard", 48: "Brouillard givrant",
-  51: "Bruine faible", 53: "Bruine", 55: "Bruine forte",
-  61: "Pluie faible", 63: "Pluie modérée", 65: "Pluie forte",
-  80: "Averses faibles", 81: "Averses modérées", 82: "Fortes averses",
-  95: "Orages", 96: "Orages grêle", 99: "Orages grêle"
+  0:"Ciel dégagé",1:"Principalement clair",2:"Partiellement nuageux",3:"Couvert",45:"Brouillard",48:"Brouillard givrant",
+  51:"Bruine faible",53:"Bruine",55:"Bruine forte",61:"Pluie faible",63:"Pluie modérée",65:"Pluie forte",
+  80:"Averses faibles",81:"Averses modérées",82:"Fortes averses",95:"Orages",96:"Orages avec grêle",99:"Orages avec grêle"
 };
 
-// === État ===
-const lineMetaCache = new Map();
 let newsItems = [];
 let currentNews = 0;
 let tickerIndex = 0;
-let tickerData = { timeWeather: "", saint: "", horoscope: "", traffic: "" };
+let tickerData = { weather:"", traffic:"" };
+let lastGoodTransportUpdate = null;
+let cachedVelib = null;
 
-// === Utils ===
-function decodeEntities(str=""){return str.replace(/&nbsp;/gi," ").replace(/&amp;/gi,"&").replace(/&quot;/gi,'"').replace(/&#039;/gi,"'").replace(/&apos;/gi,"'").replace(/&lt;/gi,"<").replace(/&gt;/gi,">").trim();}
-function cleanText(str=""){return decodeEntities(str).replace(/<[^>]*>/g," ").replace(/[<>]/g," ").replace(/\s+/g," ").trim();}
-async function fetchJSON(url, timeout=12000){ try{ const c=new AbortController(); const t=setTimeout(()=>c.abort(),timeout); const r=await fetch(url,{signal:c.signal, cache:"no-store"}); clearTimeout(t); if(!r.ok) throw new Error(`HTTP ${r.status}`); return await r.json(); } catch(e){ console.error("fetchJSON",url,e.message); return null; } }
-async function fetchText(url, timeout=12000){ try{ const c=new AbortController(); const t=setTimeout(()=>c.abort(),timeout); const r=await fetch(url,{signal:c.signal, cache:"no-store"}); clearTimeout(t); if(!r.ok) throw new Error(`HTTP ${r.status}`); return await r.text(); } catch(e){ console.error("fetchText",url,e.message); return ""; } }
-function minutesFromISO(iso){ if(!iso) return null; return Math.max(0, Math.round((new Date(iso).getTime()-Date.now())/60000)); }
-function setClock(){ const el=document.getElementById("clock"); if(el) el.textContent=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}); }
-function setLastUpdate(){ const el=document.getElementById("lastUpdate"); if(el) el.textContent=`Maj ${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}`; }
+const $ = id => document.getElementById(id);
+function text(v=""){return String(v ?? "").replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();}
+function valueOf(x){return x?.value ?? x ?? "";}
+function fmtTime(iso){if(!iso)return "—";const d=new Date(iso);return Number.isNaN(d.getTime())?"—":d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});}
+function minUntil(iso){if(!iso)return null;const d=new Date(iso);if(Number.isNaN(d.getTime()))return null;return Math.max(0,Math.round((d-Date.now())/60000));}
+function signedMinutes(expected, aimed){if(!expected||!aimed)return null;const a=new Date(aimed),e=new Date(expected);if(Number.isNaN(a)||Number.isNaN(e))return null;return Math.round((e-a)/60000);}
+function primUrl(path){return PROXY + encodeURIComponent(PRIM + path);}
 
-// === Référentiel lignes (couleurs IDFM) ===
-function normaliseColor(hex){ if(!hex) return null; const c=hex.toString().trim().replace(/^#/,""); return /^[0-9a-fA-F]{6}$/.test(c)?`#${c}`:null; }
-function fallbackLineMeta(id){ return { id, code:id, color:"#2450a4", textColor:"#fff" }; }
-async function fetchLineMetadata(lineId){
-  if(!lineId) return fallbackLineMeta(lineId);
-  if(lineMetaCache.has(lineId)) return lineMetaCache.get(lineId);
-  const url = "https://data.iledefrance-mobilites.fr/api/explore/v2.1/catalog/datasets/referentiel-des-lignes/records?where=id_line%3D%22"+lineId+"%22&limit=1";
-  const data = await fetchJSON(url,10000); let meta=fallbackLineMeta(lineId);
-  if(data?.results?.length){ const e=data.results[0]; meta={ id:lineId, code:e.shortname_line||e.name_line||lineId, color: normaliseColor(e.colourweb_hexa)||"#2450a4", textColor: normaliseColor(e.textcolourweb_hexa)||"#fff" }; }
-  lineMetaCache.set(lineId, meta); return meta;
+async function fetchJSON(url, timeout=12000){
+  const c=new AbortController();const timer=setTimeout(()=>c.abort(),timeout);
+  try{const r=await fetch(url,{signal:c.signal,cache:"no-store"});if(!r.ok)throw new Error(`HTTP ${r.status}`);return await r.json();}
+  catch(e){console.error("fetchJSON",e);return null;}finally{clearTimeout(timer);}
+}
+async function fetchText(url, timeout=12000){
+  const c=new AbortController();const timer=setTimeout(()=>c.abort(),timeout);
+  try{const r=await fetch(url,{signal:c.signal,cache:"no-store"});if(!r.ok)throw new Error(`HTTP ${r.status}`);return await r.text();}
+  catch(e){console.error("fetchText",e);return "";}finally{clearTimeout(timer);}
 }
 
-// === Stops parsing ===
-function parseStop(data){
-  const visits=data?.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0]?.MonitoredStopVisit;
-  if(!Array.isArray(visits)) return [];
+function setClock(){if($("clock")) $("clock").textContent=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});}
+function setLastUpdate(){if(!$("lastUpdate"))return;const base=lastGoodTransportUpdate||new Date();$("lastUpdate").textContent=`Maj ${base.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}`;}
+
+function parseVisits(data){
+  const deliveries=data?.Siri?.ServiceDelivery?.StopMonitoringDelivery||[];
+  const visits=deliveries.flatMap(d=>Array.isArray(d?.MonitoredStopVisit)?d.MonitoredStopVisit:[]);
   return visits.map(v=>{
-    const mv=v.MonitoredVehicleJourney||{}; const call=mv.MonitoredCall||{};
-    const lineRef=mv.LineRef?.value||mv.LineRef||""; const lineId=(lineRef.match(/C\d{5}/)||[null])[0];
-    const destDisplay=cleanText(call.DestinationDisplay?.[0]?.value||"");
+    const mv=v?.MonitoredVehicleJourney||{};
+    const call=mv?.MonitoredCall||{};
     const expected=call.ExpectedDepartureTime||call.ExpectedArrivalTime||null;
-    return { lineId, dest: destDisplay, minutes: minutesFromISO(expected) };
-  });
+    const aimed=call.AimedDepartureTime||call.AimedArrivalTime||null;
+    const status=String(call.DepartureStatus||call.ArrivalStatus||"onTime");
+    const destination=text(valueOf(call?.DestinationDisplay?.[0])||valueOf(mv?.DestinationName?.[0])||valueOf(mv?.DirectionName?.[0])||"Destination non communiquée");
+    const lineRef=String(valueOf(mv.LineRef)||"");
+    const published=text(valueOf(mv?.PublishedLineName?.[0])||"");
+    return {
+      lineRef,published,destination,expected,aimed,status,
+      wait:minUntil(expected||aimed),delay:signedMinutes(expected,aimed),
+      vehicleAtStop:Boolean(call.VehicleAtStop)
+    };
+  }).filter(v=>v.destination||v.expected||v.aimed);
 }
 
-// === RER ===
+function statusInfo(v){
+  const s=(v.status||"").toLowerCase();
+  if(s==="cancelled") return {label:"ANNULÉ",cls:"cancelled"};
+  if(s==="missed") return {label:"ARRÊT NON DESSERVI",cls:"missed"};
+  if(s==="delayed" || (v.delay!=null&&v.delay>=2)) return {label:v.delay!=null?`RETARD +${v.delay} min`:"RETARD",cls:"delayed"};
+  if(s==="early" || (v.delay!=null&&v.delay<=-2)) return {label:v.delay!=null?`AVANCE ${v.delay} min`:"EN AVANCE",cls:"early"};
+  if(!v.expected && v.aimed) return {label:"HORAIRE THÉORIQUE",cls:"na"};
+  return {label:v.vehicleAtStop?"À QUAI":"TEMPS RÉEL",cls:"ok"};
+}
+
+function passageHTML(v){
+  const st=statusInfo(v);
+  const wait=v.wait==null?"—":v.wait<=1?"À l’approche":`${v.wait} min`;
+  const exact=fmtTime(v.expected||v.aimed);
+  return `<div class="passage ${v.wait!=null&&v.wait<=1?"imminent":""}"><div class="wait">${wait}</div><div class="exact">${exact}</div><div class="status ${st.cls}">${st.label}</div></div>`;
+}
+
+function emptyHTML(label="Information indisponible"){return `<div class="empty-state">— ${label}</div>`;}
+
+function groupByDirection(visits){
+  const map=new Map();
+  visits.forEach(v=>{const k=v.destination||"Destination non communiquée";if(!map.has(k))map.set(k,[]);map.get(k).push(v);});
+  for(const rows of map.values()) rows.sort((a,b)=>new Date(a.expected||a.aimed)-new Date(b.expected||b.aimed));
+  return map;
+}
+
+async function fetchStop(ref){return fetchJSON(primUrl(`/stop-monitoring?MonitoringRef=${encodeURIComponent(ref)}`),15000);}
+
 async function renderRer(){
-  const data=await fetchJSON(PROXY+encodeURIComponent(`https://prim.iledefrance-mobilites.fr/marketplace/stop-monitoring?MonitoringRef=${STOP_IDS.RER_A}`));
-  const visits=parseStop(data).filter(v=>/paris|nation|châtelet|haussmann/i.test(v.dest||"")).slice(0,6);
-  const cont=document.getElementById("rer-body");
-  cont.innerHTML="";
-  visits.forEach(v=>{
-    const row=document.createElement("div"); row.className="row";
-    const pill=document.createElement("span"); pill.className="line-pill rer-a"; pill.textContent="A"; row.appendChild(pill);
-    const dest=document.createElement("div"); dest.className="dest"; dest.textContent=v.dest; row.appendChild(dest);
-    const time=document.createElement("div"); time.className="times"; time.textContent=(v.minutes!=null?`${v.minutes} min`:"--"); row.appendChild(time);
-    cont.appendChild(row);
-  });
+  const cont=$("rer-body");if(!cont)return false;
+  const all=[];
+  for(const ref of RER_STOP.refs){const d=await fetchStop(ref);if(d)all.push(...parseVisits(d));}
+  const rer=all.filter(v=>!v.published || /(^|\s)A($|\s)/i.test(v.published) || /C01742|Line::A/i.test(v.lineRef));
+  if(!rer.length){cont.innerHTML=emptyHTML("Aucun passage RER A reçu de PRIM");return false;}
+  const dirs=groupByDirection(rer);
+  cont.innerHTML=`<div class="stop-block"><div class="stop-title">📍 ${RER_STOP.name}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div>${[...dirs.entries()].map(([dest,rows])=>`<div class="direction">→ ${dest}</div><div class="passages">${rows.slice(0,4).map(passageHTML).join("")}</div>`).join("")}</div></div>`;
+  return true;
 }
 
-// === BUS par arrêt ===
-async function renderBusByStop() {
-  const stops = [
-    { id: STOP_IDS.HIPPODROME, name: "Hippodrome de Vincennes" },
-    { id: STOP_IDS.BREUIL, name: "École du Breuil" },
-    { id: STOP_IDS.JOINVILLE, name: "Joinville-le-Pont" }
-  ];
+function matchesLine(v, code){
+  const p=(v.published||"").toUpperCase().replace(/\s/g,"");
+  const lr=(v.lineRef||"").toUpperCase();
+  return p===code.toUpperCase() || lr.includes(`::${code.toUpperCase()}:`) || lr.endsWith(`:${code.toUpperCase()}:`);
+}
 
-  const container = document.getElementById("bus-blocks");
-  container.innerHTML = "";
-
-  for (const stop of stops) {
-    const data = await fetchJSON(PROXY + encodeURIComponent(`https://prim.iledefrance-mobilites.fr/marketplace/stop-monitoring?MonitoringRef=${stop.id}`));
-    const visits = parseStop(data);
-    if (!visits.length) continue;
-
-    const block = document.createElement("div");
-    block.className = "bus-stop-block";
-    block.innerHTML = `<h3 class="bus-stop-title">🚏 ${stop.name}</h3>`;
-
-    const byLine = {};
-    visits.forEach(v => {
-      if (!byLine[v.lineId]) byLine[v.lineId] = [];
-      byLine[v.lineId].push(v);
-    });
-
-    for (const [lineId, rows] of Object.entries(byLine)) {
-      const meta = await fetchLineMetadata(lineId);
-      const lineHeader = document.createElement("div");
-      lineHeader.className = "bus-line-header";
-      lineHeader.innerHTML = `<span class="line-pill" style="background:${meta.color};color:${meta.textColor}">${meta.code}</span>`;
-      block.appendChild(lineHeader);
-
-      rows.slice(0, 4).forEach(r => {
-        const row = document.createElement("div");
-        row.className = "row";
-        row.innerHTML = `<div class="dest">${r.dest}</div><div class="times">${r.minutes != null ? r.minutes + " min" : "--"}</div>`;
-        block.appendChild(row);
-      });
+async function renderBus(){
+  const cont=$("bus-blocks");if(!cont)return false;
+  let any=false;const stopHtml=[];
+  for(const stop of BUS_STOPS){
+    const linesHtml=[];
+    for(const line of stop.lines){
+      const merged=[];
+      for(const ref of line.refs){const d=await fetchStop(ref);if(d)merged.push(...parseVisits(d));}
+      let visits=merged.filter(v=>matchesLine(v,line.code));
+      // Certains flux PRIM omettent PublishedLineName : si la référence est dédiée à la ligne, on garde la réponse.
+      if(!visits.length && merged.length && stop.lines.length===1) visits=merged;
+      if(visits.length) any=true;
+      const dirs=groupByDirection(visits);
+      linesHtml.push(`<div class="line-block"><div class="line-head"><span class="line-pill" style="background:${line.color}">${line.code}</span><span class="line-name">Ligne ${line.code}</span></div>${visits.length?[...dirs.entries()].map(([dest,rows])=>`<div class="direction">→ ${dest}</div><div class="passages">${rows.slice(0,3).map(passageHTML).join("")}</div>`).join(""):emptyHTML("Aucun passage communiqué")}</div>`);
     }
-    container.appendChild(block);
+    stopHtml.push(`<div class="stop-block"><div class="stop-title">🚏 ${stop.name}</div>${linesHtml.join("")}</div>`);
   }
+  cont.innerHTML=stopHtml.join("");
+  return any;
 }
 
-// === Itinéraire optimal Joinville ===
-async function computeBestRouteJoinville(){
-  const el=document.getElementById("best-route"); if(!el) return;
-  const hippo=await fetchJSON(PROXY+encodeURIComponent(`https://prim.iledefrance-mobilites.fr/marketplace/stop-monitoring?MonitoringRef=${STOP_IDS.HIPPODROME}`));
-  const visits=parseStop(hippo);
-  const busNext=visits.filter(v=>/C02251|C01219/.test(v.lineId||"")).sort((a,b)=>(a.minutes||99)-(b.minutes||99))[0];
-  const nextBusMin = Number.isFinite(busNext?.minutes)? Math.max(0,busNext.minutes) : null;
-
-  const MARCHE=15, VELIB=6, BUS_TRAVEL=5;
-  let velibOK=false;
-  try{
-    const d=await fetchJSON(`https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/velib-disponibilite-en-temps-reel/records?where=stationcode%3D${encodeURIComponent(VELIB_STATIONS.VINCENNES)}&limit=1`);
-    const st=d?.results?.[0]; velibOK = ((st?.mechanical_bikes||0)+(st?.ebike_bikes||0))>0;
-  }catch{}
-
-  const options=[
-    {label:"🚶 Marche", total:MARCHE, detail:"trajet direct"},
-    {label:"🚲 Vélib’", total: velibOK? VELIB : Infinity, detail: velibOK? "vélo disponible" : "aucun vélo dispo"}
-  ];
-  if(nextBusMin!=null) options.push({label:"🚌 Bus 77/201", total: nextBusMin+BUS_TRAVEL, detail:`attente ${nextBusMin} min + ~${BUS_TRAVEL} min`});
-  options.sort((a,b)=>a.total-b.total);
-  const best=options[0];
-
-  el.innerHTML = `<div class="best-option"><span class="tag">${best.label}</span><div><strong>${best.total===Infinity? "Non recommandé" : best.total+" min"}</strong> • ${best.detail}</div></div>`;
-}
-
-// === Horoscope ===
-const SIGNS = [
-  { fr: "Bélier", en: "Aries" },
-  { fr: "Taureau", en: "Taurus" },
-  { fr: "Gémeaux", en: "Gemini" },
-  { fr: "Cancer", en: "Cancer" },
-  { fr: "Lion", en: "Leo" },
-  { fr: "Vierge", en: "Virgo" },
-  { fr: "Balance", en: "Libra" },
-  { fr: "Scorpion", en: "Scorpio" },
-  { fr: "Sagittaire", en: "Sagittarius" },
-  { fr: "Capricorne", en: "Capricorn" },
-  { fr: "Verseau", en: "Aquarius" },
-  { fr: "Poissons", en: "Pisces" }
-];
-let signIdx = 0;
-
-async function fetchHoroscope(signEn) {
-  const target = `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${signEn}&day=today`;
-  const url = PROXY + encodeURIComponent(target);
-
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data?.data?.horoscope_data || "Horoscope indisponible.";
-  } catch (e) {
-    console.error("fetchHoroscope", signEn, e);
-    return "Erreur horoscope";
+async function fetchTrafficMessages(){
+  const lineCodes=["A","77","101","106","108","110","112","201","281","N33"];
+  const messages=[];
+  for(const code of lineCodes){
+    const refs=[`STIF:Line::${code}:`];
+    for(const ref of refs){
+      const data=await fetchJSON(primUrl(`/general-message?LineRef=${encodeURIComponent(ref)}`),12000);
+      const deliveries=data?.Siri?.ServiceDelivery?.GeneralMessageDelivery||[];
+      deliveries.forEach(del=>(del?.InfoMessage||[]).forEach(msg=>{
+        const content=msg?.Content||{};
+        const candidate=valueOf(content?.Message?.[0]?.MessageText?.[0])||valueOf(content?.Message?.MessageText)||valueOf(msg?.Description);
+        const t=text(candidate);if(t&&!messages.some(x=>x.text===t))messages.push({line:code,text:t});
+      }));
+    }
   }
+  const banner=$("traffic-banner");if(!banner)return;
+  if(messages.length){banner.className="traffic-banner alert";banner.textContent=`⚠️ ${messages.slice(0,3).map(m=>`${m.line} : ${m.text}`).join(" • ")}`;tickerData.traffic=`⚠️ ${messages[0].line} : ${messages[0].text}`;}
+  else{banner.className="traffic-banner ok";banner.textContent="✅ Aucun message de perturbation PRIM reçu sur les lignes suivies.";tickerData.traffic="✅ Trafic : aucun message de perturbation reçu";}
 }
 
-async function refreshHoroscopeCycle() {
-  const { fr, en } = SIGNS[signIdx];
-  const text = await fetchHoroscope(en);
-  tickerData.horoscope = `🔮 ${fr} : ${text}`;
-  signIdx = (signIdx + 1) % SIGNS.length;
-}
-
-
-// === Saint du jour ===
-async function refreshSaint(){
-  try{ const data=await fetchJSON("https://nominis.cef.fr/json/nominis.php",10000); if(data?.response?.prenoms) tickerData.saint=`🎂 Ste ${data.response.prenoms}`; }
-  catch{ tickerData.saint="🎂 Fête indisponible"; }
-}
-
-// === Météo ===
-function weatherEmojiFromCode(code){ if([0,1].includes(code)) return "☀️"; if([2,3].includes(code)) return "⛅"; if([61,63,65,80,81,82].includes(code)) return "🌧️"; if([95,96,99].includes(code)) return "⛈️"; if([45,48].includes(code)) return "🌫️"; return "🌤️"; }
-async function refreshWeather(){
-  const data=await fetchJSON(WEATHER_URL,10000);
-  const t=document.getElementById("weather-temp"), d=document.getElementById("weather-desc"), e=document.getElementById("weather-emoji");
-  if(!data?.current_weather){ if(t) t.textContent="--°"; return; }
-  const { temperature, weathercode }=data.current_weather;
-  const temp=`${Math.round(temperature)}°C`; const desc=WEATHER_CODES[weathercode]||""; const ico=weatherEmojiFromCode(weathercode);
-  if(t) t.textContent=temp; if(d) d.textContent=desc; if(e) e.textContent=ico;
-  tickerData.timeWeather=`${ico} ${temp} (${desc})`;
-}
-
-// === Vélib ===
 async function refreshVelib(){
-  for(const [key,stationId] of Object.entries(VELIB_STATIONS)){
-    try{
-      const d=await fetchJSON(`https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/velib-disponibilite-en-temps-reel/records?where=stationcode%3D${encodeURIComponent(stationId)}&limit=1`);
-      const st=d?.results?.[0]; const el=document.getElementById(`velib-${key.toLowerCase()}`); if(!el) continue;
-      if(!st){ el.textContent="Indispo"; continue; }
-      const mech=st.mechanical_bikes||0, ebike=st.ebike_bikes||0, docks=st.numdocksavailable||0;
-      el.innerHTML=`🚲${mech} 🔌${ebike} 🅿️${docks}`;
-    }catch{}
+  const cache={};
+  for(const [key,station] of Object.entries(VELIB_STATIONS)){
+    const el=$(`velib-${key.toLowerCase()}`);if(!el)continue;
+    const url=`https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/velib-disponibilite-en-temps-reel/records?where=stationcode%3D${station.id}&limit=1`;
+    const d=await fetchJSON(url,10000);const st=d?.results?.[0];
+    if(!st){el.innerHTML=`<div class="velib-name">${station.label}</div><div class="velib-value">— indisponible</div>`;continue;}
+    const mech=Number(st.mechanical_bikes||0), elec=Number(st.ebike_bikes||0), docks=Number(st.numdocksavailable||0);
+    cache[key]={mech,elec,docks};el.innerHTML=`<div class="velib-name">${station.label}</div><div class="velib-value">🚲 ${mech} &nbsp; ⚡ ${elec}</div><div class="muted">${docks} place${docks>1?"s":""}</div>`;
   }
+  cachedVelib=cache;
 }
 
-// === Actus ===
+function weatherEmoji(code){if([0,1].includes(code))return"☀️";if([2,3].includes(code))return"⛅";if([45,48].includes(code))return"🌫️";if([61,63,65,80,81,82].includes(code))return"🌧️";if([95,96,99].includes(code))return"⛈️";return"🌤️";}
+async function refreshWeather(){
+  const d=await fetchJSON(WEATHER_URL,10000);const cw=d?.current_weather;if(!cw)return;
+  const temp=`${Math.round(cw.temperature)}°C`,desc=WEATHER_CODES[cw.weathercode]||"Météo",ico=weatherEmoji(cw.weathercode);
+  if($("weather-temp"))$("weather-temp").textContent=temp;if($("weather-desc"))$("weather-desc").textContent=desc;if($("weather-emoji"))$("weather-emoji").textContent=ico;
+  tickerData.weather=`${ico} ${temp} • ${desc}`;
+}
+
+async function computeRoute(){
+  const el=$("best-route");if(!el)return;
+  const d=await fetchStop("STIF:StopPoint:Q:22452:");const visits=parseVisits(d||{});
+  const bus=visits.filter(v=>matchesLine(v,"77")||matchesLine(v,"201")).sort((a,b)=>(a.wait??999)-(b.wait??999))[0];
+  const wait=bus?.wait;const bikes=cachedVelib?.VINCENNES?(cachedVelib.VINCENNES.mech+cachedVelib.VINCENNES.elec):0;
+  const opts=[
+    {name:"🚶 À pied",time:15,detail:"environ 15 min",available:true},
+    {name:"🚲 Vélib’",time:bikes>0?6:Infinity,detail:bikes>0?`${bikes} vélo${bikes>1?"s":""} disponible${bikes>1?"s":""}`:"aucun vélo disponible",available:bikes>0},
+    {name:"🚌 Bus",time:wait==null?Infinity:wait+5,detail:wait==null?"pas de passage exploitable":`prochain passage ~${wait} min + trajet ~5 min`,available:wait!=null}
+  ];
+  const finite=opts.filter(o=>Number.isFinite(o.time)).sort((a,b)=>a.time-b.time);const best=finite[0];
+  el.innerHTML=opts.map(o=>`<div class="route-option ${o===best?"best":""}"><div class="route-name">${o.name}</div><div class="route-time">${Number.isFinite(o.time)?`~${o.time} min`:"—"}</div><div class="route-detail">${o.detail}</div></div>`).join("");
+}
+
+async function refreshCourses(){
+  const cont=$("courses-list");if(!cont)return;
+  const d=new Date();const ds=`${String(d.getDate()).padStart(2,"0")}${String(d.getMonth()+1).padStart(2,"0")}${d.getFullYear()}`;
+  const data=await fetchJSON(PROXY+encodeURIComponent(`https://offline.turfinfo.api.pmu.fr/rest/client/7/programme/${ds}`),15000);
+  const rows=[];(data?.programme?.reunions||[]).forEach(r=>{if(r?.hippodrome?.code!=="VIN")return;(r.courses||[]).forEach(c=>rows.push({time:fmtTime(c.heureDepart),name:text(c.libelle||"Course")}));});
+  cont.innerHTML=rows.length?rows.map(r=>`<div class="course"><span class="course-time">${r.time}</span>${r.name}</div>`).join(""):emptyHTML("Pas de réunion à Vincennes aujourd’hui");
+}
+
 async function refreshNews(){
-  const xml=await fetchText(PROXY+encodeURIComponent(RSS_URL),15000); let items=[];
-  if(xml){ try{ const doc=new DOMParser().parseFromString(xml,"application/xml"); const nodes=[...doc.querySelectorAll("item")].slice(0,6); items=nodes.map(n=>({title:cleanText(n.querySelector("title")?.textContent||""),desc:cleanText(n.querySelector("description")?.textContent||"")})); }catch{} }
-  newsItems=items; renderNews();
+  const cont=$("news-carousel");if(!cont)return;const xml=await fetchText(PROXY+encodeURIComponent(RSS_URL),15000);let items=[];
+  if(xml){try{const doc=new DOMParser().parseFromString(xml,"application/xml");items=[...doc.querySelectorAll("item")].slice(0,6).map(n=>({title:text(n.querySelector("title")?.textContent),desc:text(n.querySelector("description")?.textContent)}));}catch(e){console.error(e);}}
+  if(items.length)newsItems=items;if(!newsItems.length){cont.innerHTML=emptyHTML("Actualités indisponibles");return;}renderNews();
 }
-function renderNews(){ const cont=document.getElementById("news-carousel"); if(!cont) return; cont.innerHTML=""; if(!newsItems.length){ cont.textContent="Aucune actu"; return; } newsItems.forEach((n,i)=>{ const d=document.createElement("div"); d.className="news-card"+(i===currentNews?" active":""); d.innerHTML=`<div class="news-title">${n.title}</div><div class="news-desc">${n.desc}</div>`; cont.appendChild(d); }); }
-function nextNews(){ if(newsItems.length){ currentNews=(currentNews+1)%newsItems.length; renderNews(); } }
+function renderNews(){const cont=$("news-carousel");if(!cont)return;cont.innerHTML=newsItems.map((n,i)=>`<div class="news-card ${i===currentNews?"active":""}"><div class="news-title">${n.title}</div><div class="news-desc">${n.desc}</div></div>`).join("");}
+function nextNews(){if(newsItems.length){currentNews=(currentNews+1)%newsItems.length;renderNews();}}
 
-// === Courses Vincennes ===
-async function getVincennesCoursesToday(){
-  const d=new Date(); const pmu=`${String(d.getDate()).padStart(2,"0")}${String(d.getMonth()+1).padStart(2,"0")}${d.getFullYear()}`;
-  const url=PROXY+encodeURIComponent(`https://offline.turfinfo.api.pmu.fr/rest/client/7/programme/${pmu}`);
-  const data=await fetchJSON(url,15000); const res=[];
-  if(data?.programme?.reunions){ data.programme.reunions.forEach(reunion=>{ if(reunion.hippodrome?.code!=="VIN") return; reunion.courses?.forEach(course=>{ const start=new Date(course.heureDepart); if(!isNaN(start)){ res.push({heure:start.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}),nom:course.libelle}); } }); }); }
-  return res;
-}
-async function refreshCourses(){ const courses=await getVincennesCoursesToday(); const cont=document.getElementById("courses-list"); cont.innerHTML=""; courses.forEach(c=>{ const row=document.createElement("div"); row.textContent=`${c.heure} – ${c.nom}`; cont.appendChild(row); }); }
-
-// === Trafic routier (comptages permanents Open Data Paris) ===
-async function refreshRoad() {
-  try {
-    const url = PROXY + encodeURIComponent(
-      "https://opendata.paris.fr/api/records/1.0/search/?dataset=comptages-routiers-permanents&sort=-horodate&rows=5"
-    );
-    const data = await fetchJSON(url, 15000);
-    const cont = document.getElementById("road-list");
-    cont.innerHTML = "";
-
-    if (!data || !data.records) throw new Error("Pas de données trafic");
-
-    data.records.forEach(rec => {
-      const f = rec.fields;
-      const libelle = f.libelle || "Point de comptage";
-      const etat = f.etat_trafic || f.etat_trafichttps || "Inconnu";
-      const debit = f.debit || "-";
-      const taux = f.taux_occupation || f.taux_occupation_htps || "-";
-      const hd = f.horodate;
-      const time = hd ? new Date(hd).toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit" }) : "";
-
-      const div = document.createElement("div");
-      div.textContent = `${libelle} • état: ${etat} • débit: ${debit} veh/h • taux: ${taux}% • ${time}`;
-      cont.appendChild(div);
-    });
-  } catch (e) {
-    console.error("refreshRoad", e);
-    const cont = document.getElementById("road-list");
-    if (cont) cont.textContent = "Trafic routier indisponible 🚧";
-  }
+async function refreshRoad(){
+  const cont=$("road-list");if(!cont)return;const url=PROXY+encodeURIComponent("https://opendata.paris.fr/api/records/1.0/search/?dataset=comptages-routiers-permanents&sort=-horodate&rows=5");const d=await fetchJSON(url,15000);
+  if(!d?.records?.length){cont.innerHTML=emptyHTML("Trafic routier indisponible");return;}
+  cont.innerHTML=d.records.map(r=>{const f=r.fields||{};return `<div class="road"><strong>${text(f.libelle||"Point de comptage")}</strong><br><span class="muted">Débit ${f.debit??"—"} véh/h • occupation ${f.taux_occupation??f.taux_occupation_htps??"—"}%</span></div>`;}).join("");
 }
 
-// === Événements circulation (Open Data Paris) ===
-async function refreshEventsCirculation() {
-  try {
-    const url = PROXY + encodeURIComponent(
-      "https://opendata.paris.fr/api/records/1.0/search/?dataset=circulation_evenement&sort=-starttime&rows=5"
-    );
-    const data = await fetchJSON(url, 15000);
-    const cont = document.getElementById("events-list");
-    cont.innerHTML = "";
+function updateTicker(){const el=$("ticker-slot");if(!el)return;const pool=[tickerData.weather,tickerData.traffic].filter(Boolean);el.textContent=pool.length?pool[tickerIndex++%pool.length]:"Informations mobilité en cours de chargement…";}
 
-    if (!data || !data.records) throw new Error("Pas de données événements");
-
-    data.records.forEach(rec => {
-      const f = rec.fields;
-      const titre = f.objet || f.description || f.type || "Événement circulation";
-      const localisation = f.localisation || f.rue || "";
-      const dateDebut = f.datedebut;
-      const dateFin = f.datefin;
-
-      const debutStr = dateDebut ? new Date(dateDebut).toLocaleString("fr-FR", { hour:"2-digit", minute:"2-digit", day:"2-digit", month:"2-digit" }) : "";
-      const finStr = dateFin ? new Date(dateFin).toLocaleString("fr-FR", { hour:"2-digit", minute:"2-digit", day:"2-digit", month:"2-digit" }) : "";
-
-      const div = document.createElement("div");
-      div.className = "event-row";
-      div.textContent = `${titre}${localisation ? " – " + localisation : ""} (${debutStr}${finStr ? " → " + finStr : ""})`;
-      cont.appendChild(div);
-    });
-  } catch (e) {
-    console.error("refreshEventsCirculation", e);
-    const cont = document.getElementById("events-list");
-    if (cont) cont.textContent = "Événements circulation indisponibles 🚧";
-  }
+async function refreshTransport(){
+  const results=await Promise.allSettled([renderRer(),renderBus(),fetchTrafficMessages()]);
+  const ok=results.some(r=>r.status==="fulfilled"&&r.value===true);
+  if(ok)lastGoodTransportUpdate=new Date();setLastUpdate();
 }
 
-
-// === Messages trafic (IDFM GeneralMessage) ===
-async function fetchGeneralMessages() {
-  const msgs = [];
-const ids = Object.values(LINES_SIRI);
-
-  await Promise.all(ids.map(async (lineRef) => {
-    const url = PROXY + encodeURIComponent(
-      `https://prim.iledefrance-mobilites.fr/marketplace/general-message?LineRef=${lineRef}`
-    );
-    const data = await fetchJSON(url, 12000);
-
-    const deliveries = data?.Siri?.ServiceDelivery?.GeneralMessageDelivery || [];
-    deliveries.forEach(del => {
-      (del.InfoMessage || []).forEach(msg => {
-        const txt =
-          cleanText(msg?.Content?.Message?.[0]?.MessageText?.[0]?.value ||
-                    msg?.Content?.Message?.MessageText?.value ||
-                    msg?.Description || "");
-        if (txt) msgs.push(`[${lineRef}] ${txt}`);
-      });
-    });
-  }));
-
-  const banner = document.getElementById("traffic-banner");
-  if (!banner) return;
-
-  if (!msgs.length) {
-    banner.className = "traffic-banner ok";
-    banner.textContent = "Trafic normal sur les lignes suivies.";
-    tickerData.traffic = "✅ Trafic normal";
-  } else {
-    banner.className = "traffic-banner alert";
-    banner.textContent = msgs.join("  •  ");
-    tickerData.traffic = `⚠️ ${msgs[0]}`;
-  }
-}
- 
-// === Ticker (alterne météo/heure, fête, horoscope, trafic) ===
-function updateTicker(){
-  const slot = document.getElementById("ticker-slot");
-  if (!slot) return;
-  const pool = [
-    `${new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})} • ${tickerData.timeWeather}`.trim(),
-    tickerData.saint,
-    tickerData.horoscope,
-    tickerData.traffic
-  ].filter(Boolean);
-
-  if (!pool.length) {
-    slot.textContent = "Chargement…";
-    return;
-  }
-  slot.classList.remove("fade-in");
-  // petit reflow pour relancer l’anim CSS
-  // eslint-disable-next-line no-unused-expressions
-  slot.offsetHeight;
-  slot.textContent = pool[tickerIndex % pool.length];
-  slot.classList.add("fade-in");
-  tickerIndex++;
-}
-
-// === Boucles ===
-function startLoops(){
-  setInterval(setClock, 1000);
-
-  setInterval(renderRer, 60 * 1000);
-  setInterval(renderBusByStop, 60 * 1000);
-
-  setInterval(computeBestRouteJoinville, 120 * 1000);
-
-  setInterval(refreshVelib, 3 * 60 * 1000);
-  setInterval(refreshWeather, 30 * 60 * 1000);
-  setInterval(refreshCourses, 5 * 60 * 1000);
-  setInterval(refreshNews, 15 * 60 * 1000);
-  setInterval(nextNews, 12 * 1000);
-  setInterval(refreshEventsCirculation, 5 * 60 * 1000);
-
-  setInterval(refreshHoroscopeCycle, 5 * 1000);
-  setInterval(fetchGeneralMessages, 5 * 60 * 1000);
-
-  setInterval(() => { updateTicker(); setLastUpdate(); }, 10 * 1000);
-}
-
-// === Init ===
-
-// dans startLoops
-setInterval(refreshEventsCirculation, 5 * 60 * 1000);
-
-(async function init(){
+async function init(){
   setClock();
+  await Promise.allSettled([refreshTransport(),refreshVelib(),refreshWeather(),refreshCourses(),refreshNews(),refreshRoad()]);
+  await computeRoute();updateTicker();setLastUpdate();
+  setInterval(setClock,1000);
+  setInterval(refreshTransport,60*1000);
+  setInterval(refreshVelib,2*60*1000);
+  setInterval(computeRoute,2*60*1000);
+  setInterval(refreshWeather,10*60*1000);
+  setInterval(refreshCourses,5*60*1000);
+  setInterval(refreshNews,15*60*1000);
+  setInterval(nextNews,12*1000);
+  setInterval(refreshRoad,5*60*1000);
+  setInterval(updateTicker,10*1000);
+}
 
-  await Promise.allSettled([
-    renderRer(),
-    renderBusByStop(),
-    computeBestRouteJoinville(),
-    refreshEventsCirculation(),
-    refreshVelib(),
-    refreshWeather(),
-    refreshCourses(),
-    refreshNews(),  // remplit le carrousel actus
-    refreshHoroscopeCycle(),
-    refreshSaint(),
-    fetchGeneralMessages(),
-    refreshRoad()
-  ]);
-
-  updateTicker();
-  setLastUpdate();
-  startLoops();
-
-})();
-
+document.addEventListener("DOMContentLoaded",init);
