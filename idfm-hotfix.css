@@ -1,0 +1,53 @@
+@media (min-width:1200px) and (orientation:landscape){
+  /* En-tête global : rester sombre et lisible malgré le thème clair voyageurs. */
+  .topbar,.topbar .title,.topbar .header-weather,.topbar .weather-temp,.topbar .now{color:#fff!important}
+  .topbar .subtitle,.topbar .header-weather .muted,.topbar .now .muted{color:#aebbd0!important}
+  .news-strip{color:#fff!important}
+  .news-strip .news-title{color:#fff!important;font-weight:800!important}
+  .news-strip .news-desc{color:#d7dde6!important}
+
+  /* Bus Joinville : 8 lignes maximum en grille 4 x 2, sans texte coupé. */
+  .compact-stop-view .mirrored-stop{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-template-rows:repeat(2,minmax(0,1fr))!important;
+    align-items:stretch!important;
+    height:100%!important;
+  }
+  .compact-stop-view .line-block{
+    height:auto!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+  }
+  .compact-stop-view .line-head{flex:0 0 auto!important}
+  .compact-stop-view .direction{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .compact-stop-view .empty-state{
+    margin:2px 0 0!important;
+    padding:3px 4px!important;
+    min-height:0!important;
+    font-size:7px!important;
+    line-height:1.1!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    border:0!important;
+    background:transparent!important;
+  }
+  .compact-stop-view .service-ended{
+    margin:2px 0 0!important;
+    padding:3px 4px!important;
+    min-height:0!important;
+    border:0!important;
+    background:transparent!important;
+  }
+  .compact-stop-view .service-ended strong{font-size:7px!important;line-height:1!important}
+  .compact-stop-view .service-ended span{font-size:6px!important;line-height:1!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .compact-stop-view .passages{margin-top:auto!important}
+
+  /* Éviter qu'un message vide prenne la moitié d'une case. */
+  .location-stop-view .empty-state{padding:8px!important;font-size:10px!important}
+
+  /* Bandeaux de situation : typographie nette à distance. */
+  .traffic-banner{font-weight:800!important}
+}
