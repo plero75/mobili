@@ -1,0 +1,143 @@
+/* Adaptation visuelle inspirée des prescriptions IDFM Afficheurs digitaux.
+   Objectif : lecture à distance, hiérarchie ligne → destination → prochains passages,
+   états normaux discrets, exceptions explicites. */
+
+@media (min-width:1200px) and (orientation:landscape){
+  :root{
+    --idfm-black:#1b1b1b;
+    --idfm-paper:#f5f5f3;
+    --idfm-white:#ffffff;
+    --idfm-ink:#151515;
+    --idfm-muted:#5f6368;
+    --idfm-rule:#c7c9cc;
+    --idfm-green:#008c5a;
+    --idfm-orange:#e87500;
+    --idfm-red:#c51d2a;
+  }
+
+  body{background:#dfe3e6;color:var(--idfm-ink)}
+
+  .location-dashboard{background:#dfe3e6}
+  .panel{background:var(--idfm-paper);border:1px solid #aeb4ba;box-shadow:none;color:var(--idfm-ink)}
+  .panel-heading.location-heading,
+  .panel-velib>.panel-heading,
+  .panel-courses>.panel-heading{
+    margin:-8px -8px 7px;
+    padding:7px 9px;
+    background:var(--idfm-black);
+    border:0;
+    color:#fff;
+    align-items:center;
+  }
+  .panel-heading.location-heading h1,
+  .panel-heading.location-heading h2,
+  .panel-velib>.panel-heading h2,
+  .panel-courses>.panel-heading h2{color:#fff;font-weight:900;letter-spacing:-.01em}
+  .panel-heading.location-heading p,
+  .panel-velib>.panel-heading p,
+  .panel-courses>.panel-heading p{color:#d6d6d6}
+  .source-badge{background:#fff;color:#111;border:1px solid #b8b8b8}
+  .theoretical-badge{background:#6f7479;color:#fff;border-color:#6f7479}
+
+  .joinville-rer,.joinville-bus,.joinville-route{background:#fff;border:1px solid var(--idfm-rule);color:var(--idfm-ink)}
+  .subhead{color:#111;font-weight:900;border-bottom:1px solid #d2d4d6;padding-bottom:4px}
+
+  .line-block{border-color:#c9cbd0!important}
+  .line-name,.direction{color:#111!important}
+  .direction{font-weight:900!important;font-size:11px!important;line-height:1.1;margin:5px 0 3px!important}
+  .direction::first-letter{color:#111}
+
+  .service-meta{color:#666!important}
+  .service-meta strong{color:#111!important}
+
+  /* Deux prochains passages : lecture sur une seule ligne, comme un afficheur quai. */
+  .passages,.train-list{display:flex!important;flex-wrap:nowrap!important;gap:0!important;border-top:1px solid #d1d3d5;border-bottom:1px solid #d1d3d5;background:#fff}
+  .passage,.train-card{
+    flex:0 0 50%;
+    min-width:0!important;
+    max-width:none!important;
+    background:#fff!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    outline:none!important;
+    color:#111!important;
+  }
+  .passage+.passage,.train-card+.train-card{border-left:1px solid #c5c8cb!important}
+  .passage{display:grid!important;grid-template-columns:auto 1fr!important;grid-template-rows:auto auto!important;align-items:center;padding:5px 7px!important}
+  .train-card{padding:5px 7px!important}
+  .train-main{align-items:center!important;gap:6px!important}
+
+  .wait,.train-main .wait{color:#111!important;font-size:17px!important;font-weight:900!important;letter-spacing:-.02em}
+  .exact,.train-time .exact{color:#4e5256!important;font-size:10px!important;font-weight:800!important}
+  .train-destination{display:none!important}
+
+  /* En situation normale : point vert, pas de gros libellé « À L’HEURE ». */
+  .status.ok{font-size:0!important;line-height:1!important;color:transparent!important}
+  .status.ok::before{
+    content:"";
+    display:inline-block;
+    width:8px;height:8px;border-radius:50%;
+    background:var(--idfm-green);
+    vertical-align:middle;
+  }
+  .status.delayed,.status.early{color:var(--idfm-orange)!important;font-weight:900!important}
+  .status.cancelled,.status.missed{color:var(--idfm-red)!important;font-weight:900!important}
+  .status.na{color:#666!important;font-weight:800!important}
+
+  .last-passage-badge{background:#111!important;color:#fff!important;border:0!important;border-radius:3px!important;font-size:6.5px!important;padding:2px 4px!important}
+
+  /* Desserte détaillée seulement sous le prochain RER. */
+  .joinville-rer .train-list .train-card:nth-child(n+2) .route-diagram{display:none!important}
+  .route-diagram{border-top:1px solid #d9dadd;margin-top:5px!important;background:#fafafa}
+  .route-stop-name{color:#333!important}
+  .route-stop.current .route-stop-name{color:#111!important}
+  .route-stop.terminus .route-stop-name{color:#111!important}
+
+  /* Bus Joinville : lignes ultra-compactes, destination puis 2 passages. */
+  .compact-stop-view .mirrored-stop{gap:4px!important}
+  .compact-stop-view .line-block{background:#fff!important;border:1px solid #c7c9cc!important;border-radius:2px!important;padding:4px!important}
+  .compact-stop-view .line-head{border-bottom:1px solid #d1d3d5;padding-bottom:3px!important}
+  .compact-stop-view .passages{border-bottom:0}
+
+  .location-stop-view .line-block{background:#fff!important}
+  .location-stop-view .direction-grid{gap:0!important;border:1px solid #c9cbcf;background:#fff}
+  .location-stop-view .theoretical-direction{padding:5px 6px}
+  .location-stop-view .theoretical-direction+.theoretical-direction{border-left:1px solid #c9cbcf}
+  .mini-source{color:#555!important;background:#f0f1f2!important;border-color:#b8bcc0!important}
+
+  .theoretical-passage .status.na{font-size:6px!important;color:#666!important}
+
+  .service-ended,.empty-state{
+    background:#fff!important;
+    color:#333!important;
+    border:1px solid #c9cbcf!important;
+    border-radius:2px!important;
+  }
+  .service-ended strong{color:#111!important}
+  .service-ended span{color:#555!important}
+
+  /* Choix d'itinéraire : une option gagnante claire, sans look de carte applicative. */
+  .route-option{background:#fff!important;border:1px solid #c7c9cc!important;border-radius:2px!important;color:#111!important}
+  .route-option.best{border:2px solid #111!important;box-shadow:none!important}
+  .route-name,.route-time{color:#111!important}
+  .route-detail{color:#666!important}
+
+  .context-card,.course{background:#fff!important;border:1px solid #c7c9cc!important;border-radius:2px!important;color:#111!important}
+  .velib-name,.context-card .muted{color:#666!important}
+  .velib-value{color:#111!important}
+  .course-time{color:#111!important}
+  .next-course{border:2px solid #111!important}
+
+  /* Bandeau information : noir en normal, rouge/orange uniquement si incident. */
+  .traffic-banner.ok{background:#1f2a27;color:#fff}
+  .traffic-banner.neutral{background:#30343a;color:#fff}
+  .traffic-banner.warn{background:#7a4b00;color:#fff}
+  .traffic-banner.alert{background:#8d1720;color:#fff}
+
+  /* Les badges de ligne gardent leur couleur transport, sans effets décoratifs. */
+  .line-pill{border-radius:2px!important;box-shadow:none!important}
+
+  /* Supprime les effets « dashboard » au profit d'un tableau voyageur. */
+  .panel,.joinville-rer,.joinville-bus,.joinville-route,.context-card,.course,.route-option{box-shadow:none!important}
+}
