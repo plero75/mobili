@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a1628">
   <title>Mobilité – Hippodrome Paris-Vincennes</title>
-  <link rel="stylesheet" href="styles.css?v=20260819-0120">
-  <link rel="stylesheet" href="tv.css?v=20260819-0120">
-  <style>
-    .data-stage{display:none!important}
-  </style>
+  <link rel="stylesheet" href="styles.css?v=20260819-0205">
+  <link rel="stylesheet" href="tv.css?v=20260819-0205">
+  <link rel="stylesheet" href="idfm.css?v=20260819-0205">
+  <style>.data-stage{display:none!important}</style>
 </head>
 <body>
   <header class="topbar tv-topbar">
@@ -41,24 +40,18 @@
   <main class="dashboard location-dashboard">
     <section class="panel panel-joinville location-card">
       <div class="panel-heading location-heading">
-        <div>
-          <h1>Joinville-le-Pont</h1>
-          <p>RER A • bus • meilleur trajet depuis l’hippodrome</p>
-        </div>
+        <div><h1>Joinville-le-Pont</h1><p>RER A • bus • meilleur trajet depuis l’hippodrome</p></div>
         <span class="source-badge">PRIM</span>
       </div>
-
       <div class="joinville-grid">
         <div class="joinville-rer">
           <div class="subhead"><span class="line-pill rer-pill">A</span><strong>RER A</strong></div>
           <div id="rer-body" class="transport-board" aria-live="polite"></div>
         </div>
-
         <div class="joinville-bus">
           <div class="subhead"><strong>Bus à Joinville</strong></div>
           <div id="joinville-bus-view" class="compact-stop-view">Chargement…</div>
         </div>
-
         <div class="joinville-route">
           <div class="subhead"><strong>Le plus rapide depuis l’hippodrome</strong></div>
           <div id="best-route" class="route-options">Calcul en cours…</div>
@@ -68,10 +61,7 @@
 
     <section class="panel panel-hippodrome location-card">
       <div class="panel-heading location-heading">
-        <div>
-          <h2>Arrêt Hippodrome de Vincennes</h2>
-          <p>Ligne 77 • deux sens • horaires du jour</p>
-        </div>
+        <div><h2>Arrêt Hippodrome de Vincennes</h2><p>Ligne 77 • deux sens • horaires du jour</p></div>
         <span class="source-badge theoretical-badge">GTFS</span>
       </div>
       <div id="hippodrome-stop-view" class="location-stop-view">Chargement…</div>
@@ -79,10 +69,7 @@
 
     <section class="panel panel-breuil location-card">
       <div class="panel-heading location-heading">
-        <div>
-          <h2>École du Breuil</h2>
-          <p>Deux sens • PRIM quand disponible</p>
-        </div>
+        <div><h2>École du Breuil</h2><p>Deux sens • PRIM quand disponible</p></div>
         <span class="source-badge">PRIM</span>
       </div>
       <div id="breuil-bus-view" class="location-stop-view">Chargement…</div>
@@ -107,9 +94,9 @@
   <div id="road-list" class="data-stage" aria-hidden="true"></div>
 
   <footer>Informations indicatives • Sources : Île-de-France Mobilités / PRIM / GTFS</footer>
-  <script src="app.js?v=20260819-0120"></script>
-  <script src="service-day.js?v=20260819-0120"></script>
-  <script src="labels.js?v=20260819-0120"></script>
-  <script src="layout.js?v=20260819-0120"></script>
+  <script src="app.js?v=20260819-0205"></script>
+  <script src="service-day.js?v=20260819-0205"></script>
+  <script src="labels.js?v=20260819-0205"></script>
+  <script src="layout.js?v=20260819-0205"></script>
 </body>
 </html>
