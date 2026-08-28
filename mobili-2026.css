@@ -1,0 +1,144 @@
+/* Mobili 2026 — couche finale d'affichage voyageur.
+   Objectif : décision en quelques secondes, priorité au prochain départ atteignable. */
+
+:root{
+  --mobili-navy:#071526;
+  --mobili-blue:#0d2f53;
+  --mobili-paper:#f4f6f8;
+  --mobili-white:#ffffff;
+  --mobili-text:#111827;
+  --mobili-muted:#667085;
+  --mobili-line:#d7dce2;
+  --mobili-green:#0b8f55;
+  --mobili-orange:#d97706;
+  --mobili-red:#c9252d;
+  --mobili-accent:#f2b134;
+}
+
+@media (min-width:1100px) and (orientation:landscape){
+  body{background:#e9edf1!important;color:var(--mobili-text)!important}
+
+  .topbar{
+    position:relative!important;
+    grid-template-columns:minmax(430px,1.35fr) minmax(300px,.8fr) auto!important;
+    padding:15px 24px!important;
+    background:var(--mobili-navy)!important;
+    border-bottom:0!important;
+    box-shadow:none!important;
+  }
+  .brand-mark{background:var(--mobili-accent)!important;color:var(--mobili-navy)!important;border-radius:8px!important}
+  .title{font-size:22px!important;font-weight:900!important;letter-spacing:-.02em!important}
+  .subtitle{font-size:12px!important;color:#aebbd0!important}
+  .now #clock{font-family:inherit!important;font-size:34px!important;color:#fff!important;letter-spacing:-.03em!important}
+  #lastUpdate{color:#aebbd0!important}
+  .header-weather{justify-self:end;display:flex;align-items:center;gap:8px}
+  .weather-emoji{font-size:28px!important}.weather-temp{font-size:25px!important}
+
+  .news-strip{background:#10233b!important;border:0!important;min-height:34px!important}
+  .news-label{background:transparent!important;border-right:1px solid rgba(255,255,255,.2);padding-right:12px!important}
+
+  .traffic-banner{
+    margin:0!important;
+    border-radius:0!important;
+    padding:10px 22px!important;
+    text-align:left!important;
+    font-size:14px!important;
+    letter-spacing:0!important;
+  }
+  .traffic-banner.ok{background:#e9f7f0!important;color:#12613f!important;border-bottom:1px solid #bcdcca}
+  .traffic-banner.neutral{background:#edf2f7!important;color:#334155!important;border-bottom:1px solid #d5dde6}
+  .traffic-banner.warn{background:#fff4dd!important;color:#8c4d00!important;border-bottom:1px solid #edce91}
+  .traffic-banner.alert{background:#fde9eb!important;color:#991b1b!important;border-bottom:3px solid var(--mobili-red)}
+
+  .location-dashboard{
+    grid-template-columns:minmax(0,1.75fr) minmax(360px,.8fr)!important;
+    gap:12px!important;
+    padding:12px!important;
+    background:#e9edf1!important;
+  }
+  .panel{border-radius:5px!important;border:1px solid #cfd5dc!important;padding:10px!important;background:var(--mobili-white)!important;box-shadow:none!important}
+  .panel-joinville{grid-column:1!important;grid-row:1 / span 3!important}
+  .panel-hippodrome{grid-column:2!important;grid-row:1!important}
+  .panel-breuil{grid-column:2!important;grid-row:2!important}
+  .panel-velib{grid-column:2!important;grid-row:3!important}
+  .panel-courses{grid-column:1 / -1!important;grid-row:4!important}
+
+  .panel-heading.location-heading,.panel-velib>.panel-heading,.panel-courses>.panel-heading{
+    margin:-10px -10px 10px!important;
+    padding:9px 12px!important;
+    background:#17202c!important;
+    border:0!important;
+  }
+  .panel-heading h1,.panel-heading h2{font-size:17px!important;font-weight:900!important}
+  .panel-heading p{font-size:10px!important}
+
+  .joinville-grid{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)!important;grid-template-areas:"rer route" "rer bus"!important;gap:8px!important}
+  .joinville-rer{grid-area:rer!important}.joinville-bus{grid-area:bus!important}.joinville-route{grid-area:route!important}
+  .joinville-rer,.joinville-bus,.joinville-route{border-radius:3px!important;border:1px solid var(--mobili-line)!important;padding:8px!important;background:#fff!important}
+  .subhead{font-size:12px!important;padding-bottom:6px!important;margin-bottom:6px!important}
+
+  .access-filter-note{
+    margin:4px 0 7px!important;
+    padding:5px 7px!important;
+    background:#eef5fb!important;
+    border-left:3px solid #1677b8!important;
+    color:#31506c!important;
+    font-size:9px!important;
+    font-weight:750!important;
+    line-height:1.25!important;
+  }
+
+  .stop-block{background:#fff!important;border-left:0!important;border-radius:0!important;padding:0!important;margin:0!important}
+  .stop-title{font-size:10px!important;color:#5f6772!important;margin:0 0 5px!important}
+  .line-block{padding-top:5px!important;margin-top:4px!important}
+  .line-head{margin-bottom:4px!important}
+  .line-pill{height:26px!important;min-width:36px!important;border-radius:3px!important;font-size:13px!important}
+  .line-name{font-size:11px!important}
+  .direction{font-size:12px!important;margin:7px 0 4px!important;color:#17202c!important}
+
+  .service-meta{font-size:8px!important;margin-bottom:3px!important;opacity:.75}
+
+  .train-list,.passages{border:1px solid var(--mobili-line)!important;background:#fff!important}
+  .train-card,.passage{position:relative!important;background:#fff!important}
+  .train-card:first-child,.passage:first-child{background:#f4f9fd!important}
+  .train-card:first-child::before,.passage:first-child::before{
+    content:"PREMIER DÉPART ATTEIGNABLE";
+    display:block;
+    position:absolute;
+    top:3px;left:6px;
+    font-size:6px;
+    font-weight:900;
+    letter-spacing:.08em;
+    color:#35627f;
+  }
+  .train-card:first-child{padding-top:15px!important}.passage:first-child{padding-top:14px!important}
+  .train-card+.train-card,.passage+.passage{border-left:1px solid var(--mobili-line)!important}
+  .wait,.train-main .wait{font-size:23px!important;font-weight:950!important;color:#111827!important}
+  .exact,.train-time .exact{font-size:12px!important;color:#4b5563!important}
+
+  .route-diagram{padding-top:7px!important;margin-top:6px!important}
+  .route-stop{min-width:70px!important}.route-stop-name{font-size:8px!important}
+
+  .compact-stop-view .mirrored-stop{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:auto!important;gap:5px!important}
+  .compact-stop-view .line-block{padding:5px!important}
+  .compact-stop-view .passages{margin-top:4px!important}
+
+  .route-options{grid-template-columns:1fr!important;gap:4px!important}
+  .route-option{display:grid!important;grid-template-columns:1fr auto!important;align-items:center!important;padding:7px 9px!important;border-radius:3px!important}
+  .route-option.best{background:#f5f9fc!important;border:2px solid #17202c!important}
+  .route-name{font-size:12px!important}.route-time{font-size:18px!important;margin:0!important}.route-detail{grid-column:1/-1;font-size:9px!important;margin-top:2px}
+
+  .location-stop-view .direction-grid{grid-template-columns:1fr 1fr!important}
+  .location-stop-view .theoretical-direction{padding:6px!important}
+
+  .velib-row{gap:5px!important}.context-card{padding:8px!important}.velib-value{font-size:15px!important}
+
+  .courses-board{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:4px!important}
+  .course{padding:6px 7px!important;font-size:10px!important}.course-time{display:block!important;font-size:13px!important;margin:0 0 2px!important}
+
+  footer{padding:5px 12px 8px!important;font-size:9px!important;color:#657180!important}
+}
+
+@media (max-width:1099px){
+  .access-filter-note{margin:5px 0 8px;padding:7px 9px;background:#0d2945;border-left:3px solid #4da3db;color:#dcecff;font-size:10px;font-weight:700}
+}
