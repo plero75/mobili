@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a1628">
   <title>Mobilité – Hippodrome Paris-Vincennes</title>
-  <link rel="stylesheet" href="styles.css?v=20260828-1">
-  <link rel="stylesheet" href="tv.css?v=20260828-1">
-  <link rel="stylesheet" href="idfm.css?v=20260828-1">
-  <link rel="stylesheet" href="idfm-hotfix.css?v=20260828-1">
-  <link rel="stylesheet" href="mobili-2026.css?v=20260828-1">
+  <link rel="stylesheet" href="styles.css?v=20260828-2">
+  <link rel="stylesheet" href="tv.css?v=20260828-2">
+  <link rel="stylesheet" href="idfm.css?v=20260828-2">
+  <link rel="stylesheet" href="idfm-hotfix.css?v=20260828-2">
+  <link rel="stylesheet" href="mobili-2026.css?v=20260828-2">
   <style>.data-stage{display:none!important}</style>
 </head>
 <body>
@@ -47,12 +47,12 @@
       </div>
       <div class="joinville-grid">
         <div class="joinville-rer">
-          <div class="subhead"><span class="line-pill rer-pill">A</span><strong>RER A</strong></div>
+          <div class="subhead"><span class="line-pill rer-pill">A</span><strong>RER A</strong><span class="mini-source">PRIM</span></div>
           <div id="rer-body" class="transport-board" aria-live="polite"></div>
         </div>
         <div class="joinville-bus">
-          <div class="subhead"><strong>Bus à Joinville</strong></div>
-          <div id="joinville-bus-view" class="compact-stop-view">Chargement…</div>
+          <div class="subhead"><strong>Bus à Joinville</strong><span class="mini-source">PRIM</span></div>
+          <div id="joinville-bus-view" class="compact-stop-view">Chargement PRIM…</div>
         </div>
         <div class="joinville-route">
           <div class="subhead"><strong>Le plus rapide depuis l’hippodrome</strong></div>
@@ -63,18 +63,18 @@
 
     <section class="panel panel-hippodrome location-card">
       <div class="panel-heading location-heading">
-        <div><h2>Arrêt Hippodrome de Vincennes</h2><p>Ligne 77 • deux sens • départs atteignables</p></div>
-        <span class="source-badge theoretical-badge">GTFS</span>
+        <div><h2>Arrêt Hippodrome de Vincennes</h2><p>Ligne 77 • deux sens • temps réel PRIM</p></div>
+        <span class="source-badge">PRIM</span>
       </div>
-      <div id="hippodrome-stop-view" class="location-stop-view">Chargement…</div>
+      <div id="hippodrome-stop-view" class="location-stop-view">Chargement PRIM…</div>
     </section>
 
     <section class="panel panel-breuil location-card">
       <div class="panel-heading location-heading">
-        <div><h2>École du Breuil</h2><p>Deux sens • départs atteignables depuis l’hippodrome</p></div>
+        <div><h2>École du Breuil</h2><p>Bus 77 / 201 • deux sens • temps réel PRIM</p></div>
         <span class="source-badge">PRIM</span>
       </div>
-      <div id="breuil-bus-view" class="location-stop-view">Chargement…</div>
+      <div id="breuil-bus-view" class="location-stop-view">Chargement PRIM…</div>
     </section>
 
     <section class="panel panel-velib">
@@ -95,12 +95,12 @@
   <div id="ticker-slot" class="data-stage" aria-hidden="true"></div>
   <div id="road-list" class="data-stage" aria-hidden="true"></div>
 
-  <footer>Informations indicatives • Sources : Île-de-France Mobilités / PRIM / GTFS / Vélib’ Métropole / PMU</footer>
-  <script src="app.js?v=20260828-1"></script>
-  <script src="access-filter.js?v=20260828-1"></script>
-  <script src="data-hotfix.js?v=20260828-1"></script>
-  <script src="service-day.js?v=20260828-1"></script>
-  <script src="labels.js?v=20260828-1"></script>
-  <script src="layout.js?v=20260828-1"></script>
+  <footer>Informations indicatives • Transports : Île-de-France Mobilités / PRIM • Vélib’ Métropole • PMU</footer>
+  <script src="app.js?v=20260828-2"></script>
+  <script src="access-filter.js?v=20260828-2"></script>
+  <script src="data-hotfix.js?v=20260828-2"></script>
+  <script src="service-day.js?v=20260828-2"></script>
+  <script src="labels.js?v=20260828-2"></script>
+  <script src="layout.js?v=20260828-2"></script>
 </body>
 </html>
