@@ -1,6 +1,18 @@
 (() => {
   const $id = id => document.getElementById(id);
 
+  function accessKey(stopName, lineCode) {
+    return window.MobiliAccess?.keyForScheduledStop?.(stopName, lineCode) || null;
+  }
+
+  function accessInfoHTML(stopName, lineCode) {
+    const key = accessKey(stopName, lineCode);
+    if (!key || !window.MobiliAccess) return "";
+    const cfg = window.MobiliAccess.stopConfig(key);
+    const threshold = window.MobiliAccess.thresholdMinutes(key);
+    return `<div class="access-filter-note">Depuis l’hippodrome : ~${esc(cfg.accessMinutes)} min • départs affichés à partir de +${esc(threshold)} min</div>`;
+  }
+
   function scheduledPassageHTML(row, dateKey) {
     const dt = gtfsTimeToDate(dateKey, row.time);
     const wait = dt ? Math.max(0, Math.round((dt.getTime() - Date.now()) / 60000)) : null;
@@ -30,10 +42,13 @@
       grouped.get(dest).push(row);
     });
 
+    const key = accessKey(stopName, lineCode);
     const directions = [...grouped.entries()].map(([dest, destRows]) => {
       const future = destRows.filter(row => {
         const dt = gtfsTimeToDate(dateKey, row.time);
-        return dt && dt.getTime() >= Date.now() - 5000;
+        if (!dt) return false;
+        if (key && window.MobiliAccess) return window.MobiliAccess.isReachableDate(dt, key);
+        return dt.getTime() >= Date.now() - 5000;
       });
       const body = future.length
         ? `<div class="passages">${future.slice(0, 2).map(row => scheduledPassageHTML(row, dateKey)).join("")}</div>`
@@ -47,6 +62,7 @@
 
     return `<div class="line-block theoretical-line">
       <div class="line-head"><span class="line-pill" style="background:${color}">${esc(lineCode)}</span><span class="line-name">Ligne ${esc(lineCode)}</span><span class="mini-source">THÉORIQUE</span></div>
+      ${accessInfoHTML(stopName, lineCode)}
       <div class="direction-grid">${directions}</div>
     </div>`;
   }
@@ -65,14 +81,14 @@
     const joinville = $id("joinville-bus-view");
     if (joinville) {
       joinville.innerHTML = blocks[0]
-        ? `<div class="mirrored-stop">${blocks[0].innerHTML}</div>`
+        ? `<div class="mirrored-stop"><div class="access-filter-note">Depuis l’hippodrome : ~12 min • départs atteignables uniquement</div>${blocks[0].innerHTML}</div>`
         : `<div class="empty-state">Chargement des bus de Joinville…</div>`;
     }
 
     const breuil = $id("breuil-bus-view");
     if (breuil) {
       const realtime = blocks[1]
-        ? `<div class="mirrored-stop realtime-breuil">${blocks[1].innerHTML}</div>`
+        ? `<div class="mirrored-stop realtime-breuil"><div class="access-filter-note">Depuis l’hippodrome : ~7 min • départs atteignables uniquement</div>${blocks[1].innerHTML}</div>`
         : "";
       breuil.innerHTML = `${realtime}${theoreticalLineHTML("École du Breuil", "77", "#0071bc")}` || `<div class="empty-state">Chargement de l’École du Breuil…</div>`;
     }
