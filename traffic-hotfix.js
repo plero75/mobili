@@ -39,8 +39,8 @@
       msg?.Summary?.[0],
       msg?.Summary
     ];
-    for (const c of candidates) {
-      const t = clean(c);
+    for (const candidate of candidates) {
+      const t = clean(candidate);
       if (t) return t;
     }
     return "";
@@ -77,19 +77,42 @@
     return /(interrompu|interruption|non desserv|supprim|incident|accident|arrêté|fermée|fermé)/i.test(text) ? "critical" : "info";
   }
 
+  function desiredAlertHTML(code, messages) {
+    return `<strong>INFO TRAFIC ${esc(code === "A" ? "RER A" : `LIGNE ${code}`)}</strong><span>${esc(messages[0])}</span>`;
+  }
+
+  // Important : ne pas supprimer/réinsérer toutes les alertes à chaque mutation DOM.
+  // Cela déclenchait le MutationObserver en boucle et pouvait figer / casser l'écran.
   function applyInlineAlerts() {
-    document.querySelectorAll(".mobili-line-alert").forEach(el => el.remove());
     document.querySelectorAll(".line-block").forEach(block => {
       const pill = block.querySelector(".line-pill");
       const head = block.querySelector(".line-head");
       if (!pill || !head) return;
+
       const code = pill.textContent.trim().toUpperCase();
       const messages = state.get(code) || [];
-      if (!messages.length) return;
-      const alert = document.createElement("div");
-      alert.className = `mobili-line-alert ${alertClass(messages.join(" "))}`;
-      alert.innerHTML = `<strong>INFO TRAFIC ${esc(code === "A" ? "RER A" : `LIGNE ${code}`)}</strong><span>${esc(messages[0])}</span>`;
-      head.insertAdjacentElement("afterend", alert);
+      let alert = block.querySelector(":scope > .mobili-line-alert");
+
+      if (!messages.length) {
+        if (alert) alert.remove();
+        return;
+      }
+
+      const cls = `mobili-line-alert ${alertClass(messages.join(" "))}`;
+      const html = desiredAlertHTML(code, messages);
+
+      if (!alert) {
+        alert = document.createElement("div");
+        alert.className = cls;
+        alert.innerHTML = html;
+        head.insertAdjacentElement("afterend", alert);
+        return;
+      }
+
+      // Aucun changement DOM si le contenu est déjà correct : l'observer reste stable.
+      if (alert.className !== cls) alert.className = cls;
+      if (alert.innerHTML !== html) alert.innerHTML = html;
+      if (alert.previousElementSibling !== head) head.insertAdjacentElement("afterend", alert);
     });
   }
 
@@ -128,7 +151,14 @@
   document.addEventListener("DOMContentLoaded", () => {
     setTimeout(refreshTrafficFixed, 2200);
     setInterval(refreshTrafficFixed, 90 * 1000);
+
     const root = document.querySelector(".location-dashboard");
-    if (root) new MutationObserver(() => applyInlineAlerts()).observe(root, { childList: true, subtree: true });
+    if (root) {
+      let timer = null;
+      new MutationObserver(() => {
+        clearTimeout(timer);
+        timer = setTimeout(applyInlineAlerts, 80);
+      }).observe(root, { childList: true, subtree: true });
+    }
   });
 })();
