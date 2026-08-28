@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0a1628">
+  <meta name="theme-color" content="#071526">
   <title>Mobilité – Hippodrome Paris-Vincennes</title>
-  <link rel="stylesheet" href="styles.css?v=20260828-2">
-  <link rel="stylesheet" href="tv.css?v=20260828-2">
-  <link rel="stylesheet" href="idfm.css?v=20260828-2">
-  <link rel="stylesheet" href="idfm-hotfix.css?v=20260828-2">
-  <link rel="stylesheet" href="mobili-2026.css?v=20260828-2">
+  <link rel="stylesheet" href="styles.css?v=20260828-3">
+  <link rel="stylesheet" href="tv.css?v=20260828-3">
+  <link rel="stylesheet" href="mobili-2026.css?v=20260828-3">
   <style>.data-stage{display:none!important}</style>
 </head>
 <body>
@@ -18,7 +16,7 @@
       <div class="brand-mark" aria-hidden="true">VH</div>
       <div>
         <div class="title">Mobilité – Hippodrome Paris‑Vincennes</div>
-        <div class="subtitle">Joinville-le-Pont • Hippodrome • École du Breuil</div>
+        <div class="subtitle">Les prochains départs réellement atteignables depuis l’hippodrome</div>
       </div>
     </div>
     <div class="header-weather" aria-label="Météo">
@@ -42,19 +40,19 @@
   <main class="dashboard location-dashboard">
     <section class="panel panel-joinville location-card">
       <div class="panel-heading location-heading">
-        <div><h1>Joinville-le-Pont</h1><p>RER A • bus • départs réellement atteignables depuis l’hippodrome</p></div>
+        <div><h1>Joinville-le-Pont</h1><p>RER A et bus • temps réel PRIM • accès ~12 min</p></div>
         <span class="source-badge">PRIM</span>
       </div>
       <div class="joinville-grid">
         <div class="joinville-rer">
-          <div class="subhead"><span class="line-pill rer-pill">A</span><strong>RER A</strong><span class="mini-source">PRIM</span></div>
+          <div class="subhead"><span class="line-pill rer-pill">A</span><strong>RER A</strong><span class="mini-source">TEMPS RÉEL</span></div>
           <div id="rer-body" class="transport-board" aria-live="polite"></div>
         </div>
         <div class="joinville-bus">
-          <div class="subhead"><strong>Bus à Joinville</strong><span class="mini-source">PRIM</span></div>
+          <div class="subhead"><strong>Bus à Joinville</strong><span class="mini-source">TEMPS RÉEL PRIM</span></div>
           <div id="joinville-bus-view" class="compact-stop-view">Chargement PRIM…</div>
         </div>
-        <div class="joinville-route">
+        <div class="joinville-route" aria-hidden="true">
           <div class="subhead"><strong>Le plus rapide depuis l’hippodrome</strong></div>
           <div id="best-route" class="route-options">Calcul en cours…</div>
         </div>
@@ -63,7 +61,7 @@
 
     <section class="panel panel-hippodrome location-card">
       <div class="panel-heading location-heading">
-        <div><h2>Arrêt Hippodrome de Vincennes</h2><p>Ligne 77 • deux sens • temps réel PRIM</p></div>
+        <div><h2>Hippodrome de Vincennes</h2><p>Bus 77 • accès ~4 min • deux sens</p></div>
         <span class="source-badge">PRIM</span>
       </div>
       <div id="hippodrome-stop-view" class="location-stop-view">Chargement PRIM…</div>
@@ -71,14 +69,14 @@
 
     <section class="panel panel-breuil location-card">
       <div class="panel-heading location-heading">
-        <div><h2>École du Breuil</h2><p>Bus 77 / 201 • deux sens • temps réel PRIM</p></div>
+        <div><h2>École du Breuil</h2><p>Bus 77 / 201 • accès ~7 min • deux sens</p></div>
         <span class="source-badge">PRIM</span>
       </div>
       <div id="breuil-bus-view" class="location-stop-view">Chargement PRIM…</div>
     </section>
 
     <section class="panel panel-velib">
-      <div class="panel-heading"><div><h2>Vélib’</h2><p>Disponibilités en temps réel à proximité</p></div></div>
+      <div class="panel-heading"><div><h2>Vélib’</h2><p>Disponibilités en temps réel</p></div></div>
       <div class="velib-row">
         <div id="velib-vincennes" class="context-card">Chargement…</div>
         <div id="velib-breuil" class="context-card">Chargement…</div>
@@ -86,7 +84,7 @@
     </section>
 
     <section class="panel panel-courses">
-      <div class="panel-heading"><div><h2>Courses à Vincennes</h2><p>Prochaine réunion et prochains départs</p></div></div>
+      <div class="panel-heading"><div><h2>Courses à Vincennes</h2><p>Prochaine réunion</p></div></div>
       <div id="courses-list" class="courses-board"></div>
     </section>
   </main>
@@ -96,11 +94,11 @@
   <div id="road-list" class="data-stage" aria-hidden="true"></div>
 
   <footer>Informations indicatives • Transports : Île-de-France Mobilités / PRIM • Vélib’ Métropole • PMU</footer>
-  <script src="app.js?v=20260828-2"></script>
-  <script src="access-filter.js?v=20260828-2"></script>
-  <script src="data-hotfix.js?v=20260828-2"></script>
-  <script src="service-day.js?v=20260828-2"></script>
-  <script src="labels.js?v=20260828-2"></script>
-  <script src="layout.js?v=20260828-2"></script>
+  <script src="app.js?v=20260828-3"></script>
+  <script src="access-filter.js?v=20260828-3"></script>
+  <script src="data-hotfix.js?v=20260828-3"></script>
+  <script src="service-day.js?v=20260828-3"></script>
+  <script src="labels.js?v=20260828-3"></script>
+  <script src="layout.js?v=20260828-3"></script>
 </body>
 </html>
