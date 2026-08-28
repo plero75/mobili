@@ -5,10 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#071526">
   <title>Mobilité – Hippodrome Paris-Vincennes</title>
-  <link rel="stylesheet" href="styles.css?v=20260828-3">
-  <link rel="stylesheet" href="tv.css?v=20260828-3">
-  <link rel="stylesheet" href="mobili-2026.css?v=20260828-3">
-  <style>.data-stage{display:none!important}</style>
+  <link rel="stylesheet" href="styles.css?v=20260828-4">
+  <link rel="stylesheet" href="tv.css?v=20260828-4">
+  <link rel="stylesheet" href="mobili-2026.css?v=20260828-4">
+  <style>
+    .data-stage{display:none!important}
+    @media (min-width:1100px) and (orientation:landscape){
+      .location-dashboard{grid-template-rows:minmax(0,1fr) minmax(0,.72fr) minmax(0,.52fr) minmax(0,.52fr)!important}
+      .panel-joinville{grid-row:1 / span 4!important}
+      .panel-velib{grid-row:3!important}
+      .panel-courses{display:block!important;grid-column:2!important;grid-row:4!important}
+      .panel-courses .panel-heading{height:42px!important;padding:7px 11px!important}
+      .panel-courses .panel-heading h2{font-size:14px!important}.panel-courses .panel-heading p{font-size:8px!important}
+      .courses-board{height:calc(100% - 42px)!important;box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;padding:6px!important;overflow:hidden!important}
+      .courses-date-label{grid-column:1/-1!important;font-size:8px!important;font-weight:900!important;color:#475467!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+      .course{position:relative!important;min-width:0!important;padding:5px 6px!important;border:1px solid #d3dae3!important;border-radius:4px!important;background:#fff!important;font-size:7px!important;overflow:hidden!important}
+      .course:nth-of-type(n+6){display:none!important}.course-time{display:block!important;font-size:12px!important;font-weight:950!important;color:#101828!important}.course-number{font-weight:900!important;margin-right:4px!important}.course-name{display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#475467!important}.next-course{background:#eef7fc!important;border:2px solid #1677b8!important}.course-next-label{font-size:5px!important;color:#245c7d!important;letter-spacing:.04em!important}
+    }
+  </style>
 </head>
 <body>
   <header class="topbar tv-topbar">
@@ -94,11 +108,11 @@
   <div id="road-list" class="data-stage" aria-hidden="true"></div>
 
   <footer>Informations indicatives • Transports : Île-de-France Mobilités / PRIM • Vélib’ Métropole • PMU</footer>
-  <script src="app.js?v=20260828-3"></script>
-  <script src="access-filter.js?v=20260828-3"></script>
-  <script src="data-hotfix.js?v=20260828-3"></script>
-  <script src="service-day.js?v=20260828-3"></script>
-  <script src="labels.js?v=20260828-3"></script>
-  <script src="layout.js?v=20260828-3"></script>
+  <script src="app.js?v=20260828-4"></script>
+  <script src="access-filter.js?v=20260828-4"></script>
+  <script src="data-hotfix.js?v=20260828-4"></script>
+  <script src="service-day.js?v=20260828-4"></script>
+  <script src="labels.js?v=20260828-4"></script>
+  <script src="layout.js?v=20260828-4"></script>
 </body>
 </html>
