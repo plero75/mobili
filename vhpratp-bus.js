@@ -76,7 +76,6 @@
     return rows.filter(v => {
       const m = minutesUntil(v.time);
       if(m == null) return false;
-      if(v.status === 'cancelled') return m >= threshold;
       return m >= threshold;
     }).sort((a,b)=>new Date(a.time)-new Date(b.time));
   }
@@ -92,9 +91,9 @@
     const m = minutesUntil(v.time);
     const imminent = m != null && m <= 1 && v.status !== 'cancelled';
     return `<div class="passage ${first?'first-reachable':''} ${imminent?'imminent':''}">
-      ${first?'<div class="reachable-label">1ER DÉPART ATTEIGNABLE</div>':''}
+      ${first?'<div class="reachable-label">1ER ATTEIGNABLE</div>':''}
       <div class="departure-clock">${escLocal(hhmm(v.time))}</div>
-      <div class="departure-wait">${v.status==='cancelled'?'—':(imminent?'Imminent':`dans ${Math.max(0,m)} min`)}</div>
+      <div class="departure-wait">${v.status==='cancelled'?'Supprimé':(imminent?'Imminent':`dans ${Math.max(0,m)} min`)}</div>
       ${statusLabel(v)}
     </div>`;
   }
@@ -108,11 +107,11 @@
     }
     let body='';
     if(!filtered.length){
-      body='<div class="empty-state">Aucun départ PRIM atteignable actuellement</div>';
+      body='<div class="bus-no-reachable">Aucun départ atteignable</div>';
     }else{
-      body=[...groups.entries()].map(([dest,items])=>`<div class="bus-direction-row">
+      body=[...groups.entries()].slice(0,2).map(([dest,items])=>`<div class="bus-direction-row">
         <div class="direction">→ ${escLocal(dest)}</div>
-        <div class="passages">${items.slice(0,4).map((v,i)=>passageHTML(v,i===0)).join('')}</div>
+        <div class="passages">${items.slice(0,2).map((v,i)=>passageHTML(v,i===0)).join('')}</div>
       </div>`).join('');
     }
     return `<div class="line-block vhpratp-line" data-line="${escLocal(line.code)}">
@@ -144,18 +143,21 @@
   const style=document.createElement('style');
   style.textContent=`
     @media (min-width:1100px) and (orientation:landscape){
-      .vhpratp-bus-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-content:start}
-      .vhpratp-bus-grid .line-block{min-width:0;padding:6px;border:1px solid #d3dae3;border-radius:5px;background:#fff;overflow:hidden}
-      .vhpratp-bus-grid .line-head{margin-bottom:4px}
-      .vhpratp-bus-grid .bus-direction-row{min-width:0}
-      .vhpratp-bus-grid .direction{font-size:8px;margin:4px 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      .vhpratp-bus-grid .passages{display:grid!important;grid-template-columns:1fr 1fr!important;border:0!important;gap:3px!important}
-      .vhpratp-bus-grid .passage{padding:5px!important;border:1px solid #d8dee6!important;border-radius:3px!important;background:#fff!important;min-width:0!important}
-      .vhpratp-bus-grid .passage:nth-child(n+3){display:none!important}
-      .departure-clock{font-size:15px;font-weight:950;line-height:1;color:#101828}
-      .departure-wait{margin-top:3px;font-size:8px;font-weight:800;color:#475467}
-      .reachable-label{margin-bottom:4px;font-size:5px;font-weight:950;letter-spacing:.04em;color:#245c7d}
-      .vhpratp-bus-grid .status{font-size:5.5px!important;margin-top:3px!important}
+      /* Neutralise les anciennes règles compact-stop-view qui coupaient le contenu */
+      #joinville-bus-view.compact-stop-view{height:auto!important;max-height:none!important;overflow:visible!important}
+      #joinville-bus-view .vhpratp-bus-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-rows:minmax(86px,auto)!important;gap:6px!important;align-content:start!important;overflow:visible!important}
+      #joinville-bus-view .vhpratp-bus-grid .line-block{height:auto!important;min-height:86px!important;max-height:none!important;overflow:visible!important;padding:6px!important;border:1px solid #d3dae3!important;border-radius:5px!important;background:#fff!important;box-sizing:border-box!important}
+      #joinville-bus-view .vhpratp-bus-grid .line-head{margin-bottom:4px!important}
+      #joinville-bus-view .vhpratp-bus-grid .bus-direction-row{min-width:0!important;overflow:visible!important}
+      #joinville-bus-view .vhpratp-bus-grid .direction{font-size:8px!important;margin:4px 0 2px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+      #joinville-bus-view .vhpratp-bus-grid .passages{display:grid!important;grid-template-columns:1fr 1fr!important;border:0!important;gap:3px!important;overflow:visible!important}
+      #joinville-bus-view .vhpratp-bus-grid .passage{display:block!important;height:auto!important;min-height:44px!important;padding:5px!important;border:1px solid #d8dee6!important;border-radius:3px!important;background:#fff!important;min-width:0!important;overflow:hidden!important}
+      #joinville-bus-view .vhpratp-bus-grid .passage:nth-child(n+3){display:none!important}
+      #joinville-bus-view .departure-clock{font-size:15px!important;font-weight:950!important;line-height:1!important;color:#101828!important}
+      #joinville-bus-view .departure-wait{margin-top:3px!important;font-size:8px!important;font-weight:800!important;color:#475467!important}
+      #joinville-bus-view .reachable-label{margin-bottom:3px!important;font-size:5px!important;font-weight:950!important;letter-spacing:.04em!important;color:#245c7d!important}
+      #joinville-bus-view .status{font-size:5.5px!important;margin-top:3px!important}
+      #joinville-bus-view .bus-no-reachable{padding:8px 2px 2px!important;font-size:8px!important;color:#667085!important}
       .vhpratp-bus-grid .mobili-line-alert{grid-column:1/-1}
       .panel-breuil .departure-clock,.panel-hippodrome .departure-clock{font-size:18px}
       .panel-breuil .departure-wait,.panel-hippodrome .departure-wait{font-size:9px}
