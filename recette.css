@@ -327,6 +327,13 @@ body { font-variant-numeric: tabular-nums; }
   border-top: 8px solid var(--alert);
   border-bottom: 1px solid #59616b;
 }
+.incident-banner.clear {
+  border-top-color: var(--green);
+}
+.incident-banner.clear .alert-icon,
+.incident-banner.clear h1 span {
+  color: var(--green);
+}
 .incident-symbol { display: flex; align-items: center; gap: 13px; }
 .alert-icon { width: 72px; height: 72px; color: #ff5b52; }
 .incident-banner h1 { margin: 0; font-size: 50px; line-height: 1.05; text-transform: uppercase; }
@@ -359,6 +366,19 @@ body { font-variant-numeric: tabular-nums; }
   color: rgba(255,255,255,.22);
   font-size: 10px;
   letter-spacing: .08em;
+}
+
+.live-empty {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1.35;
+  text-align: center;
+  border: 1px dashed rgba(255,255,255,.2);
+  background: rgba(0,0,0,.12);
 }
 
 svg { display: block; }
