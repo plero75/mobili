@@ -187,8 +187,13 @@
       return date;
     });
     const requests = dates.map(async date => {
-      const target = `https://online.turfinfo.api.pmu.fr/rest/client/61/programme/${pmuDateKey(date)}?specialisation=INTERNET&meteo=true`;
-      const data = await fetchCandidates([PROXY + encodeURIComponent(target)]);
+      const key = pmuDateKey(date);
+      const targets = [
+        `https://online.turfinfo.api.pmu.fr/rest/client/1/programme/${key}?specialisation=INTERNET&meteo=true`,
+        `https://offline.turfinfo.api.pmu.fr/rest/client/7/programme/${key}`,
+        `https://online.turfinfo.api.pmu.fr/rest/client/61/programme/${key}?specialisation=INTERNET&meteo=true`
+      ];
+      const data = await fetchCandidates(targets.map(target => PROXY + encodeURIComponent(target)));
       return parseMeeting(data, date);
     });
     const found = (await Promise.all(requests)).filter(Boolean).sort((a, b) => a.date - b.date);
@@ -209,27 +214,23 @@
     return { mechanical, electric };
   }
   async function loadVelib() {
-    const [statusData, infoData] = await Promise.all([
-      fetchCandidates([VELIB_STATUS_URL, VELIB_PROXY + encodeURIComponent(VELIB_STATUS_URL)]),
-      fetchCandidates([VELIB_INFO_URL, VELIB_PROXY + encodeURIComponent(VELIB_INFO_URL)])
-    ]);
-    const statuses = statusData?.data?.stations || [];
-    const infos = infoData?.data?.stations || [];
     const out = {};
-    for (const [key, target] of Object.entries(VELIB)) {
-      const status = statuses.find(row => target.ids.includes(String(row?.station_id)));
-      const info = infos.find(row => String(row?.station_id) === String(status?.station_id));
-      if (!status) continue;
-      const { mechanical, electric } = bikeCounts(status);
+    await Promise.all(Object.entries(VELIB).map(async ([key, target]) => {
+      const direct = `https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/velib-disponibilite-en-temps-reel/exports/json?lang=fr&qv1=(${target.code})&timezone=Europe%2FParis`;
+      const data = await fetchCandidates([direct, PROXY + encodeURIComponent(direct)]);
+      const status = Array.isArray(data) ? data[0] : null;
+      if (!status) return;
+      const mechanical = Number(status?.mechanical ?? status?.numbikesavailable ?? 0);
+      const electric = Number(status?.ebike ?? status?.ebikeavailable ?? 0);
       out[key] = {
-        name: clean(info?.name) || target.label,
+        name: clean(status?.name) || target.label,
         mechanical,
         electric,
         total: mechanical + electric,
-        docks: Number(status?.num_docks_available || 0),
-        active: status?.is_installed !== 0 && status?.is_renting !== 0
+        docks: Number(status?.numdocksavailable ?? status?.numdocks ?? 0),
+        active: String(status?.is_renting ?? status?.operative ?? "OUI").toUpperCase() !== "NON"
       };
-    }
+    }));
     return out;
   }
 
