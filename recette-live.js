@@ -195,7 +195,7 @@
       date.setDate(date.getDate() + offset);
       return date;
     });
-    const requests = dates.map(async date => {
+    for (const date of dates) {
       const key = pmuDateKey(date);
       const targets = [
         `https://online.turfinfo.api.pmu.fr/rest/client/1/programme/${key}?specialisation=INTERNET&meteo=true`,
@@ -203,10 +203,10 @@
         `https://online.turfinfo.api.pmu.fr/rest/client/61/programme/${key}?specialisation=INTERNET&meteo=true`
       ];
       const data = await fetchCandidates(targets.map(target => PROXY + encodeURIComponent(target)));
-      return parseMeeting(data, date);
-    });
-    const found = (await Promise.all(requests)).filter(Boolean).sort((a, b) => a.date - b.date);
-    return found[0] || null;
+      const meeting = parseMeeting(data, date);
+      if (meeting) return meeting;
+    }
+    return null;
   }
 
   function bikeCounts(station) {
