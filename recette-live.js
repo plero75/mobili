@@ -289,6 +289,11 @@
     return { start, end: end && end >= start ? end : start };
   }
   async function loadEvents() {
+    try {
+      const cache = await fetchJSON(`data/events.json?ts=${Date.now()}`, 8000);
+      const cached = (cache?.events || []).map(item => ({ ...item, start: new Date(item.start), end: new Date(item.end || item.start) })).filter(item => item.title && !Number.isNaN(item.start.getTime()) && item.end.getTime() >= Date.now() - 86400000);
+      if (cached.length) return cached;
+    } catch (_) {}
     let html = "";
     let sourceUrl = EVENTS_URL;
     for (const candidate of [EVENTS_URL, EVENTS_FALLBACK_URL]) {
