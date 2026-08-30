@@ -1,6 +1,31 @@
 {
-  "updatedAt": null,
+  "updatedAt": "2026-08-30T22:42:37.365Z",
   "source": "https://www.letrot.com/hippodromes/vincennes/7500",
-  "events": [],
+  "events": [
+    {
+      "title": "Fête du Cheval",
+      "start": "2026-09-12T00:00:00.000Z",
+      "end": "2026-09-12T00:00:00.000Z",
+      "summary": "Courses de très haut niveau et multiples animations autour du monde équin !",
+      "url": "https://www.letrot.com/hippodromes/vincennes/7500",
+      "image": "1920x1080-6a71a5621c70b161134051.jpg"
+    },
+    {
+      "title": "Critériums 3/4/5 : Jour de Sacres",
+      "start": "2026-09-12T00:00:00.000Z",
+      "end": "2026-09-12T00:00:00.000Z",
+      "summary": "Vibrez pour les Finales des Championnats de France de Sulky !",
+      "url": "https://www.letrot.com/hippodromes/vincennes/7500",
+      "image": "1920x1080-6a71a5a7dcf1a410612400.jpg"
+    },
+    {
+      "title": "Grand Prix du Portugal",
+      "start": "2026-09-27T00:00:00.000Z",
+      "end": "2026-09-27T00:00:00.000Z",
+      "summary": "Courses, traditions, spectacles, musique, animations gratuites et gastronomie !",
+      "url": "https://www.letrot.com/hippodromes/vincennes/7500",
+      "image": "hippodrome-vincennes-format-hd-sans-texte-1920x1080-6a86cf15d1ee5262193431.jpg"
+    }
+  ],
   "errors": []
 }
