@@ -55,7 +55,14 @@
     const date = value instanceof Date ? value : new Date(value);
     if (Number.isNaN(date.getTime())) return "—";
     const seconds = Math.max(0, Math.floor((date.getTime() - Date.now()) / 1000));
+    if (seconds >= 3600) return `${String(Math.floor(seconds / 3600)).padStart(2, "0")}:${String(Math.floor((seconds % 3600) / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
     return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  };
+  const compactWait = value => {
+    const minutes = minutesUntil(value);
+    if (minutes == null) return `—<span class="time-unit">MIN</span>`;
+    if (minutes >= 120) return `${Math.floor(minutes / 60)}<span class="time-unit">H</span>${String(minutes % 60).padStart(2, "0")}`;
+    return `${minutes}<span class="time-unit">MIN</span>`;
   };
   const lineMatches = (visit, code) => {
     const published = String(visit.published || "").toUpperCase().replace(/\s/g, "");
@@ -294,7 +301,7 @@
   function renderArrival() {
     const race = nextRace() || state.meeting?.races[0];
     const count = q(".arrival-countdown .big-count");
-    if (count) count.innerHTML = race ? `${minutesUntil(race.date)}<span class="time-unit">MIN</span>` : `—<span class="time-unit">MIN</span>`;
+    if (count) count.innerHTML = race ? compactWait(race.date) : `—<span class="time-unit">MIN</span>`;
     const ref = q(".arrival-countdown .race-ref");
     if (ref) ref.innerHTML = race ? `<strong>C${race.number} · ${fmtTime(race.date)}</strong><br><span class="muted">${esc(race.title)}</span>` : `<strong>Programme en attente</strong><br><span class="muted">Source PMU indisponible</span>`;
     const schedule = q(".arrival-program .schedule");
