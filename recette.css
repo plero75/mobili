@@ -357,10 +357,10 @@ body { font-variant-numeric: tabular-nums; }
   grid-template-rows: 560px 318px;
   gap: 15px;
 }
-.no-race-idle-main { padding: 48px 55px; background: linear-gradient(135deg, #0b2038, #0f2945); border-top: 9px solid var(--pv-gold); }
-.no-race-idle-main h1 { margin: 30px 0 0; font-size: 75px; line-height: 1.04; }
-.no-race-idle-main > p { max-width: 800px; margin: 22px 0 0; color: var(--muted); font-size: 27px; line-height: 1.35; }
-.next-meeting-focus { margin-top: 48px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.22); }
+.no-race-idle-main { padding: 34px 50px; background: linear-gradient(135deg, #0b2038, #0f2945); border-top: 9px solid var(--pv-gold); }
+.no-race-idle-main h1 { margin: 20px 0 0; font-size: 68px; line-height: 1.02; }
+.no-race-idle-main > p { max-width: 800px; margin: 16px 0 0; color: var(--muted); font-size: 25px; line-height: 1.3; }
+.next-meeting-focus { margin-top: 27px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.22); }
 .next-meeting-focus span { display: block; color: var(--pv-gold); font-size: 20px; text-transform: uppercase; font-weight: 800; }
 .next-meeting-focus strong { display: block; margin-top: 10px; font-size: 45px; }
 .next-meeting-focus small { display: block; margin-top: 8px; color: var(--muted); font-size: 18px; }
