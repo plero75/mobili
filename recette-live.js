@@ -4,6 +4,7 @@
   const PROXY = "https://ratp-proxy.hippodrome-proxy42.workers.dev/?url=";
   const PRIM = "https://prim.iledefrance-mobilites.fr/marketplace";
   const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=48.835&longitude=2.440&current_weather=true&timezone=Europe%2FParis";
+  const EVENTS_URL = "https://www.letrot.com/hippodromes/vincennes/7500";
   const VELIB_STATUS_URL = "https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_status.json";
   const VELIB_INFO_URL = "https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_information.json";
   const VELIB_PROXY = "https://velib-proxy.hippodrome-proxy42.workers.dev/?url=";
@@ -32,7 +33,9 @@
     bus77: [],
     bus101: [],
     velib: {},
-    incidents: { A: [], 77: [] },
+    incidents: { A: [], 77: [], 101: [] },
+    events: [],
+    eventsLoaded: false,
     updatedAt: null,
     pending: true
   };
@@ -78,6 +81,17 @@
       const response = await fetch(url, { signal: controller.signal, cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return await response.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  async function fetchText(url, timeout = 16000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    try {
+      const response = await fetch(url, { signal: controller.signal, cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.text();
     } finally {
       clearTimeout(timer);
     }
@@ -134,7 +148,7 @@
   }
 
   async function loadMessages(code) {
-    const idfm = { A: "C01742", 77: "C02251" }[code];
+    const idfm = { A: "C01742", 77: "C02251", 101: "C01130" }[code];
     const refs = [`STIF:Line::${idfm}:`];
     const messages = [];
     for (const ref of refs) {
@@ -249,6 +263,55 @@
     return current ? { temp: `${Math.round(current.temperature)}°C`, label: WEATHER[current.weathercode] || "Météo locale" } : null;
   }
 
+  const MONTHS = { janvier:0, fevrier:1, février:1, mars:2, avril:3, mai:4, juin:5, juillet:6, aout:7, août:7, septembre:8, octobre:9, novembre:10, decembre:11, décembre:11 };
+  function frenchDate(value, base = new Date()) {
+    const match = clean(value).toLowerCase().match(/\b(\d{1,2}|1er)\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)(?:\s+(20\d{2}))?/i);
+    if (!match) return null;
+    const day = match[1] === "1er" ? 1 : Number(match[1]);
+    const month = MONTHS[match[2].normalize("NFC")];
+    let year = Number(match[3] || base.getFullYear());
+    let date = new Date(year, month, day, 12, 0, 0, 0);
+    if (!match[3] && date.getTime() < base.getTime() - 45 * 86400000) date = new Date(year + 1, month, day, 12, 0, 0, 0);
+    return date;
+  }
+  function eventDateRange(value) {
+    const shortRange = clean(value).toLowerCase().match(/\b(\d{1,2})\s*(?:au|[-–])\s*(\d{1,2})\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)(?:\s+(20\d{2}))?/i);
+    if (shortRange) {
+      const month = MONTHS[shortRange[3].normalize("NFC")];
+      const year = Number(shortRange[4] || new Date().getFullYear());
+      return { start: new Date(year, month, Number(shortRange[1]), 12), end: new Date(year, month, Number(shortRange[2]), 12) };
+    }
+    const start = frenchDate(value);
+    if (!start) return null;
+    const matches = [...clean(value).matchAll(/\b(\d{1,2}|1er)\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)(?:\s+(20\d{2}))?/gi)];
+    const end = matches[1] ? frenchDate(matches[1][0], start) : start;
+    return { start, end: end && end >= start ? end : start };
+  }
+  async function loadEvents() {
+    let html = "";
+    try { html = await fetchText(PROXY + encodeURIComponent(EVENTS_URL)); } catch (error) { console.warn("Agenda officiel indisponible", error); }
+    if (!html) return [];
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const rows = [];
+    for (const anchor of [...doc.querySelectorAll("a[href]")]) {
+      const href = anchor.getAttribute("href") || "";
+      if (!/(evenement|event|\/f\/lp\/|dlt\.letrot)/i.test(href)) continue;
+      const card = anchor.closest("article, li, [class*='card'], [class*='event']") || anchor;
+      const cardText = clean(card.textContent);
+      const range = eventDateRange(cardText);
+      if (!range || range.end.getTime() < Date.now() - 86400000) continue;
+      const titleNode = card.querySelector("h1,h2,h3,h4") || anchor;
+      const title = clean(titleNode.textContent).replace(/\b(?:lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)?\s*(?:\d{1,2}|1er)\s+(?:janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre).*$/i, "").trim();
+      if (!title || title.length < 4) continue;
+      let url = href;
+      try { url = new URL(href, EVENTS_URL).href; } catch (_) {}
+      rows.push({ title, start: range.start, end: range.end, url, summary: cardText.slice(0, 180) });
+    }
+    const unique = new Map();
+    rows.sort((a, b) => a.start - b.start).forEach(item => { const key = item.title.toLowerCase(); if (!unique.has(key)) unique.set(key, item); });
+    return [...unique.values()].slice(0, 8);
+  }
+
   function nextRace() {
     return state.meeting?.races.find(race => race.date.getTime() >= Date.now() - 120000) || null;
   }
@@ -263,13 +326,43 @@
     return passage.wait <= 1 ? "À l’approche" : `${passage.wait} min`;
   }
   function sourceState(messages) {
-    if (!messages.length) return { title: "Aucune perturbation majeure", message: "Aucune information active n’est publiée pour cette ligne.", recovery: "—", active: false };
-    const message = messages[0];
+    const message = messages.find(isMajorNow);
+    if (!message) return { title: "Aucune perturbation majeure", message: "Aucune perturbation majeure en cours n’est publiée pour cette ligne.", recovery: "—", active: false };
     const recovery = message.match(/(?:reprise|jusqu(?:'|’)à|fin)[^0-9]{0,25}(\d{1,2}[h:]\d{0,2})/i)?.[1]?.replace(":", "h") || "Non précisée";
     const title = /non desserv/i.test(message) ? "Arrêt non desservi" : /interromp/i.test(message) ? "Trafic interrompu" : /retard|ralenti|perturb/i.test(message) ? "Trafic perturbé" : "Information trafic";
     return { title, message, recovery, active: true };
   }
-  function trafficNormal() { return !state.incidents.A.length && !state.incidents[77].length; }
+  function sameDay(a, b) { return a && b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+  function isMajorNow(message) {
+    if (!/(interromp|aucun train|non desserv|dévi|devi|accident|incident grave|trafic très perturb|trafic tres perturb)/i.test(message)) return false;
+    const range = eventDateRange(message);
+    if (!range) return true;
+    const today = new Date(); today.setHours(12,0,0,0);
+    return today >= range.start && today <= range.end;
+  }
+  function trafficNormal() { return !state.incidents.A.some(isMajorNow) && !state.incidents[77].some(isMajorNow) && !state.incidents[101].some(isMajorNow); }
+  function todayEvent() { const today = new Date(); today.setHours(12,0,0,0); return state.events.find(event => today >= event.start && today <= event.end) || null; }
+
+  function automaticMode() {
+    if (state.incidents.A.some(isMajorNow)) return "incident_rer_a";
+    if (state.incidents[77].some(isMajorNow) || state.incidents[101].some(isMajorNow)) return "incident_bus";
+    const todayMeeting = state.meeting && sameDay(state.meeting.date, new Date());
+    if (!todayMeeting) return todayEvent() ? "no_race_event" : "no_race_idle";
+    const races = state.meeting.races;
+    const first = races[0], last = races.at(-1);
+    if (!first || Date.now() < first.date.getTime()) return "arrivee";
+    if (last && Date.now() >= last.date.getTime()) return "sortie";
+    const remaining = races.filter(race => race.date.getTime() >= Date.now());
+    return remaining.length <= 2 ? "transition" : "reunion";
+  }
+  function syncAutomaticMode() {
+    if (requestedMode !== "auto") return;
+    const next = automaticMode();
+    if (next === mode) return;
+    mode = next;
+    document.getElementById("app").innerHTML = (renderers[mode] || noRaceIdle)();
+    fitRecipeScreen();
+  }
 
   function renderHeader() {
     const meta = qa(".header .meta");
@@ -282,8 +375,13 @@
       q(".meta-label", meta[1]).textContent = fmtDate(new Date());
     }
     if (meta[2]) {
-      q(".meta-value", meta[2]).textContent = state.meeting ? `RÉUNION ${state.meeting.number}` : "VINCENNES";
-      q(".meta-label", meta[2]).textContent = state.meeting ? `${state.meeting.races.length} COURSES · ${fmtDate(state.meeting.date)}` : "PROGRAMME EN ATTENTE";
+      if (mode === "no_race_event" || mode === "no_race_idle") {
+        q(".meta-value", meta[2]).textContent = "PAS DE COURSES";
+        q(".meta-label", meta[2]).textContent = "AUJOURD’HUI À PARIS-VINCENNES";
+      } else {
+        q(".meta-value", meta[2]).textContent = state.meeting ? `RÉUNION ${state.meeting.number}` : "VINCENNES";
+        q(".meta-label", meta[2]).textContent = state.meeting ? `${state.meeting.races.length} COURSES · ${fmtDate(state.meeting.date)}` : "PROGRAMME EN ATTENTE";
+      }
     }
     const label = q(".distance-test-label");
     if (label) label.textContent = state.pending ? "DONNÉES TEMPS RÉEL · CHARGEMENT" : `DONNÉES TEMPS RÉEL · MAJ ${fmtTime(state.updatedAt)}`;
@@ -305,16 +403,16 @@
     const count = q(".arrival-countdown .big-count");
     if (count) count.innerHTML = race ? compactWait(race.date) : `—<span class="time-unit">MIN</span>`;
     const ref = q(".arrival-countdown .race-ref");
-    if (ref) ref.innerHTML = race ? `<strong>C${race.number} · ${fmtTime(race.date)}</strong><br><span class="muted">${esc(race.title)}</span>` : `<strong>Programme en attente</strong><br><span class="muted">Source PMU indisponible</span>`;
+    if (ref) ref.innerHTML = race ? `<strong>C${race.number} · ${fmtTime(race.date)}</strong><br><span class="muted">${esc(race.title)}</span>` : `<strong>Programme en attente</strong><br><span class="muted">Information momentanément indisponible</span>`;
     const schedule = q(".arrival-program .schedule");
     if (schedule) schedule.innerHTML = scheduleHTML(state.meeting?.races || [], race);
 
     const highlights = q(".arrival-highlights");
     if (highlights) highlights.innerHTML = `<h2 class="section-title white">Prochaines courses</h2>` + (state.meeting?.races.slice(0, 4).map(item => `<div class="highlight-item"><time class="highlight-time">${fmtTime(item.date)}</time><div class="highlight-copy"><strong>C${item.number} · ${esc(item.title)}</strong><span>${esc(item.discipline)}${item.distance ? ` · ${item.distance.toLocaleString("fr-FR")} m` : ""}</span></div></div>`).join("") || `<div class="live-empty">Chargement du programme officiel…</div>`);
     const animations = q(".arrival-animations");
-    if (animations) animations.innerHTML = `<h2 class="section-title">Réunion officielle</h2><div class="list-compact"><div><time>${state.meeting ? fmtDate(state.meeting.date).split(" ").slice(1).join(" ") : "—"}</time><span>${state.meeting ? `${state.meeting.races.length} courses programmées` : "Donnée PMU indisponible"}</span></div><div><time>${state.meeting?.races[0] ? fmtTime(state.meeting.races[0].date) : "—"}</time><span>Première course</span></div><div><time>${lastRace() ? fmtTime(lastRace().date) : "—"}</time><span>Dernière course</span></div></div>`;
+    if (animations) animations.innerHTML = `<h2 class="section-title">Réunion officielle</h2><div class="list-compact"><div><time>${state.meeting ? fmtDate(state.meeting.date).split(" ").slice(1).join(" ") : "—"}</time><span>${state.meeting ? `${state.meeting.races.length} courses programmées` : "Programme momentanément indisponible"}</span></div><div><time>${state.meeting?.races[0] ? fmtTime(state.meeting.races[0].date) : "—"}</time><span>Première course</span></div><div><time>${lastRace() ? fmtTime(lastRace().date) : "—"}</time><span>Dernière course</span></div></div>`;
     const events = q(".arrival-events");
-    if (events) events.innerHTML = `<div class="event"><div class="event-date">PMU</div><div><div class="event-name">Programme Vincennes en direct</div><div class="event-note">Horaires et statut actualisés automatiquement</div></div></div><div class="event"><div class="event-date">PRIM</div><div><div class="event-name">Mobilité en temps réel</div><div class="event-note">Passages, perturbations et disponibilité Vélib’</div></div></div>`;
+    if (events) events.innerHTML = `<div class="event"><div class="event-date">PROGRAMME</div><div><div class="event-name">Vincennes en direct</div><div class="event-note">Horaires et statut actualisés automatiquement</div></div></div><div class="event"><div class="event-date">MOBILITÉ</div><div><div class="event-name">Information voyageurs</div><div class="event-note">Passages, perturbations et disponibilité Vélib’</div></div></div>`;
 
     const rail = qa(".transport-rail .rail-item");
     const rer = state.rer[0], b77 = state.bus77[0], b101 = state.bus101[0];
@@ -355,7 +453,7 @@
       const passage = state.rer[index];
       const time = q(".departure-time", row), dest = q(".departure-dest", row), reach = q(".reachable", row);
       if (time) time.textContent = passage ? fmtTime(passage.when) : "—";
-      if (dest) dest.innerHTML = passage ? `<strong>Direction ${esc(passage.destination)}</strong><span>${passage.monitored ? "Horaire temps réel PRIM" : "Horaire théorique PRIM"}</span>` : `<strong>Donnée indisponible</strong><span>Aucun passage exploitable reçu</span>`;
+      if (dest) dest.innerHTML = passage ? `<strong>Direction ${esc(passage.destination)}</strong><span>${passage.monitored ? "Horaire temps réel" : "Horaire théorique"}</span>` : `<strong>Horaires indisponibles</strong><span>Aucun passage exploitable reçu</span>`;
       if (reach) reach.textContent = passage ? (passage.wait >= 12 ? "✓ ATTEIGNABLE" : "DÉPART PROCHE") : "—";
     });
   }
@@ -370,8 +468,8 @@
     renderTransportRows(".rer-preview");
     const rerStatus = q(".rer-preview .status"); if (rerStatus) rerStatus.textContent = state.incidents.A.length ? "Information trafic active" : "Aucune alerte active";
     const cards = qa(".transition-modes .mode-card");
-    if (cards[0]) { q(".minutes", cards[0]).textContent = passageLabel(state.bus77[0]); q(".sub", cards[0]).textContent = state.bus77[0]?.destination || "Donnée PRIM indisponible"; }
-    if (cards[1]) { q(".minutes", cards[1]).textContent = passageLabel(state.bus101[0]); q(".sub", cards[1]).textContent = state.bus101[0]?.destination || "Donnée PRIM indisponible"; }
+    if (cards[0]) { q(".minutes", cards[0]).textContent = passageLabel(state.bus77[0]); q(".sub", cards[0]).textContent = state.bus77[0]?.destination || "Horaires indisponibles"; }
+    if (cards[1]) { q(".minutes", cards[1]).textContent = passageLabel(state.bus101[0]); q(".sub", cards[1]).textContent = state.bus101[0]?.destination || "Horaires indisponibles"; }
     if (cards[2]) { q(".minutes", cards[2]).textContent = state.velib.hippodrome ? `${state.velib.hippodrome.total} vélos` : "— vélos"; q(".sub", cards[2]).textContent = state.velib.hippodrome ? `${state.velib.hippodrome.docks} places disponibles` : "Donnée Vélib’ indisponible"; }
   }
 
@@ -389,14 +487,14 @@
     const rerStatus = q(".rer-main .status"); if (rerStatus) rerStatus.textContent = state.incidents.A.length ? "Information trafic active" : "Aucune alerte active";
     const stops = q(".stop-line");
     const onward = state.rer[0]?.onward?.slice(0, 5) || [];
-    if (stops) stops.innerHTML = onward.length ? onward.map(stop => `<div class="stop"><strong>${esc(stop.name)}</strong><span>${fmtTime(stop.time)}</span></div>`).join("") : `<div class="live-empty">Desserte détaillée non communiquée par PRIM</div>`;
+    if (stops) stops.innerHTML = onward.length ? onward.map(stop => `<div class="stop"><strong>${esc(stop.name)}</strong><span>${fmtTime(stop.time)}</span></div>`).join("") : `<div class="live-empty">Desserte détaillée momentanément indisponible</div>`;
     const buses = qa(".bus-main");
     [[buses[0], state.bus77], [buses[1], state.bus101]].forEach(([card, rows]) => {
       if (!card) return;
       const passages = q(".passages", card);
       if (passages) passages.innerHTML = `<strong>${esc(passageLabel(rows[0]))}</strong><span>puis <b>${esc(passageLabel(rows[1]))}</b></span>`;
       const direction = q(".transport-direction", card); if (direction) direction.textContent = `Direction ${rows[0]?.destination || "non communiquée"}`;
-      const route = q(".route", card); if (route) route.textContent = rows[0] ? `Passage ${fmtTime(rows[0].when)} · donnée ${rows[0].monitored ? "temps réel" : "théorique"} PRIM` : "Aucun passage exploitable reçu";
+      const route = q(".route", card); if (route) route.textContent = rows[0] ? `Passage ${fmtTime(rows[0].when)} · horaire ${rows[0].monitored ? "temps réel" : "théorique"}` : "Aucun passage exploitable reçu";
     });
     const stations = qa(".velib-station");
     [[stations[0], state.velib.hippodrome], [stations[1], state.velib.breuil]].forEach(([card, station]) => {
@@ -404,6 +502,49 @@
       const numbers = q(".velib-numbers", card);
       if (numbers) numbers.innerHTML = station ? `<strong>${station.total}</strong><span>vélos · ${station.docks} places</span>` : `<strong>—</strong><span>donnée indisponible</span>`;
     });
+  }
+
+  function mobilityRowsHTML() {
+    return `
+      <div class="no-race-mobility-row"><strong>RER A</strong><span>Joinville-le-Pont · 12 min à pied</span><span>${esc(passageLabel(state.rer[0]))}</span></div>
+      <div class="no-race-mobility-row"><strong>BUS 77</strong><span>Hippodrome de Vincennes · 4 min à pied</span><span>${esc(passageLabel(state.bus77[0]))}</span></div>
+      <div class="no-race-mobility-row"><strong>BUS 101</strong><span>École du Breuil · 7 min à pied</span><span>${esc(passageLabel(state.bus101[0]))}</span></div>
+      <div class="no-race-mobility-row"><strong>VÉLIB’</strong><span>Hippodrome / École du Breuil</span><span>${state.velib.hippodrome ? `${state.velib.hippodrome.total} / ${state.velib.breuil?.total ?? "—"} vélos` : "—"}</span></div>`;
+  }
+  function meetingLabel() {
+    if (!state.meeting) return { date: "Prochaine date en attente", detail: "Programme momentanément indisponible" };
+    return { date: fmtDate(state.meeting.date), detail: `${fmtTime(state.meeting.races[0]?.date)} · ${state.meeting.races.length} courses` };
+  }
+  function renderNoRaceEvent() {
+    const event = todayEvent() || state.events[0] || null;
+    const main = q(".no-race-event-main");
+    if (main) {
+      q(".eyeline", main).textContent = todayEvent() ? "Aujourd’hui à Paris-Vincennes" : "Prochain événement à Paris-Vincennes";
+      q("h1", main).textContent = event?.title || "Agenda officiel momentanément indisponible";
+      q(".no-race-event-date", main).textContent = event ? `${fmtDate(event.start)}${event.end && !sameDay(event.start, event.end) ? ` → ${fmtDate(event.end)}` : ""}` : "Les informations seront affichées dès leur publication";
+      q(".no-race-event-copy", main).textContent = event?.summary || "L’écran reste alimenté par les informations mobilité et la prochaine réunion de courses.";
+      q(".no-race-event-access", main).textContent = event ? "Horaires et conditions d’accès : consulter la page officielle de l’événement." : "Informations visiteurs et accès actualisés automatiquement.";
+    }
+    const meeting = meetingLabel();
+    const nextMeeting = q(".next-meeting-card");
+    if (nextMeeting) { q(".no-race-big", nextMeeting).textContent = meeting.date; q("p", nextMeeting).textContent = meeting.detail; }
+    const mobility = q(".no-race-mobility-list"); if (mobility) mobility.innerHTML = mobilityRowsHTML();
+    const next = state.events.find(item => !event || item.title !== event.title);
+    const footer = q(".no-race-next-event"); if (footer) footer.textContent = next ? `${fmtDate(next.start)} · ${next.title}` : "Les prochains événements seront affichés dès leur publication officielle.";
+  }
+  function renderNoRaceIdle() {
+    const meeting = meetingLabel();
+    const focus = q(".next-meeting-focus");
+    if (focus) { q("strong", focus).textContent = meeting.date; q("small", focus).textContent = meeting.detail; }
+    const list = q(".no-race-events-list");
+    if (list) list.innerHTML = state.events.length ? state.events.slice(0, 3).map(event => `<div class="no-race-event-row"><time>${fmtDate(event.start)}</time><strong>${esc(event.title)}</strong></div>`).join("") : `<div class="live-empty">Agenda officiel momentanément indisponible</div>`;
+    const access = q(".no-race-access-grid");
+    if (access) access.innerHTML = `
+      <div class="no-race-access-item"><strong>RER A</strong><span>Joinville-le-Pont · 12 min à pied<br>${esc(passageLabel(state.rer[0]))}</span></div>
+      <div class="no-race-access-item"><strong>BUS 77</strong><span>Arrêt Hippodrome · 4 min<br>${esc(passageLabel(state.bus77[0]))}</span></div>
+      <div class="no-race-access-item"><strong>BUS 101</strong><span>École du Breuil · 7 min<br>${esc(passageLabel(state.bus101[0]))}</span></div>
+      <div class="no-race-access-item"><strong>VÉLIB’</strong><span>${state.velib.hippodrome ? `${state.velib.hippodrome.total} vélos Hippodrome<br>${state.velib.breuil?.total ?? "—"} vélos École du Breuil` : "Disponibilités en attente"}</span></div>`;
+    const service = q(".no-race-service p"); if (service) service.textContent = trafficNormal() ? "Accès et transports : aucune perturbation majeure en cours." : "Une information transport importante est en cours : consultez les indications affichées.";
   }
 
   function renderIncident(code) {
@@ -416,8 +557,9 @@
     const impactTitle = q(".incident-impact h2"); if (impactTitle) impactTitle.textContent = info.active ? "Information voyageurs" : "Situation actuelle";
     const message = q(".impact-message"); if (message) message.textContent = info.message;
     const zone = q(".impact-zone"); if (zone) zone.textContent = info.active ? `Ligne ${code === "A" ? "RER A" : "77"} · message officiel actif` : "Aucun scénario fictif affiché";
-    const detail = q(".impact-detail"); if (detail) detail.textContent = info.active ? "Consultez les alternatives calculées à partir des prochains passages réellement publiés." : "Cet écran de recette reste disponible et s’activera avec le texte réellement reçu de la source PRIM.";
-    const source = q(".incident-source"); if (source) source.textContent = `Source PRIM · actualisée à ${fmtTime(state.updatedAt || new Date())}`;
+    const detail = q(".impact-detail"); if (detail) detail.textContent = info.active ? "Consultez les alternatives calculées à partir des prochains passages réellement publiés." : "Cet écran s’activera automatiquement lors de la publication d’une perturbation majeure en cours.";
+    const source = q(".incident-source"); if (source) source.textContent = `Information voyageurs actualisée à ${fmtTime(state.updatedAt || new Date())}`;
+    const symbolLine = q(".incident-symbol .line-badge.bus"); if (symbolLine && code !== "A") symbolLine.textContent = code;
     const alternatives = qa(".alternative-card");
     if (code === "A") {
       const rows = [state.bus77, state.bus101];
@@ -425,35 +567,39 @@
         const passage = rows[index]?.[0];
         const altTime = q(".alt-time", card); if (altTime) altTime.textContent = passageLabel(passage);
         const main = q(".alt-main", card); if (main) main.textContent = passage ? `Direction ${passage.destination}` : "Aucun passage reçu";
-        const altDetail = q(".alt-detail", card); if (altDetail) altDetail.innerHTML = passage ? `Passage publié à ${fmtTime(passage.when)}<br>Donnée ${passage.monitored ? "temps réel" : "théorique"} PRIM` : "Information momentanément indisponible";
+        const altDetail = q(".alt-detail", card); if (altDetail) altDetail.innerHTML = passage ? `Passage publié à ${fmtTime(passage.when)}<br>Horaire ${passage.monitored ? "temps réel" : "théorique"}` : "Information momentanément indisponible";
       });
     } else {
-      const first = alternatives[0], second = alternatives[1], rer = state.rer[0], bus = state.bus101[0];
+      const first = alternatives[0], second = alternatives[1], rer = state.rer[0], bus = code === 77 ? state.bus101[0] : state.bus77[0];
       if (first) { q(".alt-time", first).textContent = rer ? `${passageLabel(rer)}` : "—"; q(".alt-main", first).textContent = rer ? `Direction ${rer.destination}` : "Aucun passage RER reçu"; q(".alt-detail", first).innerHTML = rer ? `Départ à ${fmtTime(rer.when)} depuis Joinville-le-Pont<br>Prévoir 12 min à pied` : "Information momentanément indisponible"; }
-      if (second) { q(".alt-time", second).textContent = passageLabel(bus); q(".alt-detail", second).innerHTML = bus ? `Passage à ${fmtTime(bus.when)} · direction ${esc(bus.destination)}` : "Information momentanément indisponible"; }
+      if (second) { const badge = q(".line-badge.bus", second); if (badge) badge.textContent = code === 77 ? "101" : "77"; q(".alt-time", second).textContent = passageLabel(bus); q(".alt-detail", second).innerHTML = bus ? `Passage à ${fmtTime(bus.when)} · direction ${esc(bus.destination)}` : "Information momentanément indisponible"; }
     }
   }
 
   function render() {
+    syncAutomaticMode();
     renderHeader();
     if (mode === "arrivee") renderArrival();
     else if (mode === "reunion") renderMeeting();
     else if (mode === "transition") renderTransition();
     else if (mode === "sortie") renderExit();
     else if (mode === "incident_rer_a") renderIncident("A");
-    else if (mode === "incident_bus") renderIncident(77);
+    else if (mode === "incident_bus") renderIncident(state.incidents[77].some(isMajorNow) ? 77 : state.incidents[101].some(isMajorNow) ? 101 : 77);
+    else if (mode === "no_race_event") renderNoRaceEvent();
+    else if (mode === "no_race_idle") renderNoRaceIdle();
   }
 
   async function refreshFast() {
     const results = await Promise.allSettled([
       loadPassages(SOURCES.rer), loadPassages(SOURCES.bus77), loadPassages(SOURCES.bus101),
-      loadMessages("A"), loadMessages("77")
+      loadMessages("A"), loadMessages("77"), loadMessages("101")
     ]);
     if (results[0].status === "fulfilled") state.rer = results[0].value;
     if (results[1].status === "fulfilled") state.bus77 = results[1].value;
     if (results[2].status === "fulfilled") state.bus101 = results[2].value;
     if (results[3].status === "fulfilled") state.incidents.A = results[3].value;
     if (results[4].status === "fulfilled") state.incidents[77] = results[4].value;
+    if (results[5].status === "fulfilled") state.incidents[101] = results[5].value;
     state.updatedAt = new Date(); state.pending = false; render();
   }
   async function refreshSlow() {
@@ -463,11 +609,17 @@
     if (results[2].status === "fulfilled") state.velib = results[2].value;
     state.updatedAt = new Date(); state.pending = false; render();
   }
+  async function refreshEvents() {
+    try { state.events = await loadEvents(); } catch (error) { console.warn("Agenda officiel", error); }
+    state.eventsLoaded = true; render();
+  }
 
   render();
   refreshFast();
   refreshSlow();
-  setInterval(() => { renderHeader(); if (["reunion", "transition"].includes(mode)) render(); }, 1000);
+  refreshEvents();
+  setInterval(() => { renderHeader(); if (["reunion", "transition", "arrivee"].includes(mode)) render(); }, 1000);
   setInterval(refreshFast, 30000);
   setInterval(refreshSlow, 60 * 1000);
+  setInterval(refreshEvents, 4 * 60 * 60 * 1000);
 })();
