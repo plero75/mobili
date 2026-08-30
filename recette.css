@@ -353,28 +353,95 @@ body { font-variant-numeric: tabular-nums; }
 .no-race-idle-layout {
   height: 100%;
   display: grid;
-  grid-template-columns: 1040px 805px;
-  grid-template-rows: 560px 318px;
+  grid-template-columns: 1085px 764px;
+  grid-template-rows: 520px 373px;
   gap: 15px;
 }
-.no-race-idle-main { padding: 34px 50px; background: linear-gradient(135deg, #0b2038, #0f2945); border-top: 9px solid var(--pv-gold); }
-.no-race-idle-main h1 { margin: 20px 0 0; font-size: 68px; line-height: 1.02; }
-.no-race-idle-main > p { max-width: 800px; margin: 16px 0 0; color: var(--muted); font-size: 25px; line-height: 1.3; }
-.next-meeting-focus { margin-top: 27px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.22); }
-.next-meeting-focus span { display: block; color: var(--pv-gold); font-size: 20px; text-transform: uppercase; font-weight: 800; }
-.next-meeting-focus strong { display: block; margin-top: 10px; font-size: 45px; }
-.next-meeting-focus small { display: block; margin-top: 8px; color: var(--muted); font-size: 18px; }
-.no-race-events-list { margin-top: 25px; display: grid; gap: 16px; }
-.no-race-event-row { padding: 18px 0 0; border-top: 1px solid rgba(255,255,255,.18); }
-.no-race-event-row:first-child { border-top: 0; padding-top: 0; }
-.no-race-event-row time { color: var(--pv-gold); font-size: 19px; font-weight: 800; }
-.no-race-event-row strong { display: block; margin-top: 6px; font-size: 24px; line-height: 1.15; }
-.no-race-access { grid-column: 1; }
-.no-race-access-grid { margin-top: 24px; display: grid; grid-template-columns: repeat(4,1fr); gap: 13px; }
-.no-race-access-item { padding: 18px; background: rgba(0,0,0,.17); }
-.no-race-access-item strong { display: block; font-size: 24px; }
-.no-race-access-item span { display: block; margin-top: 10px; color: var(--muted); font-size: 17px; line-height: 1.3; }
-.no-race-service p { margin: 34px 0 0; font-size: 27px; line-height: 1.35; }
+.no-race-news-main {
+  position: relative;
+  padding: 35px 44px 30px;
+  background: linear-gradient(135deg, #0d2948 0%, #0a2038 66%, #171e2a 100%);
+  border-top: 9px solid var(--pv-gold);
+}
+.no-race-status {
+  position: absolute;
+  top: 31px;
+  right: 40px;
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+.editorial-label { color: var(--pv-gold); font-size: 22px; font-weight: 850; letter-spacing: .04em; text-transform: uppercase; }
+.no-race-news-title {
+  max-width: 980px;
+  margin: 25px 0 0;
+  font-size: 55px;
+  line-height: 1.04;
+  letter-spacing: -.03em;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.no-race-news-summary {
+  max-width: 965px;
+  margin: 17px 0 0;
+  color: #c5d1dd;
+  font-size: 23px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.no-race-news-meta { position: absolute; left: 44px; bottom: 99px; display: flex; align-items: center; gap: 18px; font-size: 16px; font-weight: 800; letter-spacing: .045em; }
+.no-race-news-meta span { color: var(--pv-gold); }
+.no-race-news-meta time { color: var(--muted); }
+.no-race-news-strip {
+  position: absolute;
+  left: 44px;
+  right: 44px;
+  bottom: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,.2);
+}
+.news-strip-item { min-width: 0; color: #cbd5df; font-size: 18px; line-height: 1.23; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.news-strip-item b { margin-right: 10px; color: var(--pv-gold); font-size: 14px; }
+
+.no-race-horoscope { padding: 31px 34px 27px; background: linear-gradient(150deg, #18233b 0%, #291c36 100%); border-top: 9px solid #a985d8; }
+.horoscope-heading { display: flex; justify-content: space-between; align-items: baseline; }
+.horoscope-heading h2 { margin: 0; font-size: 31px; }
+.horoscope-heading span { color: #c8b6dd; font-size: 15px; font-weight: 750; letter-spacing: .055em; text-transform: uppercase; }
+.horoscope-grid { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.horoscope-item { min-height: 168px; padding: 19px 20px; background: rgba(2,10,24,.38); border: 1px solid rgba(204,178,235,.24); }
+.horoscope-sign { display: flex; align-items: center; gap: 12px; }
+.horoscope-sign b { color: #d6b7f3; font-size: 31px; font-family: "DejaVu Sans", sans-serif; }
+.horoscope-sign strong { font-size: 22px; }
+.horoscope-item p { margin: 12px 0 0; color: #d2d8e3; font-size: 17px; line-height: 1.34; }
+.horoscope-progress { margin-top: 19px; display: flex; justify-content: center; gap: 8px; }
+.horoscope-progress i { width: 42px; height: 4px; background: rgba(255,255,255,.2); }
+.horoscope-progress i.active { background: #c39ae8; }
+
+.no-race-agenda { display: grid; grid-template-columns: 1.06fr .94fr; gap: 0; padding: 0; }
+.no-race-agenda .next-meeting-focus { margin: 0; padding: 34px 38px; border: 0; }
+.next-meeting-focus span,
+.no-race-next-event span { display: block; color: var(--pv-gold); font-size: 18px; text-transform: uppercase; font-weight: 850; letter-spacing: .035em; }
+.next-meeting-focus strong { display: block; margin-top: 20px; font-size: 43px; line-height: 1.08; }
+.next-meeting-focus small { display: block; margin-top: 15px; color: var(--muted); font-size: 19px; }
+.no-race-agenda .no-race-next-event { padding: 34px 33px; border-left: 1px solid rgba(255,255,255,.2); }
+.no-race-next-event strong { display: block; margin-top: 20px; font-size: 27px; line-height: 1.25; }
+
+.no-race-access { padding: 28px 31px; }
+.no-race-access-grid { margin-top: 19px; display: grid; gap: 8px; }
+.no-race-access-item { display: grid; grid-template-columns: 108px 1fr auto; align-items: center; min-height: 58px; padding: 11px 16px; background: rgba(0,0,0,.18); }
+.no-race-access-item strong { font-size: 21px; }
+.no-race-access-item span { color: var(--muted); font-size: 16px; line-height: 1.25; }
+.no-race-access-item em { color: var(--green); font-size: 18px; font-style: normal; font-weight: 800; text-align: right; }
 
 .incident-workspace { background: #090e16; }
 .incident-banner {
