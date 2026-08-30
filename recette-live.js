@@ -84,9 +84,11 @@
   }
   const primUrl = path => PROXY + encodeURIComponent(PRIM + path);
   const fetchCandidates = async urls => {
+    let lastError = null;
     for (const url of urls) {
-      try { return await fetchJSON(url); } catch (error) { console.warn("Mobili live source", url, error); }
+      try { return await fetchJSON(url); } catch (error) { lastError = { url, error }; }
     }
+    if (lastError) console.warn("Mobili live source", lastError.url, lastError.error);
     return null;
   };
 
@@ -133,7 +135,7 @@
 
   async function loadMessages(code) {
     const idfm = { A: "C01742", 77: "C02251" }[code];
-    const refs = [`STIF:Line::${idfm}:`, `STIF:Line::${idfm}`];
+    const refs = [`STIF:Line::${idfm}:`];
     const messages = [];
     for (const ref of refs) {
       const data = await fetchCandidates([primUrl(`/general-message?LineRef=${encodeURIComponent(ref)}`)]);
@@ -187,7 +189,7 @@
     };
   }
   async function loadMeeting() {
-    const dates = Array.from({ length: 8 }, (_, offset) => {
+    const dates = state.meeting ? [new Date(state.meeting.date)] : Array.from({ length: 8 }, (_, offset) => {
       const date = new Date();
       date.setHours(12, 0, 0, 0);
       date.setDate(date.getDate() + offset);
@@ -467,5 +469,5 @@
   refreshSlow();
   setInterval(() => { renderHeader(); if (["reunion", "transition"].includes(mode)) render(); }, 1000);
   setInterval(refreshFast, 30000);
-  setInterval(refreshSlow, 5 * 60 * 1000);
+  setInterval(refreshSlow, 60 * 1000);
 })();
