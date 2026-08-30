@@ -225,15 +225,24 @@ const noRaceIdle = () => `
     ${header({meeting:'PARIS-VINCENNES', races:'PAS DE COURSES'})}
     <div class="workspace">
       <div class="no-race-idle-layout">
-        <article class="panel no-race-idle-main">
-          <div class="eyeline">Hippodrome Paris-Vincennes</div>
-          <h1>Pas de courses aujourd’hui</h1>
-          <p>Retrouvez les prochains rendez-vous et les informations utiles de l’hippodrome.</p>
-          <div class="next-meeting-focus"><span>Prochaine réunion</span><strong>Chargement…</strong><small>Programme officiel</small></div>
+        <article class="panel no-race-news-main">
+          <div class="no-race-status">Pas de courses aujourd’hui</div>
+          <div class="editorial-label">L’essentiel de l’actualité</div>
+          <h1 class="no-race-news-title">Actualités en cours de chargement</h1>
+          <p class="no-race-news-summary">Les principaux titres de la journée vont s’afficher automatiquement.</p>
+          <div class="no-race-news-meta"><span>FRANCEINFO</span><time>À L’INSTANT</time></div>
+          <div class="no-race-news-strip" aria-label="Autres titres"></div>
         </article>
-        <article class="panel no-race-events"><h2 class="section-title">Prochains événements</h2><div class="no-race-events-list"></div></article>
+        <article class="panel no-race-horoscope">
+          <div class="horoscope-heading"><h2>Horoscope du jour</h2><span>Divertissement</span></div>
+          <div class="horoscope-grid"></div>
+          <div class="horoscope-progress" aria-hidden="true"><i></i><i></i><i></i></div>
+        </article>
+        <article class="panel no-race-agenda">
+          <div class="next-meeting-focus"><span>Prochaine réunion</span><strong>Chargement…</strong><small>Programme officiel</small></div>
+          <div class="no-race-next-event"><span>Prochain rendez-vous</span><strong>Agenda en cours de chargement</strong></div>
+        </article>
         <article class="panel idfm no-race-access"><h2 class="section-title white">Venir à Paris-Vincennes</h2><div class="no-race-access-grid"></div></article>
-        <article class="panel no-race-service"><h2 class="section-title">Information visiteurs</h2><p>Accès, programme et mobilité sont actualisés automatiquement.</p></article>
       </div>
     </div>
     <span class="distance-test-label">DONNÉES TEMPS RÉEL · CHARGEMENT</span>
