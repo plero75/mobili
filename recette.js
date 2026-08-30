@@ -202,7 +202,7 @@ document.getElementById('app').innerHTML = (renderers[mode] || arrival)();
 function fitRecipeScreen() {
   const app = document.getElementById('app');
   const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
-  app.style.transform = `scale(${scale})`;
+  app.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
 window.addEventListener('resize', fitRecipeScreen);
