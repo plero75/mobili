@@ -4,6 +4,7 @@
   const PROXY = "https://ratp-proxy.hippodrome-proxy42.workers.dev/?url=";
   const PRIM = "https://prim.iledefrance-mobilites.fr/marketplace";
   const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=48.835&longitude=2.440&current_weather=true&timezone=Europe%2FParis";
+  const NEWS_RSS_URL = "https://www.francetvinfo.fr/titres.rss";
   const EVENTS_URL = "https://www.letrot.com/hippodromes/vincennes/7500";
   const EVENTS_FALLBACK_URL = "https://f.dlt.letrot.com/f/lp/nocturnes-kermesse-festival/p02qtztn";
   const VELIB_STATUS_URL = "https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_status.json";
@@ -37,6 +38,9 @@
     incidents: { A: [], 77: [], 101: [] },
     events: [],
     eventsLoaded: false,
+    news: [],
+    newsIndex: 0,
+    horoscopePage: 0,
     updatedAt: null,
     pending: true
   };
@@ -262,6 +266,23 @@
     const data = await fetchCandidates([WEATHER_URL]);
     const current = data?.current_weather;
     return current ? { temp: `${Math.round(current.temperature)}°C`, label: WEATHER[current.weathercode] || "Météo locale" } : null;
+  }
+
+  async function loadNews() {
+    let xml = "";
+    for (const url of [PROXY + encodeURIComponent(NEWS_RSS_URL), NEWS_RSS_URL]) {
+      try { xml = await fetchText(url, 12000); break; } catch (_) {}
+    }
+    if (!xml) return [];
+    const doc = new DOMParser().parseFromString(xml, "application/xml");
+    return [...doc.querySelectorAll("item")].slice(0, 12).map(item => {
+      const title = clean(item.querySelector("title")?.textContent);
+      const summary = clean(item.querySelector("description")?.textContent)
+        .replace(/^franceinfo\s*[:–-]?\s*/i, "")
+        .replace(/\s*(?:lire|voir)\s+la\s+suite.*$/i, "");
+      const publishedAt = new Date(clean(item.querySelector("pubDate")?.textContent));
+      return { title, summary, publishedAt };
+    }).filter(item => item.title);
   }
 
   const MONTHS = { janvier:0, fevrier:1, février:1, mars:2, avril:3, mai:4, juin:5, juillet:6, aout:7, août:7, septembre:8, octobre:9, novembre:10, decembre:11, décembre:11 };
@@ -525,6 +546,40 @@
     if (!state.meeting) return { date: "Prochaine date en attente", detail: "Programme momentanément indisponible" };
     return { date: fmtDate(state.meeting.date), detail: `${fmtTime(state.meeting.races[0]?.date)} · ${state.meeting.races.length} courses` };
   }
+  const HOROSCOPE_SIGNS = [
+    ["♈", "Bélier"], ["♉", "Taureau"], ["♊", "Gémeaux"], ["♋", "Cancer"],
+    ["♌", "Lion"], ["♍", "Vierge"], ["♎", "Balance"], ["♏", "Scorpion"],
+    ["♐", "Sagittaire"], ["♑", "Capricorne"], ["♒", "Verseau"], ["♓", "Poissons"]
+  ];
+  const HOROSCOPE_NOTES = [
+    "Une conversation franche remet les priorités dans le bon ordre.",
+    "Un détail pratique mérite votre attention avant de vous engager.",
+    "Votre énergie revient : choisissez une seule chose et allez au bout.",
+    "Une rencontre légère pourrait rendre la journée plus intéressante.",
+    "Le calme vous aidera à voir une solution qui semblait invisible.",
+    "Faites confiance à votre première intuition, puis vérifiez les faits.",
+    "Une bonne nouvelle arrive par un échange ou un message inattendu.",
+    "Gardez du temps pour vous : votre rythme compte autant que le résultat.",
+    "Le moment est favorable pour clarifier une attente avec simplicité.",
+    "Une petite initiative aujourd’hui peut ouvrir une belle perspective.",
+    "Votre sens de l’humour désamorce une tension et rapproche les autres.",
+    "N’essayez pas de tout contrôler : laissez une place à l’imprévu.",
+    "Une idée ancienne mérite peut-être une seconde chance aujourd’hui.",
+    "Votre constance porte ses fruits, même si le résultat reste discret.",
+    "Privilégiez les échanges directs : ils vous feront gagner du temps.",
+    "Une pause bien choisie vous redonnera l’élan qui manquait ce matin.",
+    "Quelqu’un apprécie votre soutien plus que vous ne l’imaginez.",
+    "La journée favorise les décisions simples et les plaisirs spontanés."
+  ];
+  function horoscopeNote(signIndex) {
+    const day = new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    const seed = [...day].reduce((total, character) => total + character.charCodeAt(0), 0);
+    return HOROSCOPE_NOTES[(seed + signIndex * 7) % HOROSCOPE_NOTES.length];
+  }
+  function newsTime(item) {
+    if (!item || Number.isNaN(item.publishedAt?.getTime())) return `MIS À JOUR À ${fmtTime(state.updatedAt || new Date())}`;
+    return `PUBLIÉ À ${fmtTime(item.publishedAt)}`;
+  }
   function renderNoRaceEvent() {
     const event = todayEvent() || state.events[0] || null;
     const main = q(".no-race-event-main");
@@ -543,18 +598,39 @@
     const footer = q(".no-race-next-event"); if (footer) footer.textContent = next ? `${fmtDate(next.start)} · ${next.title}` : "Les prochains événements seront affichés dès leur publication officielle.";
   }
   function renderNoRaceIdle() {
+    const currentNews = state.news.length ? state.news[state.newsIndex % state.news.length] : null;
+    const newsTitle = q(".no-race-news-title");
+    if (newsTitle) newsTitle.textContent = currentNews?.title || "L’actualité est momentanément indisponible";
+    const newsSummary = q(".no-race-news-summary");
+    if (newsSummary) newsSummary.textContent = currentNews?.summary || "La prochaine réunion, la météo et les informations de transport restent actualisées ci-dessous.";
+    const newsMeta = q(".no-race-news-meta time");
+    if (newsMeta) newsMeta.textContent = newsTime(currentNews);
+    const newsStrip = q(".no-race-news-strip");
+    if (newsStrip) {
+      const secondary = state.news.length > 1 ? [1, 2].map(offset => state.news[(state.newsIndex + offset) % state.news.length]) : [];
+      newsStrip.innerHTML = secondary.length ? secondary.map(item => `<div class="news-strip-item"><b>À SUIVRE</b>${esc(item.title)}</div>`).join("") : `<div class="news-strip-item">Les autres titres s’afficheront dès réception du fil d’actualité.</div>`;
+    }
+
+    const page = state.horoscopePage % 3;
+    const signs = HOROSCOPE_SIGNS.slice(page * 4, page * 4 + 4);
+    const horoscope = q(".horoscope-grid");
+    if (horoscope) horoscope.innerHTML = signs.map(([symbol, name], offset) => {
+      const signIndex = page * 4 + offset;
+      return `<div class="horoscope-item"><div class="horoscope-sign"><b>${symbol}</b><strong>${name}</strong></div><p>${esc(horoscopeNote(signIndex))}</p></div>`;
+    }).join("");
+    qa(".horoscope-progress i").forEach((item, index) => item.classList.toggle("active", index === page));
+
     const meeting = meetingLabel();
     const focus = q(".next-meeting-focus");
     if (focus) { q("strong", focus).textContent = meeting.date; q("small", focus).textContent = meeting.detail; }
-    const list = q(".no-race-events-list");
-    if (list) list.innerHTML = state.events.length ? state.events.slice(0, 3).map(event => `<div class="no-race-event-row"><time>${fmtDate(event.start)}</time><strong>${esc(event.title)}</strong></div>`).join("") : `<div class="live-empty">Agenda officiel momentanément indisponible</div>`;
+    const eventBox = q(".no-race-agenda .no-race-next-event strong");
+    if (eventBox) eventBox.textContent = state.events[0] ? `${fmtDate(state.events[0].start)} · ${state.events[0].title}` : "Agenda officiel momentanément indisponible";
     const access = q(".no-race-access-grid");
     if (access) access.innerHTML = `
-      <div class="no-race-access-item"><strong>RER A</strong><span>Joinville-le-Pont · 12 min à pied<br>${esc(passageLabel(state.rer[0]))}</span></div>
-      <div class="no-race-access-item"><strong>BUS 77</strong><span>Arrêt Hippodrome · 4 min<br>${esc(passageLabel(state.bus77[0]))}</span></div>
-      <div class="no-race-access-item"><strong>BUS 101</strong><span>École du Breuil · 7 min<br>${esc(passageLabel(state.bus101[0]))}</span></div>
-      <div class="no-race-access-item"><strong>VÉLIB’</strong><span>${state.velib.hippodrome ? `${state.velib.hippodrome.total} vélos Hippodrome<br>${state.velib.breuil?.total ?? "—"} vélos École du Breuil` : "Disponibilités en attente"}</span></div>`;
-    const service = q(".no-race-service p"); if (service) service.textContent = trafficNormal() ? "Accès et transports : aucune perturbation majeure en cours." : "Une information transport importante est en cours : consultez les indications affichées.";
+      <div class="no-race-access-item"><strong>RER A</strong><span>Joinville-le-Pont · 12 min à pied</span><em>${esc(passageLabel(state.rer[0]))}</em></div>
+      <div class="no-race-access-item"><strong>BUS 77</strong><span>Hippodrome de Vincennes · 4 min</span><em>${esc(passageLabel(state.bus77[0]))}</em></div>
+      <div class="no-race-access-item"><strong>BUS 101</strong><span>École du Breuil · 7 min</span><em>${esc(passageLabel(state.bus101[0]))}</em></div>
+      <div class="no-race-access-item"><strong>VÉLIB’</strong><span>Hippodrome / École du Breuil</span><em>${state.velib.hippodrome ? `${state.velib.hippodrome.total} / ${state.velib.breuil?.total ?? "—"} vélos` : "En attente"}</em></div>`;
   }
 
   function renderIncident(code) {
@@ -623,13 +699,27 @@
     try { state.events = await loadEvents(); } catch (error) { console.warn("Agenda officiel", error); }
     state.eventsLoaded = true; render();
   }
+  async function refreshEditorial() {
+    try {
+      const news = await loadNews();
+      if (news.length) state.news = news;
+    } catch (error) { console.warn("Fil d’actualité", error); }
+    render();
+  }
 
   render();
   refreshFast();
   refreshSlow();
   refreshEvents();
+  refreshEditorial();
   setInterval(() => { renderHeader(); if (["reunion", "transition", "arrivee"].includes(mode)) render(); }, 1000);
+  setInterval(() => {
+    state.newsIndex = state.news.length ? (state.newsIndex + 1) % state.news.length : 0;
+    state.horoscopePage = (state.horoscopePage + 1) % 3;
+    if (mode === "no_race_idle") renderNoRaceIdle();
+  }, 14000);
   setInterval(refreshFast, 30000);
   setInterval(refreshSlow, 60 * 1000);
+  setInterval(refreshEditorial, 5 * 60 * 1000);
   setInterval(refreshEvents, 4 * 60 * 60 * 1000);
 })();
