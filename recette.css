@@ -798,3 +798,35 @@ svg { display: block; }
   box-shadow: inset 4px 0 0 var(--pv-gold);
 }
 .live-empty { border-radius: 22px; }
+
+/* Listes voyageurs compactes — hiérarchie ligne / direction / attente */
+.meeting-bottom .mini-transports {
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-top: 13px;
+  border-radius: 20px;
+}
+.meeting-bottom .mini-transport {
+  min-height: 0;
+  height: 66px;
+  grid-template-columns: 94px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 8px 15px;
+  border-left: 0;
+  border-top: 1px solid rgba(255,255,255,.11);
+}
+.meeting-bottom .mini-transport:first-child { border-top: 0; }
+.meeting-bottom .mini-transport .transport-id { gap: 7px; }
+.meeting-bottom .mini-transport .mode-badge { width: 38px; height: 38px; border-width: 2px; font-size: 14px; }
+.meeting-bottom .mini-transport .line-badge.round { width: 40px; height: 40px; font-size: 23px; }
+.meeting-bottom .mini-transport .line-badge.bus { min-width: 50px; height: 38px; padding: 0 8px; font-size: 21px; }
+.meeting-bottom .mini-transport .mini-stop { display: block; color: #fff; font-size: 17px; font-weight: 780; }
+.meeting-bottom .mini-transport .sub { margin-top: 3px; font-size: 13px; }
+.meeting-bottom .mini-transport .minutes { margin: 0; color: var(--green); font-size: 23px; text-align: right; white-space: nowrap; }
+
+.no-race-mobility-list { margin-top: 13px; gap: 4px; }
+.no-race-mobility-row {
+  min-height: 57px;
+  padding: 5px 0;
+}
