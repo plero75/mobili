@@ -40,6 +40,9 @@ body { font-variant-numeric: tabular-nums; }
   overflow: hidden;
   background: var(--pv-navy);
   transform-origin: center center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
 }
 
 .screen {
