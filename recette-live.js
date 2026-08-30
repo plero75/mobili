@@ -473,9 +473,9 @@
     const eventPanel = qa(".meeting-bottom > .panel")[1];
     if (eventPanel) eventPanel.innerHTML = `<h2 class="section-title">Fin de réunion</h2><div class="event" style="margin-top:28px"><div class="event-date">${lastRace() ? fmtTime(lastRace().date) : "—"}</div><div><div class="event-name">Dernière course</div><div class="event-note">${esc(lastRace()?.title || "Programme indisponible")}</div></div></div>`;
     const minis = qa(".mini-transport");
-    if (minis[0]) { q(".minutes", minis[0]).textContent = passageLabel(state.rer[0]); q(".sub", minis[0]).textContent = state.rer[0]?.destination || "Joinville-le-Pont"; }
-    if (minis[1]) { q(".minutes", minis[1]).textContent = passageLabel(state.bus77[0]); q(".sub", minis[1]).textContent = state.bus77[0]?.destination || "Gare de Lyon"; }
-    if (minis[2]) { q(".minutes", minis[2]).textContent = passageLabel(state.bus101[0]); q(".sub", minis[2]).textContent = state.bus101[0]?.destination || "Joinville-le-Pont"; }
+    if (minis[0]) { q(".minutes", minis[0]).textContent = passageLabel(state.rer[0]); q(".sub", minis[0]).textContent = state.rer[0] ? `Direction ${state.rer[0].destination}` : "Vers Paris et l’ouest"; }
+    if (minis[1]) { q(".minutes", minis[1]).textContent = passageLabel(state.bus77[0]); q(".sub", minis[1]).textContent = `Direction ${state.bus77[0]?.destination || "Gare de Lyon"}`; }
+    if (minis[2]) { q(".minutes", minis[2]).textContent = passageLabel(state.bus101[0]); q(".sub", minis[2]).textContent = `Direction ${state.bus101[0]?.destination || "Joinville-le-Pont"}`; }
   }
 
   function renderTransportRows(rootSelector) {
