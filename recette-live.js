@@ -537,10 +537,10 @@
 
   function mobilityRowsHTML() {
     return `
-      <div class="no-race-mobility-row"><strong>RER A</strong><span>Joinville-le-Pont · 12 min à pied</span><span>${esc(passageLabel(state.rer[0]))}</span></div>
-      <div class="no-race-mobility-row"><strong>BUS 77</strong><span>Hippodrome de Vincennes · 4 min à pied</span><span>${esc(passageLabel(state.bus77[0]))}</span></div>
-      <div class="no-race-mobility-row"><strong>BUS 101</strong><span>École du Breuil · 7 min à pied</span><span>${esc(passageLabel(state.bus101[0]))}</span></div>
-      <div class="no-race-mobility-row"><strong>VÉLIB’</strong><span>Hippodrome / École du Breuil</span><span>${state.velib.hippodrome ? `${state.velib.hippodrome.total} / ${state.velib.breuil?.total ?? "—"} vélos` : "—"}</span></div>`;
+      <div class="no-race-mobility-row">${modeId("rer", "A")}<span><strong>Joinville-le-Pont</strong><small>Vers Paris et l’ouest · 12 min à pied</small></span><em>${esc(passageLabel(state.rer[0]))}</em></div>
+      <div class="no-race-mobility-row">${modeId("bus", "77")}<span><strong>Hippodrome de Vincennes</strong><small>Direction ${esc(state.bus77[0]?.destination || "Gare de Lyon")} · 4 min à pied</small></span><em>${esc(passageLabel(state.bus77[0]))}</em></div>
+      <div class="no-race-mobility-row">${modeId("bus", "101")}<span><strong>École du Breuil</strong><small>Direction ${esc(state.bus101[0]?.destination || "Joinville-le-Pont")} · 7 min à pied</small></span><em>${esc(passageLabel(state.bus101[0]))}</em></div>
+      <div class="no-race-mobility-row"><div class="mobility-bike">VÉLIB’</div><span><strong>Stations à proximité</strong><small>Hippodrome / École du Breuil</small></span><em>${state.velib.hippodrome ? `${state.velib.hippodrome.total} / ${state.velib.breuil?.total ?? "—"} vélos` : "—"}</em></div>`;
   }
   function meetingLabel() {
     if (!state.meeting) return { date: "Prochaine date en attente", detail: "Programme momentanément indisponible" };
@@ -627,10 +627,10 @@
     if (eventBox) eventBox.textContent = state.events[0] ? `${fmtDate(state.events[0].start)} · ${state.events[0].title}` : "Agenda officiel momentanément indisponible";
     const access = q(".no-race-access-grid");
     if (access) access.innerHTML = `
-      <div class="no-race-access-item"><strong>RER A</strong><span>Joinville-le-Pont · 12 min à pied</span><em>${esc(passageLabel(state.rer[0]))}</em></div>
-      <div class="no-race-access-item"><strong>BUS 77</strong><span>Hippodrome de Vincennes · 4 min</span><em>${esc(passageLabel(state.bus77[0]))}</em></div>
-      <div class="no-race-access-item"><strong>BUS 101</strong><span>École du Breuil · 7 min</span><em>${esc(passageLabel(state.bus101[0]))}</em></div>
-      <div class="no-race-access-item"><strong>VÉLIB’</strong><span>Hippodrome / École du Breuil</span><em>${state.velib.hippodrome ? `${state.velib.hippodrome.total} / ${state.velib.breuil?.total ?? "—"} vélos` : "En attente"}</em></div>`;
+      <div class="no-race-access-item">${modeId("rer", "A")}<span><strong>Joinville-le-Pont</strong><small>Vers Paris et l’ouest · 12 min à pied</small></span><em>${esc(passageLabel(state.rer[0]))}</em></div>
+      <div class="no-race-access-item">${modeId("bus", "77")}<span><strong>Hippodrome de Vincennes</strong><small>Direction ${esc(state.bus77[0]?.destination || "Gare de Lyon")} · 4 min à pied</small></span><em>${esc(passageLabel(state.bus77[0]))}</em></div>
+      <div class="no-race-access-item">${modeId("bus", "101")}<span><strong>École du Breuil</strong><small>Direction ${esc(state.bus101[0]?.destination || "Joinville-le-Pont")} · 7 min à pied</small></span><em>${esc(passageLabel(state.bus101[0]))}</em></div>
+      <div class="no-race-access-item"><div class="mobility-bike">VÉLIB’</div><span><strong>Stations à proximité</strong><small>Hippodrome / École du Breuil</small></span><em>${state.velib.hippodrome ? `${state.velib.hippodrome.total} / ${state.velib.breuil?.total ?? "—"} vélos` : "En attente"}</em></div>`;
   }
 
   function renderIncident(code) {
