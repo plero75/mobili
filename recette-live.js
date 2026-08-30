@@ -5,6 +5,7 @@
   const PRIM = "https://prim.iledefrance-mobilites.fr/marketplace";
   const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=48.835&longitude=2.440&current_weather=true&timezone=Europe%2FParis";
   const EVENTS_URL = "https://www.letrot.com/hippodromes/vincennes/7500";
+  const EVENTS_FALLBACK_URL = "https://f.dlt.letrot.com/f/lp/nocturnes-kermesse-festival/p02qtztn";
   const VELIB_STATUS_URL = "https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_status.json";
   const VELIB_INFO_URL = "https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_information.json";
   const VELIB_PROXY = "https://velib-proxy.hippodrome-proxy42.workers.dev/?url=";
@@ -289,7 +290,11 @@
   }
   async function loadEvents() {
     let html = "";
-    try { html = await fetchText(PROXY + encodeURIComponent(EVENTS_URL)); } catch (error) { console.warn("Agenda officiel indisponible", error); }
+    let sourceUrl = EVENTS_URL;
+    for (const candidate of [EVENTS_URL, EVENTS_FALLBACK_URL]) {
+      try { html = await fetchText(PROXY + encodeURIComponent(candidate)); sourceUrl = candidate; break; } catch (_) {}
+    }
+    if (!html) console.warn("Agenda officiel momentanément indisponible");
     if (!html) return [];
     const doc = new DOMParser().parseFromString(html, "text/html");
     const rows = [];
@@ -304,7 +309,7 @@
       const title = clean(titleNode.textContent).replace(/\b(?:lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)?\s*(?:\d{1,2}|1er)\s+(?:janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre).*$/i, "").trim();
       if (!title || title.length < 4) continue;
       let url = href;
-      try { url = new URL(href, EVENTS_URL).href; } catch (_) {}
+      try { url = new URL(href, sourceUrl).href; } catch (_) {}
       rows.push({ title, start: range.start, end: range.end, url, summary: cardText.slice(0, 180) });
     }
     const unique = new Map();
