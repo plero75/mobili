@@ -316,6 +316,66 @@ body { font-variant-numeric: tabular-nums; }
 .velib-numbers strong { font-size: 46px; color: var(--cyan); }
 .velib-numbers span { font-size: 17px; color: var(--muted); }
 
+.no-race-event-layout {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1235px 610px;
+  grid-template-rows: 700px 193px;
+  gap: 15px;
+}
+.no-race-event-main {
+  position: relative;
+  padding: 52px 58px;
+  background: linear-gradient(135deg, #0b2038 0%, #102a48 66%, #604515 180%);
+  border-top: 9px solid var(--pv-gold);
+}
+.no-race-event-main h1 {
+  max-width: 1050px;
+  margin: 30px 0 0;
+  font-size: 78px;
+  line-height: 1.03;
+  letter-spacing: -.035em;
+}
+.no-race-event-date { margin-top: 30px; color: var(--pv-gold); font-size: 32px; font-weight: 800; }
+.no-race-event-copy { max-width: 980px; margin: 30px 0 0; font-size: 29px; line-height: 1.35; }
+.no-race-event-access { margin-top: 34px; color: var(--muted); font-size: 21px; line-height: 1.45; }
+.no-race-secondary { position: absolute; left: 58px; bottom: 42px; padding: 13px 20px; border: 1px solid rgba(255,255,255,.28); color: var(--muted); font-size: 22px; text-transform: uppercase; letter-spacing: .04em; }
+.no-race-side { display: grid; grid-template-rows: 280px 405px; gap: 15px; }
+.no-race-big { margin-top: 35px; color: var(--pv-gold); font-size: 46px; font-weight: 850; line-height: 1.05; }
+.next-meeting-card p { color: var(--muted); font-size: 20px; }
+.no-race-mobility-list { margin-top: 24px; display: grid; gap: 14px; }
+.no-race-mobility-row { display: grid; grid-template-columns: 95px 1fr auto; align-items: center; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.18); font-size: 19px; }
+.no-race-mobility-row strong { font-size: 23px; }
+.no-race-mobility-row span:last-child { color: var(--green); font-weight: 750; text-align: right; }
+.no-race-footer { grid-column: 1 / 3; display: grid; grid-template-columns: 300px 1fr; align-items: center; }
+.no-race-next-event { font-size: 29px; font-weight: 760; }
+
+.no-race-idle-layout {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1040px 805px;
+  grid-template-rows: 560px 318px;
+  gap: 15px;
+}
+.no-race-idle-main { padding: 48px 55px; background: linear-gradient(135deg, #0b2038, #0f2945); border-top: 9px solid var(--pv-gold); }
+.no-race-idle-main h1 { margin: 30px 0 0; font-size: 75px; line-height: 1.04; }
+.no-race-idle-main > p { max-width: 800px; margin: 22px 0 0; color: var(--muted); font-size: 27px; line-height: 1.35; }
+.next-meeting-focus { margin-top: 48px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.22); }
+.next-meeting-focus span { display: block; color: var(--pv-gold); font-size: 20px; text-transform: uppercase; font-weight: 800; }
+.next-meeting-focus strong { display: block; margin-top: 10px; font-size: 45px; }
+.next-meeting-focus small { display: block; margin-top: 8px; color: var(--muted); font-size: 18px; }
+.no-race-events-list { margin-top: 25px; display: grid; gap: 16px; }
+.no-race-event-row { padding: 18px 0 0; border-top: 1px solid rgba(255,255,255,.18); }
+.no-race-event-row:first-child { border-top: 0; padding-top: 0; }
+.no-race-event-row time { color: var(--pv-gold); font-size: 19px; font-weight: 800; }
+.no-race-event-row strong { display: block; margin-top: 6px; font-size: 24px; line-height: 1.15; }
+.no-race-access { grid-column: 1; }
+.no-race-access-grid { margin-top: 24px; display: grid; grid-template-columns: repeat(4,1fr); gap: 13px; }
+.no-race-access-item { padding: 18px; background: rgba(0,0,0,.17); }
+.no-race-access-item strong { display: block; font-size: 24px; }
+.no-race-access-item span { display: block; margin-top: 10px; color: var(--muted); font-size: 17px; line-height: 1.3; }
+.no-race-service p { margin: 34px 0 0; font-size: 27px; line-height: 1.35; }
+
 .incident-workspace { background: #090e16; }
 .incident-banner {
   height: 168px;
