@@ -111,9 +111,9 @@ const meeting = () => `
           <article class="panel"><h2 class="section-title">Animations & temps forts</h2><div class="list-compact"><div><time>15:45</time><span>Visite des écuries</span></div><div><time>16:30</time><span>Animation musicale · Terrasse</span></div><div><time>17:50</time><span>Photo souvenir à l’arrivée</span></div></div></article>
           <article class="panel"><h2 class="section-title">Prochain événement</h2><div class="event" style="margin-top:28px"><div class="event-date">20 SEPT.</div><div><div class="event-name">Grande brocante</div><div class="event-note">Entrée libre · Parvis</div></div></div></article>
           <article class="panel"><h2 class="section-title white">Mobilité · situation normale</h2><div class="mini-transports">
-            <div class="mini-transport">${modeId('rer','A')}<div class="minutes">12 min à pied</div><div class="sub">Joinville-le-Pont</div></div>
-            <div class="mini-transport">${modeId('bus','77')}<div class="minutes">7 min</div><div class="sub">puis 19 min</div></div>
-            <div class="mini-transport">${modeId('bus','101')}<div class="minutes">12 min</div><div class="sub">puis 26 min</div></div>
+            <div class="mini-transport">${modeId('rer','A')}<div class="mini-copy"><span class="mini-stop">Joinville-le-Pont</span><div class="minutes">12 min à pied</div><div class="sub">Vers Paris et l’ouest</div></div></div>
+            <div class="mini-transport">${modeId('bus','77')}<div class="mini-copy"><span class="mini-stop">Hippodrome</span><div class="minutes">7 min</div><div class="sub">Direction Gare de Lyon</div></div></div>
+            <div class="mini-transport">${modeId('bus','101')}<div class="mini-copy"><span class="mini-stop">École du Breuil</span><div class="minutes">12 min</div><div class="sub">Direction Joinville-le-Pont</div></div></div>
           </div></article>
         </div>
       </div>
