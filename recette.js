@@ -7,7 +7,8 @@ const icons = {
 };
 
 const query = new URLSearchParams(location.search);
-const mode = (query.get('mode') || 'arrivee').toLowerCase();
+const requestedMode = (query.get('mode') || 'auto').toLowerCase();
+let mode = requestedMode;
 
 const brand = () => `<div class="brand">${icons.brand}<div class="brand-copy"><span>HIPPODROME</span><strong>PARIS-VINCENNES</strong></div></div>`;
 const header = ({time='15:32', weather='21°C', weatherLabel='Ensoleillé', date='DIMANCHE 15 JUIN', meeting='RÉUNION 1', races='8 COURSES'} = {}) => `
@@ -196,7 +197,49 @@ const incidentBus = () => `
     <span class="distance-test-label">MAQUETTE DE RECETTE · 1920 × 1080</span>
   </section>`;
 
-const renderers = { arrivee: arrival, reunion: meeting, transition, sortie: exit, incident_rer_a: incidentRer, incident_bus: incidentBus };
+const noRaceEvent = () => `
+  <section class="screen">
+    ${header({meeting:'AUJOURD’HUI', races:'PAS DE COURSES'})}
+    <div class="workspace">
+      <div class="no-race-event-layout">
+        <article class="panel no-race-event-main">
+          <div class="eyeline">Aujourd’hui à Paris-Vincennes</div>
+          <h1>Événement du jour</h1>
+          <div class="no-race-event-date">Agenda officiel en cours de chargement</div>
+          <p class="no-race-event-copy">Les informations de l’événement sont récupérées automatiquement.</p>
+          <div class="no-race-event-access"></div>
+          <div class="no-race-secondary">Pas de courses aujourd’hui</div>
+        </article>
+        <aside class="no-race-side">
+          <article class="panel next-meeting-card"><h2 class="section-title">Prochaine réunion</h2><div class="no-race-big">—</div><p>Programme en cours de chargement</p></article>
+          <article class="panel idfm no-race-mobility"><h2 class="section-title white">Venir à Paris-Vincennes</h2><div class="no-race-mobility-list"></div></article>
+        </aside>
+        <article class="panel no-race-footer"><h2 class="section-title">Prochain rendez-vous</h2><div class="no-race-next-event">Agenda officiel en cours de chargement</div></article>
+      </div>
+    </div>
+    <span class="distance-test-label">DONNÉES TEMPS RÉEL · CHARGEMENT</span>
+  </section>`;
+
+const noRaceIdle = () => `
+  <section class="screen">
+    ${header({meeting:'PARIS-VINCENNES', races:'PAS DE COURSES'})}
+    <div class="workspace">
+      <div class="no-race-idle-layout">
+        <article class="panel no-race-idle-main">
+          <div class="eyeline">Hippodrome Paris-Vincennes</div>
+          <h1>Pas de courses aujourd’hui</h1>
+          <p>Retrouvez les prochains rendez-vous et les informations utiles de l’hippodrome.</p>
+          <div class="next-meeting-focus"><span>Prochaine réunion</span><strong>Chargement…</strong><small>Programme officiel</small></div>
+        </article>
+        <article class="panel no-race-events"><h2 class="section-title">Prochains événements</h2><div class="no-race-events-list"></div></article>
+        <article class="panel idfm no-race-access"><h2 class="section-title white">Venir à Paris-Vincennes</h2><div class="no-race-access-grid"></div></article>
+        <article class="panel no-race-service"><h2 class="section-title">Information visiteurs</h2><p>Accès, programme et mobilité sont actualisés automatiquement.</p></article>
+      </div>
+    </div>
+    <span class="distance-test-label">DONNÉES TEMPS RÉEL · CHARGEMENT</span>
+  </section>`;
+
+const renderers = { arrivee: arrival, reunion: meeting, transition, sortie: exit, incident_rer_a: incidentRer, incident_bus: incidentBus, no_race_event: noRaceEvent, no_race_idle: noRaceIdle };
 document.getElementById('app').innerHTML = (renderers[mode] || arrival)();
 
 function fitRecipeScreen() {
@@ -214,13 +257,17 @@ const keyboardModes = {
   '3': 'transition',
   '4': 'sortie',
   '5': 'incident_rer_a',
-  '6': 'incident_bus'
+  '6': 'incident_bus',
+  '7': 'no_race_event',
+  '8': 'no_race_idle',
+  '0': 'auto'
 };
 
 window.addEventListener('keydown', (event) => {
   const nextMode = keyboardModes[event.key];
   if (!nextMode) return;
   const url = new URL(window.location.href);
-  url.searchParams.set('mode', nextMode);
+  if (nextMode === 'auto') url.searchParams.delete('mode');
+  else url.searchParams.set('mode', nextMode);
   window.location.href = url.toString();
 });
