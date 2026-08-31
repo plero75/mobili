@@ -1283,3 +1283,164 @@ body { background: #dce4ee; }
   background: #dcf7d5;
   color: #2d8618;
 }
+
+/* Référence tableau événementiel — clair en fond, fort en information */
+.header {
+  grid-template-columns: auto minmax(460px, 1fr) auto auto auto;
+  gap: 28px;
+  color: #ffffff;
+  background:
+    linear-gradient(90deg, #061b38 0%, #08254a 54%, #04152d 100%);
+  box-shadow: 0 18px 42px rgba(18, 35, 57, .20);
+}
+
+.page-title {
+  min-width: 0;
+  padding-left: 28px;
+  border-left: 1px solid rgba(255,255,255,.26);
+}
+.page-title strong {
+  display: block;
+  color: #ffffff;
+  font-size: 38px;
+  line-height: .96;
+  font-weight: 920;
+  letter-spacing: .015em;
+  text-transform: uppercase;
+}
+.page-title span {
+  display: block;
+  margin-top: 10px;
+  color: #83bdf1;
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.header .brand-copy span,
+.header .brand-copy strong,
+.header .meta-value { color: #ffffff; }
+.header .meta-label { color: rgba(255,255,255,.72); }
+.header .meta { border-left-color: rgba(255,255,255,.22); }
+.header .meta-icon { color: #f2b625; }
+
+.screen {
+  background:
+    radial-gradient(circle at 16% 8%, rgba(242,182,37,.24), transparent 19%),
+    radial-gradient(circle at 92% 15%, rgba(0,174,186,.13), transparent 25%),
+    linear-gradient(180deg, #fff8e8 0%, #f3f8fc 42%, #edf3f8 100%);
+}
+
+.arrival-layout {
+  grid-template-rows: 474px 218px 188px;
+  gap: 16px;
+}
+
+.panel {
+  border: 1px solid rgba(11, 44, 82, .2);
+  border-radius: 10px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 16px 34px rgba(26,48,75,.14);
+}
+
+.arrival-countdown {
+  border-radius: 10px;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 82% 27%, rgba(255,255,255,.13), transparent 22%),
+    linear-gradient(145deg, #082a55 0%, #061a37 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.13), 0 18px 40px rgba(12,32,60,.18);
+}
+.arrival-countdown .section-title { color: #ffd23b; }
+.arrival-countdown .kicker,
+.arrival-countdown .race-ref,
+.arrival-countdown .muted { color: rgba(255,255,255,.82); }
+
+.arrival-program {
+  border-radius: 10px;
+  color: #ffffff;
+  background: linear-gradient(145deg, #07264d 0%, #061a37 100%);
+}
+.arrival-program .section-title.white,
+.arrival-program .schedule-row,
+.arrival-program .schedule-row span { color: #ffffff; }
+.arrival-program .schedule-row { border-top-color: rgba(255,255,255,.14); }
+.arrival-program .discipline { color: rgba(255,255,255,.72); }
+.arrival-program .schedule-row.active {
+  color: #061a37;
+  background: linear-gradient(90deg, #ffd334, #f3b918);
+  box-shadow: none;
+}
+.arrival-program .schedule-row.active span,
+.arrival-program .schedule-row.active time,
+.arrival-program .schedule-row.active .discipline { color: #061a37; }
+
+.arrival-highlights {
+  border-radius: 10px;
+  color: #ffffff;
+  background:
+    linear-gradient(145deg, #341357 0%, #102752 100%);
+}
+.arrival-highlights .section-title.white { color: #ffffff; }
+.visitor-cues { gap: 12px; }
+.visitor-cue {
+  min-height: 88px;
+  border-left: 0;
+  border-radius: 8px;
+  background: rgba(255,255,255,.09);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.visitor-cue span { color: #ffd334; }
+.visitor-cue strong { color: #ffffff; }
+.visitor-cue small { color: rgba(255,255,255,.72); }
+
+.arrival-animations,
+.arrival-events {
+  border-radius: 10px;
+  background: #ffffff;
+}
+.arrival-animations {
+  border-top: 7px solid #f2b625;
+}
+.arrival-events {
+  border-top: 7px solid #00aeba;
+}
+
+.weather-plus.compact { grid-template-columns: 134px 1fr; }
+.weather-main {
+  border-radius: 8px;
+  background: #fff0b6;
+}
+.weather-details span {
+  min-height: 52px;
+  border-radius: 8px;
+  background: #f5f8fb;
+}
+
+.road-card {
+  border-radius: 8px;
+  background: #ffffff;
+}
+.road-map { border-radius: 8px; }
+
+.transport-rail {
+  border-radius: 10px;
+  grid-template-columns: 310px 1fr;
+  background: #ffffff;
+}
+.rail-label {
+  color: #ffffff;
+  background: linear-gradient(145deg, #07315e, #061a37);
+  box-shadow: inset 7px 0 0 #f2b625;
+}
+.rail-label .section-title.white { color: #ffffff; }
+.rail-row { border-top-color: #d8e1ec; }
+.rail-main strong { color: #09223f; }
+.rail-main span { color: #53687f; }
+.rail-time { color: #188700; }
+
+.status {
+  color: #ffffff;
+  background: #2c9a2c;
+}
