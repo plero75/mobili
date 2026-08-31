@@ -14,6 +14,7 @@ const brand = () => `<div class="brand">${icons.brand}<div class="brand-copy"><s
 const header = ({time='15:32', weather='21°C', weatherLabel='Ensoleillé', date='DIMANCHE 15 JUIN', meeting='RÉUNION 1', races='8 COURSES'} = {}) => `
   <header class="header">
     ${brand()}
+    <div class="page-title"><strong>Bienvenue à Paris-Vincennes</strong><span>Courses · événements · mobilité</span></div>
     <div class="meta">${icons.weather}<div><span class="meta-value">${weather}</span><span class="meta-label">${weatherLabel}</span></div></div>
     <div class="meta"><div><span class="meta-value">${time}</span><span class="meta-label">${date}</span></div></div>
     <div class="meta"><div><span class="meta-value">${meeting}</span><span class="meta-label">${races}</span></div></div>
