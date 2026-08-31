@@ -189,7 +189,7 @@ body { font-variant-numeric: tabular-nums; }
 .highlight-copy strong { display: block; font-size: 21px; }
 .highlight-copy span { display: block; margin-top: 5px; color: var(--muted); font-size: 17px; }
 .arrival-animations { grid-column: 1; grid-row: 2; }
-.arrival-events { grid-column: 2 / 4; grid-row: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.arrival-events { grid-column: 2 / 4; grid-row: 2; display: grid; grid-template-columns: .9fr 1.1fr; gap: 18px; }
 .event { display: grid; grid-template-columns: 82px 1fr; gap: 17px; align-items: center; }
 .event + .event { border-left: 1px solid rgba(255,255,255,.18); padding-left: 24px; }
 .event-date { font-size: 21px; color: var(--pv-gold); font-weight: 800; }
@@ -436,6 +436,156 @@ body { font-variant-numeric: tabular-nums; }
 .no-race-agenda .no-race-next-event { padding: 34px 33px; border-left: 1px solid rgba(255,255,255,.2); }
 .no-race-next-event strong { display: block; margin-top: 20px; font-size: 27px; line-height: 1.25; }
 
+.weather-plus {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+.weather-plus.compact {
+  margin-top: 17px;
+  grid-template-columns: 125px 1fr;
+}
+.weather-main {
+  min-height: 138px;
+  display: grid;
+  align-content: center;
+  padding: 18px;
+  border-radius: 24px 48px 24px 24px;
+  background: rgba(242, 182, 37, .13);
+  box-shadow: inset 0 0 0 1px rgba(242,182,37,.22);
+}
+.weather-main strong {
+  display: block;
+  color: var(--pv-gold);
+  font-size: 52px;
+  font-weight: 880;
+  letter-spacing: -.05em;
+  line-height: .95;
+}
+.weather-main span {
+  display: block;
+  margin-top: 10px;
+  color: #f4dfaa;
+  font-size: 16px;
+  line-height: 1.15;
+}
+.weather-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.weather-details span {
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  padding: 0 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.07);
+  color: #d2deea;
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.brief-stack {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.brief-item {
+  min-width: 0;
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.07);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.055);
+}
+.brief-item b {
+  display: block;
+  color: var(--pv-gold);
+  font-size: 15px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.brief-item span {
+  display: block;
+  margin-top: 7px;
+  color: var(--white);
+  font-size: 22px;
+  font-weight: 760;
+  line-height: 1.16;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.brief-item small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.meeting-briefs {
+  margin-top: 17px;
+  grid-template-columns: 1fr 1fr;
+}
+.meeting-briefs .brief-item span { font-size: 18px; }
+.meeting-briefs .brief-item small { display: none; }
+
+.road-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 285px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 18px 18px 18px 22px;
+  border-radius: 26px 60px 26px 26px;
+  background:
+    radial-gradient(circle at 92% 8%, rgba(117, 192, 67, .16), transparent 40%),
+    linear-gradient(145deg, rgba(37,48,59,.98), rgba(28,40,52,.98));
+  box-shadow: inset 0 0 0 1px rgba(199,215,230,.16);
+}
+.road-copy p {
+  margin: 12px 0 0;
+  color: #d5dee8;
+  font-size: 19px;
+  line-height: 1.25;
+}
+.road-source {
+  margin-top: 14px;
+  color: #9fadb9;
+  font-size: 14px;
+  line-height: 1.25;
+}
+.road-map {
+  width: 100%;
+  height: 184px;
+  border-radius: 22px 48px 22px 22px;
+  background:
+    radial-gradient(circle at 45% 47%, rgba(242,182,37,.14), transparent 16%),
+    linear-gradient(145deg, #172634, #111c27);
+}
+.road {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.main-road { stroke: #75c043; stroke-width: 15; }
+.muted-road { stroke: #f2b625; stroke-width: 10; opacity: .8; }
+.joinville-road { stroke: #79a7d8; stroke-width: 8; opacity: .9; }
+.road-point { fill: #f0f0f0; stroke: #111c27; stroke-width: 4; }
+.road-point.venue { fill: var(--pv-gold); }
+.road-map text {
+  fill: #eef4fa;
+  font-size: 22px;
+  font-weight: 800;
+}
+
 .no-race-access { padding: 28px 31px; }
 .no-race-access-grid { margin-top: 19px; display: grid; gap: 8px; }
 .no-race-access-item { display: grid; grid-template-columns: 108px 1fr auto; align-items: center; min-height: 58px; padding: 11px 16px; background: rgba(0,0,0,.18); }
@@ -512,11 +662,11 @@ svg { display: block; }
 
 /* Modernisation 2026 — surfaces plus organiques et information voyageurs renforcée */
 :root {
-  --pv-panel: #0a213d;
-  --pv-panel-soft: #102b4d;
+  --pv-panel: #0b2440;
+  --pv-panel-soft: #123154;
   --line: rgba(126, 157, 190, .26);
   --idfm: #273440;
-  --shadow: 0 22px 55px rgba(0, 7, 19, .34);
+  --shadow: 0 22px 55px rgba(0, 7, 19, .31);
   --radius: 30px;
   --radius-hero: 30px 92px 30px 30px;
 }
@@ -563,7 +713,9 @@ svg { display: block; }
 .panel {
   border-color: var(--line);
   border-radius: var(--radius);
-  background: linear-gradient(145deg, rgba(14, 43, 75, .98), rgba(7, 27, 51, .98));
+  background:
+    radial-gradient(circle at 100% 0%, rgba(242, 182, 37, .06), transparent 35%),
+    linear-gradient(145deg, rgba(14, 48, 82, .98), rgba(7, 30, 55, .98));
   box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.035);
 }
 .panel.idfm {
@@ -593,6 +745,7 @@ svg { display: block; }
 .arrival-program { border-radius: 74px 30px 30px 30px; }
 .arrival-highlights { border-radius: 30px 30px 74px 30px; }
 .arrival-events { border-radius: 30px 72px 30px 30px; }
+.arrival-events.panel { padding: 18px; align-items: stretch; }
 .transport-rail {
   border-radius: 34px;
   background: linear-gradient(100deg, #2c3945, #202b36);
