@@ -57,11 +57,10 @@ const arrival = () => `
           ].map((r,i)=>`<div class="schedule-row ${i===0?'active':''}"><time>${r[0]}</time><span class="race">${r[1]}</span><span>${r[2]}</span><span class="discipline">${r[3]}</span></div>`).join('')}</div>
         </article>
         <article class="panel arrival-highlights">
-          <h2 class="section-title white">Aujourd’hui</h2>
-          <div class="highlight-item"><time class="highlight-time">13:30</time><div class="highlight-copy"><strong>Ouverture des animations</strong><span>Village enfants et jeux en bois</span></div></div>
-          <div class="highlight-item"><time class="highlight-time">15:30</time><div class="highlight-copy"><strong>Visite des écuries</strong><span>Départ depuis la guérite ronde</span></div></div>
-          <div class="highlight-item"><time class="highlight-time">17:15</time><div class="highlight-copy"><strong>Rencontre avec un driver</strong><span>Podium du Grand Hall</span></div></div>
-          <div class="highlight-item"><time class="highlight-time">18:55</time><div class="highlight-copy"><strong>Fin de la réunion</strong><span>Informations retour sur cet écran</span></div></div>
+          <h2 class="section-title white">À savoir</h2>
+          <div class="highlight-item"><time class="highlight-time">Réunion</time><div class="highlight-copy"><strong>6 courses au programme</strong><span>Dernière course prévue à 18:52</span></div></div>
+          <div class="highlight-item"><time class="highlight-time">Accès</time><div class="highlight-copy"><strong>Joinville-le-Pont à 12 min</strong><span>RER A conseillé pour Paris et l’ouest</span></div></div>
+          <div class="highlight-item"><time class="highlight-time">Sur site</time><div class="highlight-copy"><strong>Animations ouvertes</strong><span>Informations pratiques actualisées ici</span></div></div>
         </article>
         <article class="panel arrival-animations">
           <h2 class="section-title">Temps forts</h2>
@@ -72,12 +71,12 @@ const arrival = () => `
           <div class="event"><div class="event-date">27–29 NOV.</div><div><div class="event-name">Mer & Vigne</div><div class="event-note">Producteurs, gastronomie et découvertes</div></div></div>
         </article>
         <article class="panel idfm transport-rail">
-          <div class="rail-label"><div><strong class="section-title white">Mobilité</strong><span class="status green" style="margin-top:10px">Situation normale</span></div></div>
-          <div class="rail-item">${modeId('rer','A')}<div><strong>RER A</strong><span>Trafic normal</span></div></div>
-          <div class="rail-item">${modeId('bus','77')}<div><strong>Gare de Lyon</strong><span>7 min · puis 19 min</span></div></div>
-          <div class="rail-item">${modeId('bus','101')}<div><strong>Joinville-le-Pont</strong><span>12 min · puis 26 min</span></div></div>
-          <div class="rail-item">${icons.bike}<div><strong>Hippodrome</strong><span>14 vélos</span></div></div>
-          <div class="rail-item">${icons.bike}<div><strong>École du Breuil</strong><span>19 vélos</span></div></div>
+          <div class="rail-label"><div><strong class="section-title white">Information voyageurs</strong><span class="status green" style="margin-top:10px">Trafic normal</span></div></div>
+          <div class="rail-list">
+            <div class="rail-row">${modeId('rer','A')}<div class="rail-main"><strong>Joinville-le-Pont</strong><span>Direction Paris et l’ouest · 12 min à pied</span></div><div class="rail-time">Trafic normal</div></div>
+            <div class="rail-row">${modeId('bus','77')}<div class="rail-main"><strong>Hippodrome de Vincennes</strong><span>Direction Gare de Lyon</span></div><div class="rail-time">7 min</div></div>
+            <div class="rail-row">${modeId('bus','101')}<div class="rail-main"><strong>École du Breuil</strong><span>Direction Joinville-le-Pont RER</span></div><div class="rail-time">12 min</div></div>
+          </div>
         </article>
       </div>
     </div>
