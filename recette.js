@@ -57,10 +57,12 @@ const arrival = () => `
           ].map((r,i)=>`<div class="schedule-row ${i===0?'active':''}"><time>${r[0]}</time><span class="race">${r[1]}</span><span>${r[2]}</span><span class="discipline">${r[3]}</span></div>`).join('')}</div>
         </article>
         <article class="panel arrival-highlights">
-          <h2 class="section-title white">À savoir</h2>
-          <div class="highlight-item"><time class="highlight-time">Réunion</time><div class="highlight-copy"><strong>6 courses au programme</strong><span>Dernière course prévue à 18:52</span></div></div>
-          <div class="highlight-item"><time class="highlight-time">Accès</time><div class="highlight-copy"><strong>Joinville-le-Pont à 12 min</strong><span>RER A conseillé pour Paris et l’ouest</span></div></div>
-          <div class="highlight-item"><time class="highlight-time">Sur site</time><div class="highlight-copy"><strong>Animations ouvertes</strong><span>Informations pratiques actualisées ici</span></div></div>
+          <h2 class="section-title white">Repères visiteurs</h2>
+          <div class="visitor-cues">
+            <div class="visitor-cue"><span>Courses</span><strong>6 au programme</strong><small>Dernière course à 18:52</small></div>
+            <div class="visitor-cue"><span>Retour</span><strong>RER A conseillé</strong><small>Joinville-le-Pont à 12 min</small></div>
+            <div class="visitor-cue"><span>Sur site</span><strong>Animations ouvertes</strong><small>Infos pratiques actualisées ici</small></div>
+          </div>
         </article>
         <article class="panel arrival-animations">
           <h2 class="section-title">Temps forts</h2>
