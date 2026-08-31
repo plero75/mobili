@@ -108,7 +108,7 @@ const meeting = () => `
           <div class="flash"><strong>À l’instant à Vincennes</strong><p>Très belle victoire de Nat King Cole dans le Prix de Fontenay.</p></div>
         </article>
         <div class="meeting-bottom">
-          <article class="panel"><h2 class="section-title">Animations & temps forts</h2><div class="list-compact"><div><time>15:45</time><span>Visite des écuries</span></div><div><time>16:30</time><span>Animation musicale · Terrasse</span></div><div><time>17:50</time><span>Photo souvenir à l’arrivée</span></div></div></article>
+        <article class="panel"><h2 class="section-title">Brèves à l’écran</h2><div class="brief-stack meeting-briefs"><div class="brief-item"><b>À retenir</b><span>La prochaine course devient le repère central de la réunion.</span></div><div class="brief-item"><b>Aussi</b><span>Les infos pratiques restent visibles sans prendre le dessus.</span></div></div></article>
           <article class="panel"><h2 class="section-title">Prochain événement</h2><div class="event" style="margin-top:28px"><div class="event-date">20 SEPT.</div><div><div class="event-name">Grande brocante</div><div class="event-note">Entrée libre · Parvis</div></div></div></article>
           <article class="panel"><h2 class="section-title white">Mobilité · situation normale</h2><div class="mini-transports">
             <div class="mini-transport">${modeId('rer','A')}<div class="mini-copy"><span class="mini-stop">Joinville-le-Pont</span><div class="sub">Vers Paris et l’ouest</div></div><div class="minutes">12 min à pied</div></div>
@@ -227,14 +227,14 @@ const noRaceIdle = () => `
       <div class="no-race-idle-layout">
         <article class="panel no-race-news-main">
           <div class="no-race-status">Pas de courses aujourd’hui</div>
-          <div class="editorial-label">L’essentiel de l’actualité</div>
+          <div class="editorial-label">Les brèves du moment</div>
           <h1 class="no-race-news-title">Actualités en cours de chargement</h1>
           <p class="no-race-news-summary">Les principaux titres de la journée vont s’afficher automatiquement.</p>
           <div class="no-race-news-meta"><span>FRANCEINFO</span><time>À L’INSTANT</time></div>
           <div class="no-race-news-strip" aria-label="Autres titres"></div>
         </article>
         <article class="panel no-race-horoscope">
-          <div class="horoscope-heading"><h2>Horoscope du jour</h2><span>Divertissement</span></div>
+          <div class="horoscope-heading"><h2>Pause horoscope</h2><span>Divertissement</span></div>
           <div class="horoscope-grid"></div>
           <div class="horoscope-progress" aria-hidden="true"><i></i><i></i><i></i></div>
         </article>
