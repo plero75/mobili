@@ -48,6 +48,9 @@
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
   const esc = value => String(value ?? "").replace(/[&<>'"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c]));
+  const modeId = (kind, line) => kind === "rer"
+    ? `<div class="transport-id"><span class="mode-badge">RER</span><span class="line-badge round rer">${esc(line)}</span></div>`
+    : `<div class="transport-id"><span class="mode-badge">BUS</span><span class="line-badge bus">${esc(line)}</span></div>`;
   const scalar = value => value && typeof value === "object" && "value" in value ? scalar(value.value) : (value ?? "");
   const clean = value => String(scalar(value)).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   const fmtTime = value => {
@@ -491,6 +494,13 @@
     if (span) span.textContent = sub;
   }
 
+  function passengerRailRowHTML(kind, line, stop, direction, time, footnote = "") {
+    return `<div class="rail-row">${modeId(kind, line)}
+      <div class="rail-main"><strong>${esc(stop)}</strong><span>${esc(direction)}${footnote ? ` · ${esc(footnote)}` : ""}</span></div>
+      <div class="rail-time">${esc(time)}</div>
+    </div>`;
+  }
+
   function renderArrival() {
     const race = nextRace() || state.meeting?.races[0];
     const count = q(".arrival-countdown .big-count");
@@ -501,21 +511,31 @@
     if (schedule) schedule.innerHTML = scheduleHTML(state.meeting?.races || [], race);
 
     const highlights = q(".arrival-highlights");
-    if (highlights) highlights.innerHTML = `<h2 class="section-title white">Prochaines courses</h2>` + (state.meeting?.races.slice(0, 4).map(item => `<div class="highlight-item"><time class="highlight-time">${fmtTime(item.date)}</time><div class="highlight-copy"><strong>C${item.number} · ${esc(item.title)}</strong><span>${esc(item.discipline)}${item.distance ? ` · ${item.distance.toLocaleString("fr-FR")} m` : ""}</span></div></div>`).join("") || `<div class="live-empty">Chargement du programme officiel…</div>`);
+    if (highlights) {
+      const races = state.meeting?.races || [];
+      const last = races.at(-1);
+      const event = todayEvent();
+      highlights.innerHTML = `<h2 class="section-title white">À savoir</h2>` + [
+        `<div class="highlight-item"><time class="highlight-time">Réunion</time><div class="highlight-copy"><strong>${races.length ? `${races.length} courses au programme` : "Programme en attente"}</strong><span>${last ? `Dernière course prévue à ${fmtTime(last.date)}` : "Mise à jour automatique en cours"}</span></div></div>`,
+        `<div class="highlight-item"><time class="highlight-time">Accès</time><div class="highlight-copy"><strong>Joinville-le-Pont à 12 min</strong><span>RER A conseillé pour Paris et l’ouest</span></div></div>`,
+        event ? `<div class="highlight-item"><time class="highlight-time">Sur site</time><div class="highlight-copy"><strong>${esc(event.title)}</strong><span>${esc(event.subtitle || "Agenda officiel Paris-Vincennes")}</span></div></div>` : `<div class="highlight-item"><time class="highlight-time">Sur site</time><div class="highlight-copy"><strong>Infos pratiques actualisées</strong><span>Météo, accès et transports suivent en direct</span></div></div>`
+      ].join("");
+    }
     const animations = q(".arrival-animations");
     if (animations) animations.innerHTML = weatherPlusHTML(true);
     const events = q(".arrival-events");
-    if (events) events.innerHTML = `<div class="brief-stack">${editorialBriefsHTML(2)}</div>${roadMapHTML()}`;
+    if (events) events.innerHTML = roadMapHTML();
 
-    const rail = qa(".transport-rail .rail-item");
+    const railList = q(".transport-rail .rail-list");
     const rer = state.rer[0], b77 = state.bus77[0], b101 = state.bus101[0];
-    if (rail[0]) liveRailItem(rail[0], "RER A", state.incidents.A.length ? "Information trafic active" : passageLabel(rer));
-    if (rail[1]) liveRailItem(rail[1], "Gare de Lyon", b77 ? `${passageLabel(b77)} · puis ${passageLabel(state.bus77[1])}` : "Donnée indisponible");
-    if (rail[2]) liveRailItem(rail[2], "Joinville-le-Pont", b101 ? `${passageLabel(b101)} · puis ${passageLabel(state.bus101[1])}` : "Donnée indisponible");
-    if (rail[3]) liveRailItem(rail[3], "Hippodrome", state.velib.hippodrome ? `${state.velib.hippodrome.total} vélos · ${state.velib.hippodrome.docks} places` : "Donnée indisponible");
-    if (rail[4]) liveRailItem(rail[4], "École du Breuil", state.velib.breuil ? `${state.velib.breuil.total} vélos · ${state.velib.breuil.docks} places` : "Donnée indisponible");
+    const rerMajor = state.incidents.A.some(isMajorNow);
+    if (railList) railList.innerHTML = [
+      passengerRailRowHTML("rer", "A", "Joinville-le-Pont", rerMajor ? "Perturbation majeure en cours" : "Direction Paris et l’ouest", rerMajor ? "Voir alternatives" : passageLabel(rer), "12 min à pied"),
+      passengerRailRowHTML("bus", "77", "Hippodrome de Vincennes", "Direction Gare de Lyon", b77 ? passageLabel(b77) : "Donnée indisponible"),
+      passengerRailRowHTML("bus", "101", "École du Breuil", "Direction Joinville-le-Pont RER", b101 ? passageLabel(b101) : "Donnée indisponible")
+    ].join("");
     const status = q(".transport-rail .status");
-    if (status) status.textContent = trafficNormal() ? "Situation normale" : "Information trafic active";
+    if (status) status.textContent = trafficNormal() ? "Trafic normal" : "Perturbation majeure";
   }
 
   function renderMeeting() {
