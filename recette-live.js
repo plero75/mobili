@@ -515,11 +515,11 @@
       const races = state.meeting?.races || [];
       const last = races.at(-1);
       const event = todayEvent();
-      highlights.innerHTML = `<h2 class="section-title white">À savoir</h2>` + [
-        `<div class="highlight-item"><time class="highlight-time">Réunion</time><div class="highlight-copy"><strong>${races.length ? `${races.length} courses au programme` : "Programme en attente"}</strong><span>${last ? `Dernière course prévue à ${fmtTime(last.date)}` : "Mise à jour automatique en cours"}</span></div></div>`,
-        `<div class="highlight-item"><time class="highlight-time">Accès</time><div class="highlight-copy"><strong>Joinville-le-Pont à 12 min</strong><span>RER A conseillé pour Paris et l’ouest</span></div></div>`,
-        event ? `<div class="highlight-item"><time class="highlight-time">Sur site</time><div class="highlight-copy"><strong>${esc(event.title)}</strong><span>${esc(event.subtitle || "Agenda officiel Paris-Vincennes")}</span></div></div>` : `<div class="highlight-item"><time class="highlight-time">Sur site</time><div class="highlight-copy"><strong>Infos pratiques actualisées</strong><span>Météo, accès et transports suivent en direct</span></div></div>`
-      ].join("");
+      highlights.innerHTML = `<h2 class="section-title white">Repères visiteurs</h2><div class="visitor-cues">` + [
+        `<div class="visitor-cue"><span>Courses</span><strong>${races.length ? `${races.length} au programme` : "Programme en attente"}</strong><small>${last ? `Dernière course à ${fmtTime(last.date)}` : "Mise à jour automatique en cours"}</small></div>`,
+        `<div class="visitor-cue"><span>Retour</span><strong>RER A conseillé</strong><small>Joinville-le-Pont à 12 min</small></div>`,
+        event ? `<div class="visitor-cue"><span>Sur site</span><strong>${esc(event.title)}</strong><small>${esc(event.subtitle || "Agenda officiel Paris-Vincennes")}</small></div>` : `<div class="visitor-cue"><span>Sur site</span><strong>Infos pratiques</strong><small>Météo, accès et transports en direct</small></div>`
+      ].join("") + `</div>`;
     }
     const animations = q(".arrival-animations");
     if (animations) animations.innerHTML = weatherPlusHTML(true);
