@@ -282,19 +282,19 @@ body { font-variant-numeric: tabular-nums; }
 }
 .exit-head h1 { margin: 0; font-size: 46px; text-transform: uppercase; }
 .exit-head p { margin: 0; color: var(--muted); font-size: 20px; }
-.exit-layout { height: calc(100% - 100px); display: grid; grid-template-columns: 1120px 726px; gap: 15px; }
-.rer-main { display: grid; grid-template-rows: auto auto 1fr; padding: 28px 32px; }
+.exit-layout { height: calc(100% - 112px); display: grid; grid-template-columns: 1098px 708px; gap: 15px; }
+.rer-main { display: grid; grid-template-rows: auto auto 1fr; padding: 24px 30px; }
 .rer-main-head { display: flex; justify-content: space-between; align-items: center; }
 .rer-main .transport-name { font-size: 32px; }
 .rer-main .walk { font-size: 20px; }
-.rer-departures { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 30px; }
-.rer-departure { padding: 22px; background: rgba(0,0,0,.18); border-left: 5px solid transparent; }
+.rer-departures { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 22px; }
+.rer-departure { padding: 18px; background: rgba(0,0,0,.18); border-left: 5px solid transparent; }
 .rer-departure.best { border-left-color: var(--green); background: rgba(117,192,67,.08); }
 .rer-departure .hour { font-size: 67px; font-weight: 850; }
 .rer-departure .delay { margin-left: 13px; font-size: 22px; color: var(--muted); }
 .rer-departure h3 { margin: 15px 0 5px; font-size: 24px; }
 .rer-departure p { margin: 0; color: var(--muted); font-size: 17px; }
-.stops { align-self: end; margin-top: 25px; border-top: 1px solid rgba(255,255,255,.2); padding-top: 24px; }
+.stops { align-self: end; margin-top: 18px; border-top: 1px solid rgba(255,255,255,.2); padding-top: 18px; }
 .stops-title { font-size: 17px; text-transform: uppercase; color: var(--muted); letter-spacing: .05em; }
 .stop-line { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 28px; }
 .stop-line::before { content: ""; position: absolute; top: 7px; left: 7%; right: 7%; height: 4px; background: var(--rer-a); }
@@ -302,14 +302,14 @@ body { font-variant-numeric: tabular-nums; }
 .stop::before { content: ""; position: absolute; top: 0; left: 50%; width: 18px; height: 18px; transform: translateX(-50%); border-radius: 50%; background: var(--idfm-white); border: 4px solid var(--rer-a); }
 .stop strong { display: block; font-size: 20px; }
 .stop span { display: block; margin-top: 5px; color: var(--muted); }
-.exit-side { display: grid; grid-template-rows: 1fr 1fr .95fr; gap: 15px; }
-.bus-main { padding: 23px 26px; background: var(--idfm); border: 1px solid #4a5d70; }
+.exit-side { display: grid; grid-template-rows: 1fr 1fr .86fr; gap: 13px; }
+.bus-main { padding: 20px 24px; background: var(--idfm); border: 1px solid #4a5d70; }
 .bus-main-head { display: flex; align-items: center; justify-content: space-between; }
-.bus-main .passages { display: flex; gap: 34px; align-items: baseline; margin-top: 21px; }
+.bus-main .passages { display: flex; gap: 24px; align-items: baseline; margin-top: 16px; }
 .bus-main .passages strong { font-size: 56px; }
 .bus-main .passages span { color: var(--muted); font-size: 22px; }
-.bus-main .route { margin-top: 16px; font-size: 16px; color: var(--muted); }
-.velib-main { padding: 23px 26px; background: var(--idfm); border: 1px solid #4a5d70; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.bus-main .route { margin-top: 12px; font-size: 16px; color: var(--muted); }
+.velib-main { padding: 20px 24px; background: var(--idfm); border: 1px solid #4a5d70; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .velib-station + .velib-station { border-left: 1px solid rgba(255,255,255,.2); padding-left: 22px; }
 .velib-station h3 { margin: 0; font-size: 21px; }
 .velib-numbers { display: flex; align-items: baseline; gap: 10px; margin-top: 15px; }
