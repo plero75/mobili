@@ -3,7 +3,7 @@
 
   const PROXY = "https://ratp-proxy.hippodrome-proxy42.workers.dev/?url=";
   const PRIM = "https://prim.iledefrance-mobilites.fr/marketplace";
-  const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=48.835&longitude=2.440&current_weather=true&timezone=Europe%2FParis";
+  const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=48.835&longitude=2.440&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FParis";
   const NEWS_RSS_URL = "https://www.francetvinfo.fr/titres.rss";
   const EVENTS_URL = "https://www.letrot.com/hippodromes/vincennes/7500";
   const EVENTS_FALLBACK_URL = "https://f.dlt.letrot.com/f/lp/nocturnes-kermesse-festival/p02qtztn";
@@ -264,8 +264,23 @@
 
   async function loadWeather() {
     const data = await fetchCandidates([WEATHER_URL]);
-    const current = data?.current_weather;
-    return current ? { temp: `${Math.round(current.temperature)}°C`, label: WEATHER[current.weathercode] || "Météo locale" } : null;
+    const current = data?.current;
+    if (!current) return null;
+    const code = current.weather_code ?? current.weathercode;
+    const windDirection = current.wind_direction_10m;
+    const windLabels = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"];
+    const wind = Number.isFinite(windDirection) ? windLabels[Math.round(windDirection / 45) % 8] : "—";
+    return {
+      temp: `${Math.round(current.temperature_2m)}°C`,
+      label: WEATHER[code] || "Météo locale",
+      felt: `${Math.round(current.apparent_temperature)}°C ressenti`,
+      humidity: `${Math.round(current.relative_humidity_2m)}% humidité`,
+      rain: `${Math.round(current.precipitation || 0)} mm pluie`,
+      wind: `${Math.round(current.wind_speed_10m || 0)} km/h ${wind}`,
+      max: data?.daily?.temperature_2m_max?.[0] != null ? `${Math.round(data.daily.temperature_2m_max[0])}°` : "—",
+      min: data?.daily?.temperature_2m_min?.[0] != null ? `${Math.round(data.daily.temperature_2m_min[0])}°` : "—",
+      rainRisk: data?.daily?.precipitation_probability_max?.[0] != null ? `${Math.round(data.daily.precipitation_probability_max[0])}% risque pluie` : "Risque pluie en attente"
+    };
   }
 
   async function loadNews() {
@@ -374,6 +389,53 @@
   function trafficNormal() { return !state.incidents.A.some(isMajorNow) && !state.incidents[77].some(isMajorNow) && !state.incidents[101].some(isMajorNow); }
   function todayEvent() { const today = new Date(); today.setHours(12,0,0,0); return state.events.find(event => today >= event.start && today <= event.end) || null; }
 
+  function weatherPlusHTML(compact = false) {
+    const weather = state.weather;
+    if (!weather) return `<h2 class="section-title">Météo sur site</h2><div class="live-empty">Météo locale en cours de chargement…</div>`;
+    return `<h2 class="section-title">Météo sur site</h2>
+      <div class="weather-plus ${compact ? "compact" : ""}">
+        <div class="weather-main"><strong>${esc(weather.temp)}</strong><span>${esc(weather.label)}</span></div>
+        <div class="weather-details">
+          <span>${esc(weather.felt)}</span>
+          <span>${esc(weather.wind)}</span>
+          <span>${esc(weather.rainRisk)}</span>
+          <span>Min ${esc(weather.min)} · Max ${esc(weather.max)}</span>
+        </div>
+      </div>`;
+  }
+
+  function roadMapHTML() {
+    return `<div class="road-card">
+      <div class="road-copy">
+        <h2 class="section-title white">Accès routiers</h2>
+        <p>Porte Dorée, A4, Joinville-le-Pont : points à surveiller avant la sortie du site.</p>
+        <div class="road-source">Carte locale · flux Bison Futé à connecter en production</div>
+      </div>
+      <svg class="road-map" viewBox="0 0 520 210" aria-label="Carte routière simplifiée autour de l’hippodrome">
+        <path class="road muted-road" d="M20 152 C110 132 168 140 245 112 S394 62 500 82"/>
+        <path class="road main-road" d="M18 82 C92 70 144 78 214 95 S340 147 500 124"/>
+        <path class="road joinville-road" d="M282 28 C272 74 276 120 301 188"/>
+        <circle class="road-point venue" cx="232" cy="108" r="12"/>
+        <circle class="road-point" cx="95" cy="76" r="8"/>
+        <circle class="road-point" cx="307" cy="151" r="8"/>
+        <text x="208" y="88">Hippodrome</text>
+        <text x="56" y="55">Porte Dorée</text>
+        <text x="322" y="172">Joinville</text>
+        <text x="382" y="108">A4</text>
+      </svg>
+    </div>`;
+  }
+
+  function editorialBriefsHTML(limit = 2) {
+    const news = state.news.slice(0, Math.max(limit, 1));
+    if (!news.length) return `<div class="brief-item"><b>À savoir</b><span>Les brèves s’affichent dès réception du fil d’actualité.</span></div>`;
+    return news.map((item, index) => `<div class="brief-item">
+      <b>${index ? "Aussi" : "À retenir"}</b>
+      <span>${esc(item.title)}</span>
+      <small>${esc((item.summary || "").slice(0, 118))}</small>
+    </div>`).join("");
+  }
+
   function automaticMode() {
     if (state.incidents.A.some(isMajorNow)) return "incident_rer_a";
     if (state.incidents[77].some(isMajorNow) || state.incidents[101].some(isMajorNow)) return "incident_bus";
@@ -441,9 +503,9 @@
     const highlights = q(".arrival-highlights");
     if (highlights) highlights.innerHTML = `<h2 class="section-title white">Prochaines courses</h2>` + (state.meeting?.races.slice(0, 4).map(item => `<div class="highlight-item"><time class="highlight-time">${fmtTime(item.date)}</time><div class="highlight-copy"><strong>C${item.number} · ${esc(item.title)}</strong><span>${esc(item.discipline)}${item.distance ? ` · ${item.distance.toLocaleString("fr-FR")} m` : ""}</span></div></div>`).join("") || `<div class="live-empty">Chargement du programme officiel…</div>`);
     const animations = q(".arrival-animations");
-    if (animations) animations.innerHTML = `<h2 class="section-title">Réunion officielle</h2><div class="list-compact"><div><time>${state.meeting ? fmtDate(state.meeting.date).split(" ").slice(1).join(" ") : "—"}</time><span>${state.meeting ? `${state.meeting.races.length} courses programmées` : "Programme momentanément indisponible"}</span></div><div><time>${state.meeting?.races[0] ? fmtTime(state.meeting.races[0].date) : "—"}</time><span>Première course</span></div><div><time>${lastRace() ? fmtTime(lastRace().date) : "—"}</time><span>Dernière course</span></div></div>`;
+    if (animations) animations.innerHTML = weatherPlusHTML(true);
     const events = q(".arrival-events");
-    if (events) events.innerHTML = `<div class="event"><div class="event-date">PROGRAMME</div><div><div class="event-name">Vincennes en direct</div><div class="event-note">Horaires et statut actualisés automatiquement</div></div></div><div class="event"><div class="event-date">MOBILITÉ</div><div><div class="event-name">Information voyageurs</div><div class="event-note">Passages, perturbations et disponibilité Vélib’</div></div></div>`;
+    if (events) events.innerHTML = `<div class="brief-stack">${editorialBriefsHTML(2)}</div>${roadMapHTML()}`;
 
     const rail = qa(".transport-rail .rail-item");
     const rer = state.rer[0], b77 = state.bus77[0], b101 = state.bus101[0];
@@ -468,8 +530,8 @@
     const result = q(".last-result");
     const previous = previousRace();
     if (result) result.innerHTML = previous ? `<h2 class="section-title white">Dernière course · C${previous.number}</h2><div class="winner"><div class="winner-number">${previous.result[0] || "—"}</div><div class="winner-copy"><div class="place">${previous.result.length ? "ARRIVÉE PUBLIÉE" : "RÉSULTAT EN ATTENTE"}</div><h2>${esc(previous.title)}</h2><p>${fmtTime(previous.date)} · ${esc(previous.discipline)}</p><p>${previous.result.length ? `Ordre : ${previous.result.join(" – ")}` : "Le résultat officiel n’est pas encore disponible dans le flux."}</p></div></div><div class="flash"><strong>Source officielle</strong><p>Programme et ordre d’arrivée PMU actualisés automatiquement.</p></div>` : `<h2 class="section-title white">Dernière arrivée</h2><div class="live-empty">Aucune course terminée dans la réunion chargée.</div>`;
-    const compact = q(".meeting-bottom .list-compact");
-    if (compact) compact.innerHTML = (state.meeting?.races.filter(item => !race || item.date >= race.date).slice(0, 3).map(item => `<div><time>${fmtTime(item.date)}</time><span>C${item.number} · ${esc(item.title)}</span></div>`).join("") || `<div><time>—</time><span>Programme indisponible</span></div>`);
+    const firstPanel = qa(".meeting-bottom > .panel")[0];
+    if (firstPanel) firstPanel.innerHTML = `<h2 class="section-title">Brèves à l’écran</h2><div class="brief-stack meeting-briefs">${editorialBriefsHTML(2)}</div>`;
     const eventPanel = qa(".meeting-bottom > .panel")[1];
     if (eventPanel) eventPanel.innerHTML = `<h2 class="section-title">Fin de réunion</h2><div class="event" style="margin-top:28px"><div class="event-date">${lastRace() ? fmtTime(lastRace().date) : "—"}</div><div><div class="event-name">Dernière course</div><div class="event-note">${esc(lastRace()?.title || "Programme indisponible")}</div></div></div>`;
     const minis = qa(".mini-transport");
@@ -624,7 +686,7 @@
     const focus = q(".next-meeting-focus");
     if (focus) { q("strong", focus).textContent = meeting.date; q("small", focus).textContent = meeting.detail; }
     const eventBox = q(".no-race-agenda .no-race-next-event strong");
-    if (eventBox) eventBox.textContent = state.events[0] ? `${fmtDate(state.events[0].start)} · ${state.events[0].title}` : "Agenda officiel momentanément indisponible";
+    if (eventBox) eventBox.textContent = state.events[0] ? `${fmtDate(state.events[0].start)} · ${state.events[0].title}` : state.weather ? `${state.weather.label} · ${state.weather.felt} · ${state.weather.rainRisk}` : "Agenda officiel momentanément indisponible";
     const access = q(".no-race-access-grid");
     if (access) access.innerHTML = `
       <div class="no-race-access-item">${modeId("rer", "A")}<span><strong>Joinville-le-Pont</strong><small>Vers Paris et l’ouest · 12 min à pied</small></span><em>${esc(passageLabel(state.rer[0]))}</em></div>
