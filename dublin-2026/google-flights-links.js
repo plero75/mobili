@@ -1,0 +1,17 @@
+(()=>{
+const routes={
+ dublin:{to:'Dublin',live:'Voir prix live',note:'Prix live Google Flights · 23→25 oct. 2026'},
+ liverpool:{to:'Liverpool',live:'142,30 €*',note:'*Snapshot easyJet au 03/09 · vérifier le prix live'},
+ krakow:{to:'Krakow',live:'48,65 € + PLN 254*',note:'*Snapshot easyJet au 03/09 · vérifier le prix live'},
+ valencia:{to:'Valencia',live:'Voir prix live',note:'Comparer les directs du vendredi selon l’heure d’arrivée réelle'},
+ belgrade:{to:'Belgrade',live:'Voir prix live',note:'Pas de faux A/R estimé : ouvrir la recherche 23→25 oct.'},
+ amsterdam:{to:'Amsterdam',live:'Voir prix train',note:'Eurostar reste l’option recommandée ; vols comparables si besoin'},
+ sarajevo:{to:'Sarajevo',live:'Voir prix live',note:'Important : vérifier surtout le retour du dimanche'}
+};
+function gf(to){const q=`Flights from Paris to ${to} on 2026-10-23 returning 2026-10-25`;return `https://www.google.com/travel/flights?q=${encodeURIComponent(q)}&hl=fr&gl=FR&curr=EUR`}
+function addStyle(){const s=document.createElement('style');s.textContent=`.gf-link{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#173f32!important;border:2px solid #d7a84d;padding:9px 11px;text-decoration:none;font-size:12px;font-weight:950;white-space:nowrap}.gf-link:hover{background:#fff4d8}.gf-note{display:block;font-size:10px;color:#71695d;margin-top:4px;line-height:1.25}.transport-focus .gf-note{color:#e9e2d5}.transport-live{font-weight:950}.transport-focus .transport-live{color:#173f32}.compare td .gf-link{margin-top:5px}.compare .price{min-width:145px}`;document.head.appendChild(s)}
+function updateCards(){document.querySelectorAll('.identity[data-city]').forEach(card=>{const id=card.dataset.city,d=routes[id];if(!d)return;const cells=card.querySelectorAll('.transport-focus .transport-cell');if(cells.length>=6){const c=cells[5];c.innerHTML=`<small>Transport A/R</small><b class="transport-live">${d.live}</b><span class="gf-note">${d.note}</span>`}const links=card.querySelector('.transport-focus .transport-links');if(links&&!links.querySelector('.gf-link')){const a=document.createElement('a');a.className='gf-link';a.href=gf(d.to);a.target='_blank';a.rel='noopener';a.textContent='🔎 Comparer sur Google Flights';links.prepend(a)}})}
+function updateTable(){const table=document.querySelector('#comparatif .compare table');if(!table)return;const rows=[...table.querySelectorAll('tbody tr')];rows.forEach(r=>{const city=r.querySelector('td')?.textContent||'';const id=Object.keys(routes).find(k=>city.toLowerCase().includes(k==='krakow'?'cracovie':k));if(!id)return;const d=routes[id];const tds=r.querySelectorAll('td');if(tds.length>=10){tds[7].innerHTML=`<span class="transport-live">${d.live}</span><span class="gf-note">${d.note}</span>`;const booking=tds[9];if(!booking.querySelector('.gf-link'))booking.insertAdjacentHTML('afterbegin',`<a class="gf-link" href="${gf(d.to)}" target="_blank" rel="noopener">Google Flights ↗</a><br>`)}}});const legend=document.querySelector('.transport-legend');if(legend)legend.insertAdjacentHTML('beforebegin','<p class="transport-legend"><b>Prix :</b> quand un tarif exact n’a pas été vérifié sur les deux segments du 23→25 octobre, on n’affiche plus de fourchette inventée : le bouton Google Flights ouvre directement la comparaison aux bonnes dates.</p>')}
+function run(){addStyle();setTimeout(()=>{updateCards();updateTable()},20)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+})();
