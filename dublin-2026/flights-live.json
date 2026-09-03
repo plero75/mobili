@@ -1,9 +1,52 @@
 {
-  "generatedAt": null,
+  "generatedAt": "2026-09-03T19:16:06+00:00",
   "departDate": "2026-10-23",
   "returnDate": "2026-10-25",
-  "source": "En attente de la première actualisation automatique",
-  "sourceRevision": null,
+  "source": "Skyscanner Android API non officielle via irrisolto/skyscanner",
+  "sourceRevision": "cb0946b2f6107128ee7968ec4525e4f167dd4945",
   "successfulCities": 0,
-  "cities": {}
+  "cities": {
+    "dublin": {
+      "name": "Dublin",
+      "destination": "DUB",
+      "options": [],
+      "stale": true,
+      "refreshError": "'redirect_to'"
+    },
+    "liverpool": {
+      "name": "Liverpool",
+      "destination": "LPL",
+      "options": [],
+      "stale": true,
+      "refreshError": "'redirect_to'"
+    },
+    "krakow": {
+      "name": "Cracovie",
+      "destination": "KRK",
+      "options": [],
+      "stale": true,
+      "refreshError": "'redirect_to'"
+    },
+    "valencia": {
+      "name": "Valence",
+      "destination": "VLC",
+      "options": [],
+      "stale": true,
+      "refreshError": "'redirect_to'"
+    },
+    "belgrade": {
+      "name": "Belgrade",
+      "destination": "BEG",
+      "options": [],
+      "stale": true,
+      "refreshError": "'redirect_to'"
+    },
+    "sarajevo": {
+      "name": "Sarajevo",
+      "destination": "SJJ",
+      "options": [],
+      "stale": true,
+      "refreshError": "'redirect_to'"
+    }
+  }
 }
