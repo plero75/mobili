@@ -1,9 +1,8 @@
 {
-  "generatedAt": "2026-09-03T19:16:06+00:00",
+  "generatedAt": "2026-09-03T19:20:14+00:00",
   "departDate": "2026-10-23",
   "returnDate": "2026-10-25",
-  "source": "Skyscanner Android API non officielle via irrisolto/skyscanner",
-  "sourceRevision": "cb0946b2f6107128ee7968ec4525e4f167dd4945",
+  "source": "Google Flights via fast-flights (scraper non officiel, sans clé API)",
   "successfulCities": 0,
   "cities": {
     "dublin": {
@@ -11,42 +10,42 @@
       "destination": "DUB",
       "options": [],
       "stale": true,
-      "refreshError": "'redirect_to'"
+      "refreshError": "RuntimeError: aucune offre exploitable"
     },
     "liverpool": {
       "name": "Liverpool",
       "destination": "LPL",
       "options": [],
       "stale": true,
-      "refreshError": "'redirect_to'"
+      "refreshError": "RuntimeError: aucune offre exploitable"
     },
     "krakow": {
       "name": "Cracovie",
       "destination": "KRK",
       "options": [],
       "stale": true,
-      "refreshError": "'redirect_to'"
+      "refreshError": "RuntimeError: aucune offre exploitable"
     },
     "valencia": {
       "name": "Valence",
       "destination": "VLC",
       "options": [],
       "stale": true,
-      "refreshError": "'redirect_to'"
+      "refreshError": "RuntimeError: aucune offre exploitable"
     },
     "belgrade": {
       "name": "Belgrade",
       "destination": "BEG",
       "options": [],
       "stale": true,
-      "refreshError": "'redirect_to'"
+      "refreshError": "RuntimeError: aucune offre exploitable"
     },
     "sarajevo": {
       "name": "Sarajevo",
       "destination": "SJJ",
       "options": [],
       "stale": true,
-      "refreshError": "'redirect_to'"
+      "refreshError": "RuntimeError: aucune offre exploitable"
     }
   }
 }
