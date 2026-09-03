@@ -1,17 +1,14 @@
 import datetime as dt
 import json
-import math
-import os
 import sys
 import time
 from pathlib import Path
 
-from skyscanner import SkyScanner
-from skyscanner.types import CabinClass
+from fast_flights import FlightQuery, Passengers, create_query, get_flights
 
 OUT = Path("dublin-2026/flights-live.json")
-DEPART = dt.datetime(2026, 10, 23, 0, 0)
-RETURN = dt.datetime(2026, 10, 25, 0, 0)
+DEPART = "2026-10-23"
+RETURN = "2026-10-25"
 
 CITIES = {
     "dublin": {"name": "Dublin", "dest": "DUB", "origins": ["ORY", "CDG", "BVA"], "transfer": 35, "airport_buffer": 120},
@@ -30,104 +27,81 @@ def load_previous():
         return {"cities": {}}
 
 
-def iso(v):
-    if not v:
-        return None
-    if isinstance(v, str):
-        try:
-            return dt.datetime.fromisoformat(v.replace("Z", "+00:00")).replace(tzinfo=None)
-        except Exception:
-            return None
-    return None
+def to_dt(simple):
+    y, m, d = simple.date
+    hh, mm = simple.time
+    return dt.datetime(y, m, d, hh, mm)
 
 
-def money(item):
-    p = item.get("price") or {}
-    for key in ("raw", "amount", "value"):
-        try:
-            return float(p[key])
-        except Exception:
-            pass
-    try:
-        return float(item.get("rawPrice"))
-    except Exception:
-        return None
-
-
-def carrier_name(leg):
-    carriers = leg.get("carriers") or {}
-    marketing = carriers.get("marketing") or carriers.get("operating") or []
-    if marketing:
-        c = marketing[0]
-        code = ((c.get("alternateId") or {}).get("code") or c.get("iata") or "").strip()
-        name = (c.get("name") or code or "Compagnie").strip()
-        return f"{name} ({code})" if code and code.lower() not in name.lower() else name
-    segments = leg.get("segments") or []
-    if segments:
-        c = (segments[0].get("marketingCarrier") or segments[0].get("operatingCarrier") or {})
-        code = ((c.get("alternateId") or {}).get("code") or c.get("iata") or "").strip()
-        return (c.get("name") or code or "Compagnie").strip()
-    return "Compagnie"
-
-
-def airport_code(place):
-    if isinstance(place, str):
-        return place
-    if not isinstance(place, dict):
-        return "?"
-    return (place.get("displayCode") or place.get("skyId") or place.get("iata") or place.get("id") or "?").split("-")[0]
-
-
-def compact_leg(leg):
-    dep = iso(leg.get("departure"))
-    arr = iso(leg.get("arrival"))
+def compact_segment(seg):
     return {
-        "from": airport_code(leg.get("origin")),
-        "to": airport_code(leg.get("destination")),
-        "departure": dep.isoformat(timespec="minutes") if dep else leg.get("departure"),
-        "arrival": arr.isoformat(timespec="minutes") if arr else leg.get("arrival"),
-        "stops": int(leg.get("stopCount") or max(0, len(leg.get("segments") or []) - 1)),
-        "durationMinutes": leg.get("durationInMinutes"),
-        "carrier": carrier_name(leg),
+        "from": seg.from_airport.code,
+        "to": seg.to_airport.code,
+        "departure": to_dt(seg.departure).isoformat(timespec="minutes"),
+        "arrival": to_dt(seg.arrival).isoformat(timespec="minutes"),
+        "durationMinutes": int(seg.duration),
+        "planeType": seg.plane_type or "",
     }
 
 
-def iter_items(payload):
-    itineraries = payload.get("itineraries") or {}
-    buckets = itineraries.get("buckets") or []
-    seen = set()
-    for bucket in buckets:
-        for item in bucket.get("items") or []:
-            ident = item.get("id") or json.dumps(item, sort_keys=True)[:200]
-            if ident in seen:
-                continue
-            seen.add(ident)
-            yield item
-
-
-def simplify(item, cfg):
-    legs = item.get("legs") or []
-    if len(legs) < 2:
-        return None
-    out, back = compact_leg(legs[0]), compact_leg(legs[1])
-    out_arr = iso(out.get("arrival"))
-    back_dep = iso(back.get("departure"))
-    price = money(item)
-    if not out_arr or not back_dep or price is None:
+def split_roundtrip(item, origin, dest):
+    segments = list(item.flights)
+    if not segments:
         return None
 
+    cut = None
+    for i, seg in enumerate(segments):
+        if seg.to_airport.code == dest:
+            cut = i + 1
+            break
+    if not cut or cut >= len(segments):
+        return None
+
+    outbound = segments[:cut]
+    inbound = segments[cut:]
+    if inbound[0].from_airport.code != dest:
+        return None
+
+    out_dep = to_dt(outbound[0].departure)
+    out_arr = to_dt(outbound[-1].arrival)
+    back_dep = to_dt(inbound[0].departure)
+    back_arr = to_dt(inbound[-1].arrival)
+
+    return outbound, inbound, out_dep, out_arr, back_dep, back_arr
+
+
+def leg_summary(segments, airlines):
+    first, last = segments[0], segments[-1]
+    return {
+        "from": first.from_airport.code,
+        "to": last.to_airport.code,
+        "departure": to_dt(first.departure).isoformat(timespec="minutes"),
+        "arrival": to_dt(last.arrival).isoformat(timespec="minutes"),
+        "stops": max(0, len(segments) - 1),
+        "durationMinutes": int(sum(s.duration for s in segments)),
+        "carrier": ", ".join(airlines) if airlines else "Compagnie",
+        "segments": [compact_segment(s) for s in segments],
+    }
+
+
+def simplify(item, cfg, origin):
+    parts = split_roundtrip(item, origin, cfg["dest"])
+    if not parts:
+        return None
+    outbound, inbound, out_dep, out_arr, back_dep, back_arr = parts
     center_arrival = out_arr + dt.timedelta(minutes=cfg["transfer"] + 15)
     leave_center = back_dep - dt.timedelta(minutes=cfg["transfer"] + cfg["airport_buffer"])
     useful = max(0.0, (leave_center - center_arrival).total_seconds() / 3600)
-    stops = out["stops"] + back["stops"]
-    # Encourage useful time and direct flights, while keeping price meaningful.
+    stops = max(0, len(outbound) - 1) + max(0, len(inbound) - 1)
+    price = float(item.price)
     score = price + stops * 55 + max(0, 46 - useful) * 4
+    ident = f"{origin}-{cfg['dest']}-{out_dep.isoformat()}-{back_dep.isoformat()}-{int(price)}"
     return {
-        "id": item.get("id"),
+        "id": ident,
         "price": round(price, 2),
         "currency": "EUR",
-        "outbound": out,
-        "return": back,
+        "outbound": leg_summary(outbound, item.airlines),
+        "return": leg_summary(inbound, item.airlines),
         "centerArrival": center_arrival.isoformat(timespec="minutes"),
         "leaveCenter": leave_center.isoformat(timespec="minutes"),
         "usefulHours": round(useful, 1),
@@ -151,31 +125,44 @@ def unique_options(rows):
     return selected
 
 
-def search_city(scanner, key, cfg):
-    dest = scanner.get_airport_by_code(cfg["dest"])
+def search_origin(origin, cfg):
+    q = create_query(
+        flights=[
+            FlightQuery(date=DEPART, from_airport=origin, to_airport=cfg["dest"]),
+            FlightQuery(date=RETURN, from_airport=cfg["dest"], to_airport=origin),
+        ],
+        seat="economy",
+        trip="round-trip",
+        passengers=Passengers(adults=1),
+        language="fr",
+        currency="EUR",
+    )
+    results = get_flights(q)
+    rows = []
+    for item in results:
+        try:
+            row = simplify(item, cfg, origin)
+            if row:
+                rows.append(row)
+        except Exception:
+            continue
+    return rows
+
+
+def search_city(cfg):
     all_rows = []
     errors = []
-    for origin_code in cfg["origins"]:
+    for origin in cfg["origins"]:
         try:
-            origin = scanner.get_airport_by_code(origin_code)
-            response = scanner.get_flight_prices(
-                origin=origin,
-                destination=dest,
-                depart_date=DEPART,
-                return_date=RETURN,
-                cabinClass=CabinClass.ECONOMY,
-                adults=1,
-            )
-            parsed = [simplify(item, cfg) for item in iter_items(response.json)]
-            all_rows.extend([x for x in parsed if x])
-            time.sleep(1.0)
+            rows = search_origin(origin, cfg)
+            all_rows.extend(rows)
+            time.sleep(0.8)
         except Exception as exc:
-            errors.append(f"{origin_code}: {type(exc).__name__}: {exc}")
-    # De-duplicate equivalent itineraries/prices.
+            errors.append(f"{origin}: {type(exc).__name__}: {exc}")
     dedup = {}
-    for r in all_rows:
-        k = (r["outbound"]["departure"], r["return"]["departure"], r["price"])
-        dedup[k] = r
+    for row in all_rows:
+        key = (row["outbound"]["departure"], row["return"]["departure"], row["price"])
+        dedup[key] = row
     rows = list(dedup.values())
     return {
         "name": cfg["name"],
@@ -191,35 +178,39 @@ def search_city(scanner, key, cfg):
 def main():
     previous = load_previous()
     previous_cities = previous.get("cities") or {}
-    scanner = SkyScanner(locale="fr-FR", currency="EUR", market="FR", retry_delay=2, max_retries=8)
     cities = {}
     ok = 0
+
     for key, cfg in CITIES.items():
         try:
-            result = search_city(scanner, key, cfg)
-            if result["options"]:
-                cities[key] = result
-                ok += 1
-                print(f"{key}: {len(result['options'])} option(s), {result['offersSeen']} offres vues")
-            else:
+            result = search_city(cfg)
+            if not result["options"]:
                 raise RuntimeError("aucune offre exploitable")
+            cities[key] = result
+            ok += 1
+            print(f"{key}: {len(result['options'])} option(s), {result['offersSeen']} offres vues")
         except Exception as exc:
             old = previous_cities.get(key)
-            if old:
+            if old and old.get("options"):
                 old = dict(old)
                 old["stale"] = True
                 old["refreshError"] = f"{type(exc).__name__}: {exc}"
                 cities[key] = old
             else:
-                cities[key] = {"name": cfg["name"], "destination": cfg["dest"], "options": [], "stale": True, "refreshError": str(exc)}
+                cities[key] = {
+                    "name": cfg["name"],
+                    "destination": cfg["dest"],
+                    "options": [],
+                    "stale": True,
+                    "refreshError": f"{type(exc).__name__}: {exc}",
+                }
             print(f"{key}: ECHEC {exc}", file=sys.stderr)
 
     payload = {
         "generatedAt": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-        "departDate": "2026-10-23",
-        "returnDate": "2026-10-25",
-        "source": "Skyscanner Android API non officielle via irrisolto/skyscanner",
-        "sourceRevision": "cb0946b2f6107128ee7968ec4525e4f167dd4945",
+        "departDate": DEPART,
+        "returnDate": RETURN,
+        "source": "Google Flights via fast-flights (scraper non officiel, sans clé API)",
         "successfulCities": ok,
         "cities": cities,
     }
