@@ -46,28 +46,29 @@ def compact_segment(seg):
 
 def one_way_row(item, origin, dest):
     segments = list(item.flights)
-    if not segments:
+    if len(segments) != 1:
         return None
-    if segments[0].from_airport.code != origin or segments[-1].to_airport.code != dest:
+    seg = segments[0]
+    if seg.from_airport.code != origin or seg.to_airport.code != dest:
         return None
-    dep = to_dt(segments[0].departure)
-    arr = to_dt(segments[-1].arrival)
+    dep = to_dt(seg.departure)
+    arr = to_dt(seg.arrival)
     return {
         "price": float(item.price),
         "from": origin,
         "to": dest,
         "departureDt": dep,
         "arrivalDt": arr,
-        "stops": max(0, len(segments) - 1),
+        "stops": 0,
         "durationMinutes": int((arr - dep).total_seconds() // 60),
         "carrier": ", ".join(item.airlines) if item.airlines else "Compagnie",
-        "segments": [compact_segment(s) for s in segments],
+        "segments": [compact_segment(seg)],
     }
 
 
 def fetch_one_way(origin, dest, date):
     q = create_query(
-        flights=[FlightQuery(date=date, from_airport=origin, to_airport=dest)],
+        flights=[FlightQuery(date=date, from_airport=origin, to_airport=dest, max_stops=0)],
         seat="economy",
         trip="one-way",
         passengers=Passengers(adults=1),
@@ -94,7 +95,7 @@ def shortlist(rows, direction):
         key = (r["departureDt"], r["arrivalDt"], round(r["price"], 2), r["carrier"])
         dedup[key] = r
     rows = list(dedup.values())
-    cheapest = sorted(rows, key=lambda x: (x["price"], x["stops"], x["durationMinutes"]))[:8]
+    cheapest = sorted(rows, key=lambda x: (x["price"], x["durationMinutes"]))[:8]
     if direction == "out":
         time_best = sorted(rows, key=lambda x: (x["arrivalDt"], x["price"]))[:6]
     else:
@@ -115,9 +116,10 @@ def leg_summary(row):
         "to": row["to"],
         "departure": row["departureDt"].isoformat(timespec="minutes"),
         "arrival": row["arrivalDt"].isoformat(timespec="minutes"),
-        "stops": row["stops"],
+        "stops": 0,
         "durationMinutes": row["durationMinutes"],
         "carrier": row["carrier"],
+        "price": round(row["price"], 2),
         "segments": row["segments"],
     }
 
@@ -127,28 +129,23 @@ def combine(outbound, inbound, cfg):
     leave_center = inbound["departureDt"] - dt.timedelta(minutes=cfg["transfer"] + cfg["airport_buffer"])
     useful = max(0.0, (leave_center - center_arrival).total_seconds() / 3600)
     price = outbound["price"] + inbound["price"]
-    stops = outbound["stops"] + inbound["stops"]
 
-    # Prix + escales + vraie qualité de week-end. Un retour qui impose de
-    # quitter le centre avant 8 h est possible, mais ne doit jamais devenir
-    # automatiquement le « meilleur compromis » pour économiser quelques euros.
     early_leave_penalty = max(0, 8 * 60 - (leave_center.hour * 60 + leave_center.minute)) * 0.8
     late_friday_penalty = max(0, (center_arrival.hour * 60 + center_arrival.minute) - 22 * 60) * 0.35
-    score = price + stops * 55 + max(0, 46 - useful) * 4 + early_leave_penalty + late_friday_penalty
+    score = price + max(0, 46 - useful) * 4 + early_leave_penalty + late_friday_penalty
 
     ident = f"{outbound['from']}-{cfg['dest']}-{outbound['departureDt'].isoformat()}-{inbound['departureDt'].isoformat()}-{round(price,2)}"
     return {
         "id": ident,
         "price": round(price, 2),
         "currency": "EUR",
-        "pricingMode": "sum_of_one_ways",
-        "priceNote": "Somme de 2 allers simples Google Flights ; vérifier le tarif final A/R avant achat.",
+        "pricingMode": "direct_legs_total",
         "outbound": leg_summary(outbound),
         "return": leg_summary(inbound),
         "centerArrival": center_arrival.isoformat(timespec="minutes"),
         "leaveCenter": leave_center.isoformat(timespec="minutes"),
         "usefulHours": round(useful, 1),
-        "totalStops": stops,
+        "totalStops": 0,
         "score": round(score, 2),
         "earlyReturn": leave_center.hour < 8,
     }
@@ -157,12 +154,8 @@ def combine(outbound, inbound, cfg):
 def unique_options(rows):
     if not rows:
         return []
-
-    cheapest = min(rows, key=lambda x: (x["price"], x["totalStops"]))
+    cheapest = min(rows, key=lambda x: x["price"])
     max_weekend = max(rows, key=lambda x: (x["usefulHours"], -x["price"]))
-
-    # Pour « meilleur compromis », on privilégie d'abord les options humaines :
-    # dimanche encore exploitable et arrivée vendredi pas en pleine nuit.
     humane = []
     for row in rows:
         leave = dt.datetime.fromisoformat(row["leaveCenter"])
@@ -201,7 +194,7 @@ def search_city(cfg):
         try:
             rows, out_count, back_count = search_origin(origin, cfg)
             all_rows.extend(rows)
-            searched.append({"origin": origin, "outboundCandidates": out_count, "returnCandidates": back_count})
+            searched.append({"origin": origin, "outboundDirects": out_count, "returnDirects": back_count})
             time.sleep(0.6)
         except Exception as exc:
             errors.append(f"{origin}: {type(exc).__name__}: {exc}")
@@ -215,7 +208,7 @@ def search_city(cfg):
         "destination": cfg["dest"],
         "searchedOrigins": cfg["origins"],
         "searchDetails": searched,
-        "pricingMode": "sum_of_one_ways",
+        "pricingMode": "direct_legs_total",
         "options": unique_options(rows),
         "combinationsSeen": len(rows),
         "errors": errors[-3:],
@@ -233,14 +226,14 @@ def main():
         try:
             result = search_city(cfg)
             if not result["options"]:
-                detail = " ; ".join(result.get("errors") or []) or "aucune combinaison retour exploitable"
+                detail = " ; ".join(result.get("errors") or []) or "aucun aller + retour direct exploitable"
                 raise RuntimeError(detail)
             cities[key] = result
             ok += 1
-            print(f"{key}: {len(result['options'])} option(s), {result['combinationsSeen']} combinaisons")
+            print(f"{key}: {len(result['options'])} option(s) directes, {result['combinationsSeen']} combinaisons")
         except Exception as exc:
             old = previous_cities.get(key)
-            if old and old.get("options"):
+            if old and old.get("options") and all((x.get("totalStops") == 0) for x in old.get("options", [])):
                 old = dict(old)
                 old["stale"] = True
                 old["refreshError"] = f"{type(exc).__name__}: {exc}"
@@ -260,8 +253,8 @@ def main():
         "departDate": DEPART,
         "returnDate": RETURN,
         "source": "Google Flights via fast-flights (scraper non officiel, sans clé API)",
-        "pricingMode": "sum_of_one_ways",
-        "priceDisclaimer": "Les montants affichés additionnent deux recherches aller simple. Ils servent de snapshot comparatif ; le tarif A/R final doit être vérifié via Google Flights/compagnie.",
+        "pricingMode": "direct_legs_total",
+        "priceDisclaimer": "Uniquement des vols directs. Le total affiché = prix aller direct + prix retour direct observés lors du dernier refresh.",
         "successfulCities": ok,
         "cities": cities,
     }
