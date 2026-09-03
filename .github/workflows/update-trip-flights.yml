@@ -23,15 +23,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Charger le client Skyscanner
+      - name: Installer le collecteur Google Flights
         run: |
-          git clone --depth 1 https://github.com/irrisolto/skyscanner.git "$RUNNER_TEMP/skyscanner"
           python -m pip install --upgrade pip
-          python -m pip install -r "$RUNNER_TEMP/skyscanner/requirements.txt"
+          python -m pip install fast-flights
 
       - name: Chercher les vols du 23 au 25 octobre
-        env:
-          PYTHONPATH: ${{ runner.temp }}/skyscanner
         run: python scripts/update-trip-flights.py
 
       - name: Publier le snapshot
