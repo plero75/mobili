@@ -128,7 +128,14 @@ def combine(outbound, inbound, cfg):
     useful = max(0.0, (leave_center - center_arrival).total_seconds() / 3600)
     price = outbound["price"] + inbound["price"]
     stops = outbound["stops"] + inbound["stops"]
-    score = price + stops * 55 + max(0, 46 - useful) * 4
+
+    # Prix + escales + vraie qualité de week-end. Un retour qui impose de
+    # quitter le centre avant 8 h est possible, mais ne doit jamais devenir
+    # automatiquement le « meilleur compromis » pour économiser quelques euros.
+    early_leave_penalty = max(0, 8 * 60 - (leave_center.hour * 60 + leave_center.minute)) * 0.8
+    late_friday_penalty = max(0, (center_arrival.hour * 60 + center_arrival.minute) - 22 * 60) * 0.35
+    score = price + stops * 55 + max(0, 46 - useful) * 4 + early_leave_penalty + late_friday_penalty
+
     ident = f"{outbound['from']}-{cfg['dest']}-{outbound['departureDt'].isoformat()}-{inbound['departureDt'].isoformat()}-{round(price,2)}"
     return {
         "id": ident,
@@ -143,15 +150,27 @@ def combine(outbound, inbound, cfg):
         "usefulHours": round(useful, 1),
         "totalStops": stops,
         "score": round(score, 2),
+        "earlyReturn": leave_center.hour < 8,
     }
 
 
 def unique_options(rows):
     if not rows:
         return []
+
     cheapest = min(rows, key=lambda x: (x["price"], x["totalStops"]))
     max_weekend = max(rows, key=lambda x: (x["usefulHours"], -x["price"]))
-    recommended = min(rows, key=lambda x: x["score"])
+
+    # Pour « meilleur compromis », on privilégie d'abord les options humaines :
+    # dimanche encore exploitable et arrivée vendredi pas en pleine nuit.
+    humane = []
+    for row in rows:
+        leave = dt.datetime.fromisoformat(row["leaveCenter"])
+        arrive = dt.datetime.fromisoformat(row["centerArrival"])
+        if (leave.hour, leave.minute) >= (8, 0) and (arrive.hour, arrive.minute) <= (22, 30):
+            humane.append(row)
+    recommended = min(humane or rows, key=lambda x: x["score"])
+
     selected = []
     for label, row in (("recommended", recommended), ("cheapest", cheapest), ("max_weekend", max_weekend)):
         if not any(x["id"] == row["id"] for x in selected):
