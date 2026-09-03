@@ -1,0 +1,8 @@
+{
+  "name": "petits-chats-2026",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.1"
+  }
+}
