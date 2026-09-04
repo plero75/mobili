@@ -66,7 +66,7 @@ function displayGtfsTime(time){
 async function fetchJSON(url,timeout=12000){const c=new AbortController(),timer=setTimeout(()=>c.abort(),timeout);try{const r=await fetch(url,{signal:c.signal,cache:"no-store"});if(!r.ok)throw new Error(`HTTP ${r.status}`);return await r.json();}catch(e){console.error("fetchJSON",url,e);return null;}finally{clearTimeout(timer);}}
 async function fetchText(url,timeout=12000){const c=new AbortController(),timer=setTimeout(()=>c.abort(),timeout);try{const r=await fetch(url,{signal:c.signal,cache:"no-store"});if(!r.ok)throw new Error(`HTTP ${r.status}`);return await r.text();}catch(e){console.error("fetchText",url,e);return"";}finally{clearTimeout(timer);}}
 function setClock(){if($("clock"))$("clock").textContent=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});}
-function setLastUpdate(){if(!$("lastUpdate"))return;const base=lastGoodTransportUpdate||new Date();$("lastUpdate").textContent=`Maj ${base.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}`;}
+function setLastUpdate(){if(!$("lastUpdate"))return;if(!lastGoodTransportUpdate){$("lastUpdate").textContent="RER en attente";return;}$("lastUpdate").textContent=`RER ${lastGoodTransportUpdate.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}`;}
 
 async function loadTimetable(){
   const data=await fetchJSON(GTFS_TIMETABLE_URL,15000);
@@ -178,12 +178,19 @@ function groupByDirection(visits){const map=new Map();visits.forEach(v=>{const k
 async function fetchStop(ref){return fetchJSON(primUrl(`/stop-monitoring?MonitoringRef=${encodeURIComponent(ref)}`),15000);}
 
 async function renderRer(){
-  const cont=$("rer-body");if(!cont)return false;const all=[];
-  for(const ref of RER_STOP.refs){const d=await fetchStop(ref);if(d)all.push(...parseVisits(d));}
+  const cont=$("rer-body");if(!cont)return false;const all=[];let received=false;
+  for(const ref of RER_STOP.refs){const d=await fetchStop(ref);if(d){received=true;all.push(...parseVisits(d));}}
+  if(!received){
+    if(cont.dataset.lastGood==="true"){cont.classList.add("is-stale");return false;}
+    cont.innerHTML=`<div class="error-state"><strong>Temps réel momentanément indisponible</strong><span>Nouvelle tentative automatique</span></div>`;
+    return false;
+  }
+  cont.classList.remove("is-stale");
   const rer=all.filter(v=>(!v.published||/(^|\s)A($|\s)/i.test(v.published)||/C01742|Line::A/i.test(v.lineRef))&&isRelevantPassage(v));
   if(!rer.length){cont.innerHTML=`<div class="stop-block rer-stop"><div class="stop-title">📍 ${esc(RER_STOP.name)}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div>${serviceEndedHTML("Joinville-le-Pont","A",null)}</div></div>`;return false;}
   const dirs=groupByDirection(rer);
   cont.innerHTML=`<div class="stop-block rer-stop"><div class="stop-title">📍 ${esc(RER_STOP.name)}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div>${[...dirs.entries()].map(([dest,rows])=>`<div class="direction">→ ${esc(dest)}</div>${serviceMetaHTML("Joinville-le-Pont","A",dest)}<div class="train-list">${rows.slice(0,4).map(rerPassageHTML).join("")}</div>`).join("")}</div></div>`;
+  cont.dataset.lastGood="true";
   return true;
 }
 function matchesLine(v,code){const p=(v.published||"").toUpperCase().replace(/\s/g,"");const lr=(v.lineRef||"").toUpperCase();return p===code.toUpperCase()||lr.includes(`::${code.toUpperCase()}:`)||lr.endsWith(`:${code.toUpperCase()}:`);}
@@ -228,6 +235,6 @@ function renderNews(){const cont=$("news-carousel");if(!cont)return;cont.innerHT
 function nextNews(){if(newsItems.length){currentNews=(currentNews+1)%newsItems.length;renderNews();}}
 async function refreshRoad(){const cont=$("road-list");if(!cont)return;const url=PROXY+encodeURIComponent("https://opendata.paris.fr/api/records/1.0/search/?dataset=comptages-routiers-permanents&sort=-horodate&rows=5"),d=await fetchJSON(url,15000);if(!d?.records?.length){cont.innerHTML=emptyHTML("Trafic routier indisponible");return;}cont.innerHTML=d.records.map(r=>{const f=r.fields||{};return`<div class="road"><strong>${esc(text(f.libelle||"Point de comptage"))}</strong><br><span class="muted">Débit ${f.debit??"—"} véh/h • occupation ${f.taux_occupation??f.taux_occupation_htps??"—"}%</span></div>`;}).join("");}
 function updateTicker(){const el=$("ticker-slot");if(!el)return;const pool=[tickerData.weather,tickerData.traffic].filter(Boolean);el.textContent=pool.length?pool[tickerIndex++%pool.length]:"Informations mobilité en cours de chargement…";}
-async function refreshPassages(){const results=await Promise.allSettled([renderRer(),renderBus()]);const ok=results.some(r=>r.status==="fulfilled"&&r.value===true);if(ok)lastGoodTransportUpdate=new Date();setLastUpdate();}
-async function init(){setClock();await loadTimetable();await Promise.allSettled([refreshPassages(),refreshTraffic(),refreshVelib(),refreshWeather(),refreshCourses(),refreshNews(),refreshRoad()]);await computeRoute();updateTicker();setLastUpdate();setInterval(setClock,1000);setInterval(refreshPassages,30*1000);setInterval(refreshTraffic,90*1000);setInterval(refreshVelib,60*1000);setInterval(computeRoute,2*60*1000);setInterval(refreshWeather,10*60*1000);setInterval(refreshCourses,60*1000);setInterval(refreshNews,5*60*1000);setInterval(nextNews,12*1000);setInterval(refreshRoad,5*60*1000);setInterval(updateTicker,10*1000);setInterval(loadTimetable,60*60*1000);}
+async function refreshPassages(){const ok=await renderRer();if(ok)lastGoodTransportUpdate=new Date();setLastUpdate();}
+async function init(){setClock();setLastUpdate();await loadTimetable();await Promise.allSettled([refreshPassages(),refreshWeather(),refreshNews()]);setInterval(setClock,1000);setInterval(refreshPassages,60*1000);setInterval(refreshWeather,10*60*1000);setInterval(refreshNews,5*60*1000);setInterval(nextNews,12*1000);setInterval(loadTimetable,60*60*1000);}
 document.addEventListener("DOMContentLoaded",init);

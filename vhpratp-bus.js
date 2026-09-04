@@ -14,6 +14,8 @@
   ];
 
   const BREUIL_201 = { code:'201', line:'STIF:Line::C01219:', refs:['STIF:StopPoint:Q:39406:','STIF:StopPoint:Q:22452:'], color:'#6E491E' };
+  const lastGoodLines = new Map();
+  let refreshInFlight = false;
 
   const escLocal = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const scalar = v => v == null ? '' : (typeof v === 'object' && 'value' in v ? scalar(v.value) : String(v));
@@ -32,18 +34,20 @@
 
   function thresholdFor(key, fallback){
     try {
-      if(window.MobiliAccess?.thresholdMinutes) return window.MobiliAccess.thresholdMinutes(key);
+      if(window.MobiliAccess?.CONFIG?.stops?.[key] && window.MobiliAccess?.thresholdMinutes) return window.MobiliAccess.thresholdMinutes(key);
     } catch(_) {}
     return fallback;
   }
 
   async function fetchLine(line){
     const visits = [];
+    let successes = 0;
     for(const ref of line.refs){
       const target = `https://prim.iledefrance-mobilites.fr/marketplace/stop-monitoring?MonitoringRef=${encodeURIComponent(ref)}&LineRef=${encodeURIComponent(line.line)}`;
       try{
         const res = await fetch(PROXY_URL + encodeURIComponent(target));
         if(!res.ok) continue;
+        successes += 1;
         const data = await res.json();
         const rows = data?.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0]?.MonitoredStopVisit || [];
         for(const row of rows){
@@ -64,11 +68,12 @@
       }catch(e){ console.error('VHPRATP bus', line.code, e); }
     }
     const seen = new Set();
-    return visits.filter(v => {
+    const rows = visits.filter(v => {
       const k = `${v.destination}|${v.time}`;
       if(seen.has(k)) return false;
       seen.add(k); return true;
     });
+    return { ok: successes > 0, rows };
   }
 
   function reachable(rows, key, fallback){
@@ -124,50 +129,40 @@
     const el=document.getElementById('joinville-bus-view');
     if(!el) return;
     const entries=await Promise.all(JOINVILLE_LINES.map(async line=>[line,await fetchLine(line)]));
-    el.innerHTML=`<div class="access-filter-note">Accès ~12 min • seuls les départs PRIM réellement atteignables sont affichés</div><div class="vhpratp-bus-grid">${entries.map(([line,rows])=>lineHTML(line,rows,'joinvilleBus',14)).join('')}</div>`;
+    el.classList.toggle('is-stale',entries.some(([,result])=>!result.ok));
+    const cards=entries.map(([line,result])=>{
+      if(result.ok){
+        const html=lineHTML(line,result.rows,'busJoinville',14);
+        lastGoodLines.set(`joinville-${line.code}`,html);
+        return html;
+      }
+      return lastGoodLines.get(`joinville-${line.code}`) || `<div class="line-block vhpratp-line data-unavailable" data-line="${escLocal(line.code)}"><div class="line-head"><span class="line-pill" style="background:${line.color}">${escLocal(line.code)}</span><span class="line-name">Ligne ${escLocal(line.code)}</span></div><div class="bus-data-unavailable">Données momentanément indisponibles</div></div>`;
+    });
+    el.innerHTML=`<div class="access-filter-note">Accès ~12 min + marge 2 min • seuls les départs réellement atteignables sont affichés</div><div class="vhpratp-bus-grid">${cards.join('')}</div>`;
   }
 
   async function renderBreuil201(){
     const el=document.getElementById('breuil-bus-view');
     if(!el) return;
-    const existing77 = el.querySelector('.prim-line')?.outerHTML || '';
-    const rows = await fetchLine(BREUIL_201);
-    el.innerHTML=`<div class="access-filter-note">Accès ~7 min • seuls les départs PRIM réellement atteignables sont affichés</div>${lineHTML(BREUIL_201,rows,'breuil',9)}${existing77}`;
+    const result = await fetchLine(BREUIL_201);
+    const existing77 = el.querySelector('[data-live-section="breuil-77"]')?.outerHTML || '';
+    el.classList.toggle('is-stale',!result.ok);
+    let line201;
+    if(result.ok){line201=lineHTML(BREUIL_201,result.rows,'breuil',9);lastGoodLines.set('breuil-201',line201);}
+    else line201=lastGoodLines.get('breuil-201') || `<div class="line-block vhpratp-line data-unavailable" data-line="201"><div class="line-head"><span class="line-pill" style="background:${BREUIL_201.color}">201</span><span class="line-name">Ligne 201</span></div><div class="bus-data-unavailable">Données momentanément indisponibles</div></div>`;
+    el.innerHTML=`<div class="access-filter-note">Accès ~7 min + marge 2 min • seuls les départs réellement atteignables sont affichés</div>${line201}${existing77}`;
   }
 
   async function refreshVHPRATPBus(){
-    await Promise.allSettled([renderJoinville(),renderBreuil201()]);
-    if(window.refreshTrafficFixed) setTimeout(()=>window.refreshTrafficFixed(),150);
+    if(refreshInFlight) return;
+    refreshInFlight = true;
+    try { await Promise.allSettled([renderJoinville(),renderBreuil201()]); }
+    finally { refreshInFlight = false; }
   }
-
-  const style=document.createElement('style');
-  style.textContent=`
-    @media (min-width:1100px) and (orientation:landscape){
-      /* Neutralise les anciennes règles compact-stop-view qui coupaient le contenu */
-      #joinville-bus-view.compact-stop-view{height:auto!important;max-height:none!important;overflow:visible!important}
-      #joinville-bus-view .vhpratp-bus-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-rows:minmax(86px,auto)!important;gap:6px!important;align-content:start!important;overflow:visible!important}
-      #joinville-bus-view .vhpratp-bus-grid .line-block{height:auto!important;min-height:86px!important;max-height:none!important;overflow:visible!important;padding:6px!important;border:1px solid #d3dae3!important;border-radius:5px!important;background:#fff!important;box-sizing:border-box!important}
-      #joinville-bus-view .vhpratp-bus-grid .line-head{margin-bottom:4px!important}
-      #joinville-bus-view .vhpratp-bus-grid .bus-direction-row{min-width:0!important;overflow:visible!important}
-      #joinville-bus-view .vhpratp-bus-grid .direction{font-size:8px!important;margin:4px 0 2px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-      #joinville-bus-view .vhpratp-bus-grid .passages{display:grid!important;grid-template-columns:1fr 1fr!important;border:0!important;gap:3px!important;overflow:visible!important}
-      #joinville-bus-view .vhpratp-bus-grid .passage{display:block!important;height:auto!important;min-height:44px!important;padding:5px!important;border:1px solid #d8dee6!important;border-radius:3px!important;background:#fff!important;min-width:0!important;overflow:hidden!important}
-      #joinville-bus-view .vhpratp-bus-grid .passage:nth-child(n+3){display:none!important}
-      #joinville-bus-view .departure-clock{font-size:15px!important;font-weight:950!important;line-height:1!important;color:#101828!important}
-      #joinville-bus-view .departure-wait{margin-top:3px!important;font-size:8px!important;font-weight:800!important;color:#475467!important}
-      #joinville-bus-view .reachable-label{margin-bottom:3px!important;font-size:5px!important;font-weight:950!important;letter-spacing:.04em!important;color:#245c7d!important}
-      #joinville-bus-view .status{font-size:5.5px!important;margin-top:3px!important}
-      #joinville-bus-view .bus-no-reachable{padding:8px 2px 2px!important;font-size:8px!important;color:#667085!important}
-      .vhpratp-bus-grid .mobili-line-alert{grid-column:1/-1}
-      .panel-breuil .departure-clock,.panel-hippodrome .departure-clock{font-size:18px}
-      .panel-breuil .departure-wait,.panel-hippodrome .departure-wait{font-size:9px}
-    }
-  `;
-  document.head.appendChild(style);
 
   window.refreshVHPRATPBus=refreshVHPRATPBus;
   document.addEventListener('DOMContentLoaded',()=>{
     setTimeout(refreshVHPRATPBus,2800);
-    setInterval(refreshVHPRATPBus,30*1000);
+    setInterval(refreshVHPRATPBus,60*1000);
   });
 })();
