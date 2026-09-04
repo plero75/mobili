@@ -119,6 +119,8 @@ section+section{border-top:1px solid var(--line)}
 .destination-visual figcaption span{font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
 .destination-visual figcaption h3{margin:.15rem 0 0;color:#fff;font:800 3.5rem/.95 Georgia,serif;letter-spacing:-.035em}
 .destination-visual figcaption small{margin-top:var(--space-xs);font-size:.8rem;font-weight:800;color:#f7e9c9}
+.photo-source{position:absolute;z-index:2;right:var(--space-md);bottom:var(--space-sm);color:#fff;font-size:.64rem;font-weight:750;text-decoration:none;text-shadow:0 1px 8px #000}
+.photo-source:hover{text-decoration:underline}
 .destination-visual:hover img{transform:scale(1.018)}
 .destination-visual.photo-missing img{display:none}
 .destination-visual.photo-missing::before{content:"Photo temporairement indisponible";position:absolute;inset:0;display:grid;place-items:center;color:#dce9df;font-size:.8rem;font-weight:800}

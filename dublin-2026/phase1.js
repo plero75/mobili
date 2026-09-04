@@ -4,14 +4,14 @@ const VOTE_TARGET=6;
 const SNAPSHOT_URL='flights-live.json';
 const REFRESH_URL='https://github.com/plero75/mobili/actions/workflows/update-trip-flights.yml';
 const DESTINATION_VISUALS={
-  krakow:{src:'https://r.profitroom.pl/newporthotel/images/attractions/1627833019.kazimierz.jpg',alt:'Le quartier de Kazimierz à Cracovie',focus:'center 58%'},
-  dublin:{src:'https://wallpaperbat.com/img/106926-dublin-wallpaper-man-made-hq-dublin-picture-4k-wallpaper-2019.jpg',alt:'Les quais et les façades colorées de Dublin',focus:'center 54%'},
-  bologna:{src:'https://images.unsplash.com/photo-1560438718-eb61ede255eb?auto=format&fit=crop&w=1600&q=82',alt:'Les arcades historiques de Bologne',focus:'center 50%'},
-  tirana:{src:'https://images.unsplash.com/photo-1598804968690-7736aa2156f6?auto=format&fit=crop&w=1600&q=82',alt:'La place Skanderbeg à Tirana',focus:'center 52%'},
-  prague:{src:'https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=1600&q=82',alt:'Les toits et les clochers de Prague',focus:'center 46%'},
-  vienna:{src:'https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=1600&q=82',alt:'L’architecture monumentale de Vienne',focus:'center 52%'},
-  rotterdam:{src:'https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?auto=format&fit=crop&w=1600&q=82',alt:'L’architecture moderne de Rotterdam',focus:'center 50%'},
-  london:{src:'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=82',alt:'Le quartier de Westminster à Londres',focus:'center 48%'}
+  krakow:{src:'images/destinations/krakow.jpg',alt:'Vue sur le centre historique de Cracovie',focus:'center 58%',source:'https://commons.wikimedia.org/wiki/File:Krakow_2024_105_Old_Town_Hall_Tower_View.jpg'},
+  dublin:{src:'images/destinations/dublin.jpg',alt:'La Liffey et la skyline de Dublin',focus:'center 54%',source:'https://commons.wikimedia.org/wiki/File:Dublin_skyline_and_River_Liffey_from_ferry_arriving_at_Dublin_Port_-_geograph.org.uk_-_5167299.jpg'},
+  bologna:{src:'images/destinations/bologna.jpg',alt:'Plusieurs vues emblématiques de Bologne',focus:'center 50%',source:'https://commons.wikimedia.org/wiki/File:Collage_Bologna.jpg'},
+  tirana:{src:'images/destinations/tirana.jpg',alt:'La place Skanderbeg à Tirana',focus:'center 52%',source:'https://commons.wikimedia.org/wiki/File:Tirana_-_Skanderbeg_Square_(Sheshi_Sk%C3%ABnderbej)_-_by_Pudelek.jpg'},
+  prague:{src:'images/destinations/prague.jpg',alt:'Le pont Charles et les toits de Prague',focus:'center 46%',source:'https://commons.wikimedia.org/wiki/File:Praha_1,_Karl%C5%AFv_most_20170810_014.jpg'},
+  vienna:{src:'images/destinations/vienna.jpg',alt:'La cathédrale Saint-Étienne à Vienne',focus:'center 52%',source:'https://commons.wikimedia.org/wiki/File:Stephansdom-Vienna-Austria.jpg'},
+  rotterdam:{src:'images/destinations/rotterdam.jpg',alt:'La skyline de Rotterdam avec le pont Érasme',focus:'center 50%',source:'https://commons.wikimedia.org/wiki/File:Rotterdam-Skyline.jpg'},
+  london:{src:'images/destinations/london.jpg',alt:'La skyline de Londres et Westminster',focus:'center 48%',source:'https://commons.wikimedia.org/wiki/File:London_Skyline_(125508655).jpeg'}
 };
 
 const SHORTLIST=[
@@ -95,7 +95,7 @@ function cityCard(city){
   return `<article class="selection-card" id="fiche-${city.id}" data-city="${city.id}">
     <figure class="destination-visual">
       <img src="${visual.src}" alt="${esc(visual.alt)}" loading="lazy" referrerpolicy="no-referrer" style="object-position:${visual.focus}" onerror="this.closest('figure').classList.add('photo-missing')">
-      <figcaption><span>${city.flag} Fiche destination</span><h3>${esc(city.name)}</h3><small>${city.mode==='train'?'🚄 Train direct':'✈️ Vol direct uniquement'}</small></figcaption>
+      <figcaption><span>${city.flag} Fiche destination</span><h3>${esc(city.name)}</h3><small>${city.mode==='train'?'🚄 Train direct':'✈️ Vol direct uniquement'}</small></figcaption><a class="photo-source" href="${visual.source}" target="_blank" rel="noopener" aria-label="Source de la photo de ${esc(city.name)}">Photo Wikimedia ↗</a>
     </figure>
     <header class="selection-card-head"><div><span class="city-label">${esc(city.label)}</span></div><div class="card-badges">${badges.map(item=>`<span>${item.icon} ${item.label}</span>`).join('')}</div></header>
     <p class="selection-summary">${esc(city.summary)}</p>
