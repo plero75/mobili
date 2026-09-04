@@ -33,7 +33,6 @@ const BADGES={
   seville:[['food','Food Lover'],['sun','Sun Escape']],
   munich:[['easy','Easy Trip'],['food','Food Lover']]
 };
-
 const TRAINS={
   brussels:{label:'Paris-Nord → Bruxelles-Midi',url:'https://www.eurostar.com/fr-fr/train/paris-bruxelles',source:'Eurostar',note:'Centre à centre · direct · très peu de temps perdu en transfert.'},
   london:{label:'Paris-Nord → London St Pancras',url:'https://www.eurostar.com/fr-fr/train/paris-londres',source:'Eurostar',note:'Direct · arrivée en plein centre · contrôle frontière à intégrer.'},
@@ -41,7 +40,6 @@ const TRAINS={
   rotterdam:{label:'Paris-Nord → Rotterdam Centraal',url:'https://www.eurostar.com/fr-fr/train/paris-rotterdam',source:'Eurostar',note:'Direct selon horaire · zéro transfert aéroport.'},
   turin:{label:'Paris → Torino Porta Susa',url:'https://www.sncf-connect.com/',source:'SNCF Connect',note:'Comparer le train au vol : prix, durée totale et heure réelle d’arrivée en ville.'}
 };
-
 const CITY_GUIDES={
   krakow:{areas:['Kazimierz — vivant, bars et restos','Stare Miasto — ultra central','Podgórze — plus calme, bon rapport qualité/prix'],food:'Pierogi, obwarzanek, bars à lait et cuisine polonaise moderne.',night:'Kazimierz puis bars en caves autour de la vieille ville.',must:'Wawel + Kazimierz ; Wieliczka seulement si le timing reste confortable.',watch:'Beauvais peut ajouter beaucoup de temps porte-à-porte.'},
   dublin:{areas:['Smithfield — pratique et vivant','Stoneybatter — pubs et vraie vie de quartier','Portobello — central sans être Temple Bar'],food:'Pubs avec vraie cuisine, seafood, brunchs et coffee shops.',night:'Stoneybatter, Camden Street ou George’s Street plutôt que Temple Bar toute la soirée.',must:'Une grosse soirée pub + une visite Guinness/Teeling + balade Liffey.',watch:'Logements chers et week-end marathon : réserver tôt.'},
@@ -76,9 +74,7 @@ const CITY_GUIDES={
   amsterdam:{areas:['De Pijp — meilleur équilibre','Jordaan — très joli','Oost — plus local et souvent plus abordable'],food:'Food halls, brunch, cuisine indonésienne et cafés bruns.',night:'De Pijp, Jordaan, Leidseplein selon le style.',must:'Canaux + marché + quartier choisi plutôt qu’une checklist.',watch:'Logement très cher ; le train doit rester compétitif.'},
   turin:{areas:['San Salvario — sortie et food','Quadrilatero Romano — central','Vanchiglia — local et vivant'],food:'Aperitivo, chocolat, cuisine piémontaise et marchés.',night:'San Salvario puis Quadrilatero.',must:'Marché Porta Palazzo + aperitivo + centre baroque.',watch:'Trajet train long : vérifier si le temps utile reste suffisant.'}
 };
-
 function cityIdFromCard(card){return card?.dataset?.openCity||card?.dataset?.radarCity||card?.dataset?.city||card?.id?.replace(/^fiche-/,'')||''}
-function cardFor(id){return document.getElementById(`fiche-${id}`)||document.querySelector(`[data-city="${id}"]`)||document.querySelector(`[data-open-city="${id}"]`)||document.querySelector(`[data-radar-city="${id}"]`)}
 function badgeHtml(id,card=false){const rows=BADGES[id]?.slice(0,2)||[];if(!rows.length)return'';return `<div class="trip-badges${card?' trip-badges--card':''}" aria-label="Distinctions de cette destination">${rows.map(([kind,label])=>`<span class="trip-badge trip-badge--${kind}">${label}</span>`).join('')}</div>`}
 function addCardBadges(card){const id=cityIdFromCard(card);if(!id||card.querySelector('.trip-badges--card'))return;const html=badgeHtml(id,true);if(!html)return;const body=card.querySelector('.destination-card-body')||card;const status=body.querySelector('.destination-card-status');if(status)status.insertAdjacentHTML('afterend',html);else body.insertAdjacentHTML('afterbegin',html)}
 function addDetailBadges(id,card){if(card.querySelector('.trip-badges:not(.trip-badges--card)'))return;const html=badgeHtml(id,false);if(!html)return;const head=card.querySelector('.selection-card-head')||card.querySelector('.route-panel')||card;head.insertAdjacentHTML('afterend',html)}
@@ -86,26 +82,22 @@ function addTrainCheck(id,card){const cfg=TRAINS[id];if(!cfg||card.querySelector
 function guideHtml(id){const g=CITY_GUIDES[id];if(!g)return'';return `<section class="city-guide"><div class="city-guide__head"><span>Le mini-guide utile</span><h4>📍 Où dormir, manger et sortir</h4></div><div class="city-guide__grid"><div class="city-guide__block city-guide__block--wide"><small>🏡 Les quartiers à viser</small><div class="area-pills">${g.areas.map(x=>`<span>${x}</span>`).join('')}</div></div><div class="city-guide__block"><small>🍽️ À manger</small><p>${g.food}</p></div><div class="city-guide__block"><small>🍸 Pour sortir</small><p>${g.night}</p></div><div class="city-guide__block"><small>⭐ Le programme signature</small><p>${g.must}</p></div><div class="city-guide__block city-guide__block--watch"><small>👀 À surveiller</small><p>${g.watch}</p></div></div></section>`}
 function addGuide(id,card){if(card.querySelector('.city-guide'))return;const html=guideHtml(id);if(!html)return;const footer=card.querySelector('.card-footer');if(footer)footer.insertAdjacentHTML('beforebegin',html);else card.insertAdjacentHTML('beforeend',html)}
 function enrichArticle(article,id){if(!article||!id)return;addDetailBadges(id,article);addTrainCheck(id,article);addGuide(id,article)}
-
 function ensureModal(){let modal=document.getElementById('cityModal');if(modal)return modal;modal=document.createElement('div');modal.id='cityModal';modal.className='city-modal';modal.setAttribute('aria-hidden','true');modal.innerHTML=`<div class="city-modal__backdrop" data-close-city-modal></div><section class="city-modal__panel" role="dialog" aria-modal="true" aria-label="Fiche destination"><button class="city-modal__close" type="button" data-close-city-modal aria-label="Fermer">×</button><div class="city-modal__content" id="cityModalContent"></div></section>`;document.body.appendChild(modal);modal.addEventListener('click',event=>{
   if(event.target.closest('[data-close-city-modal]')){closeModal();return}
-  const action=event.target.closest('[data-origin-id],[data-vote],[data-idea]');if(!action)return;
+  const action=event.target.closest('[data-vote],[data-idea],button[data-origin-id]');if(!action)return;
   const originId=action.dataset.originId;
   if(originId){document.getElementById(originId)?.click();return}
   if(action.dataset.vote){document.querySelector(`#cityList [data-vote="${CSS.escape(action.dataset.vote)}"]`)?.click();action.classList.add('on');action.textContent='Vote enregistré';return}
-  if(action.dataset.idea){document.querySelector(`#cityList [data-idea="${CSS.escape(action.dataset.idea)}"]`)?.click();return}
-});
-return modal}
+  if(action.dataset.idea){const original=document.querySelector(`#cityList [data-idea="${CSS.escape(action.dataset.idea)}"]`);closeModal();setTimeout(()=>original?.click(),0)}
+});return modal}
 function cleanClone(clone){clone.querySelectorAll('[id]').forEach(el=>{el.dataset.originId=el.id;el.removeAttribute('id')});clone.querySelectorAll('[aria-controls]').forEach(el=>el.removeAttribute('aria-controls'));return clone}
 function openModal(article,id){const modal=ensureModal(),content=modal.querySelector('#cityModalContent'),clone=cleanClone(article.cloneNode(true));enrichArticle(clone,id);content.replaceChildren(clone);modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('city-modal-open');history.replaceState(null,'',`#fiche-${id}`);setTimeout(()=>modal.querySelector('.city-modal__close')?.focus(),30)}
 function closeModal(){const modal=document.getElementById('cityModal');if(!modal)return;modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('city-modal-open');if(location.hash.startsWith('#fiche-'))history.replaceState(null,'',location.pathname+location.search)}
 function openFromStaging(id){const article=document.querySelector(`#cityList #fiche-${CSS.escape(id)}`)||document.querySelector(`#cityList [data-city="${CSS.escape(id)}"]`)||document.querySelector('#cityList article');if(!article)return false;openModal(article,id);return true}
-
 function wrapCard(card){if(card.dataset.modalWrapped==='1')return;card.dataset.modalWrapped='1';const id=cityIdFromCard(card),original=card.onclick;card.onclick=function(event){if(typeof original==='function')original.call(this,event);setTimeout(()=>openFromStaging(id),0)};addCardBadges(card)}
 function enhanceCards(){document.querySelectorAll('.destination-card[data-open-city],.destination-card[data-radar-city]').forEach(wrapCard);document.querySelectorAll('#cityList article').forEach(article=>enrichArticle(article,cityIdFromCard(article)))}
 function hookPicker(){const picker=document.getElementById('cityPicker');if(!picker||picker.dataset.modalHooked==='1')return;picker.dataset.modalHooked='1';picker.addEventListener('change',()=>{const id=picker.value;setTimeout(()=>{if(openFromStaging(id))return;const card=document.querySelector(`[data-open-city="${CSS.escape(id)}"],[data-radar-city="${CSS.escape(id)}"]`);card?.click()},0)})}
 function openHashIfNeeded(){const id=location.hash.match(/^#fiche-([a-z-]+)$/)?.[1];if(!id)return;if(openFromStaging(id))return;const card=document.querySelector(`[data-open-city="${CSS.escape(id)}"],[data-radar-city="${CSS.escape(id)}"]`);card?.click()}
-
 document.addEventListener('keydown',event=>{if(event.key==='Escape')closeModal()});
 let timer;const schedule=()=>{clearTimeout(timer);timer=setTimeout(()=>{enhanceCards();hookPicker()},80)};
 document.addEventListener('DOMContentLoaded',()=>{ensureModal();enhanceCards();hookPicker()});
