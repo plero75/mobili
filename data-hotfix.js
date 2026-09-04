@@ -1,19 +1,15 @@
 (() => {
-  const VELIB_STATUS_URL = "https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_status.json";
-  const VELIB_INFO_URL = "https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_information.json";
-  const VELIB_PROXY = "https://velib-proxy.hippodrome-proxy42.workers.dev/?url=";
+  const VELIB_PARIS_URL = "https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/velib-disponibilite-en-temps-reel/records?where=stationcode%20in%20(%2212163%22,%2212128%22)&limit=10";
 
   const VELIB_TARGETS = {
-    VINCENNES: { publicCode: "12163", gbfsIds: ["1074333296", "12163"], label: "Hippodrome / Vincennes", nameHints: ["hippodrome", "vincennes"] },
-    BREUIL: { publicCode: "12128", gbfsIds: ["508042092", "12128"], label: "École du Breuil", nameHints: ["breuil", "pyramide"] }
+    VINCENNES: { publicCode: "12163", label: "Hippodrome / Vincennes" },
+    BREUIL: { publicCode: "12128", label: "École du Breuil" }
   };
   const lastGoodVelibMarkup = new Map();
   let lastGoodVelibUpdate = null;
   let lastGoodCoursesMarkup = "";
   let lastGoodCoursesUpdate = null;
 
-  const normalise = v => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  const proxyUrl = url => VELIB_PROXY + encodeURIComponent(url);
   const shortTime = date => date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 
   function setPanelStatus(selector, normalText, ok, lastUpdate) {
@@ -33,42 +29,23 @@
     return null;
   }
 
-  function findVelibStation(target, statuses, infos) {
-    let status = statuses.find(s => target.gbfsIds.includes(String(s?.station_id)));
-    let info = status ? infos.find(i => String(i?.station_id) === String(status.station_id)) : null;
-    if (status) return { status, info };
-
-    info = infos.find(i => {
-      const name = normalise(i?.name);
-      return target.nameHints.some(h => name.includes(normalise(h)));
-    });
-    if (!info) return { status: null, info: null };
-    status = statuses.find(s => String(s?.station_id) === String(info.station_id)) || null;
-    return { status, info };
-  }
-
-  function bikeCounts(st) {
-    let mechanical = 0, electric = 0;
-    const types = Array.isArray(st?.num_bikes_available_types) ? st.num_bikes_available_types : [];
-    for (const t of types) {
-      mechanical += Number(t?.mechanical || 0);
-      electric += Number(t?.ebike || t?.electric || 0);
+  async function fetchVelibParis() {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(VELIB_PARIS_URL, { cache: "no-store", headers: { Accept: "application/json" }, signal: controller.signal });
+      if (!response.ok) return [];
+      const data = await response.json();
+      return Array.isArray(data?.results) ? data.results : [];
+    } catch (_) {
+      return [];
+    } finally {
+      clearTimeout(timer);
     }
-    if (!types.length) {
-      mechanical = Number(st?.num_mechanical_bikes_available || 0);
-      electric = Number(st?.num_ebikes_available || 0);
-    }
-    return { mechanical, electric };
   }
 
   async function refreshVelibFixed() {
-    const [statusData, infoData] = await Promise.all([
-      getJSONCandidates([VELIB_STATUS_URL, proxyUrl(VELIB_STATUS_URL)]),
-      getJSONCandidates([VELIB_INFO_URL, proxyUrl(VELIB_INFO_URL)])
-    ]);
-
-    const statuses = statusData?.data?.stations || [];
-    const infos = infoData?.data?.stations || [];
+    const stations = await fetchVelibParis();
     const cache = {};
     let updated = 0;
     const updateTime = new Date();
@@ -76,20 +53,21 @@
     for (const [key, target] of Object.entries(VELIB_TARGETS)) {
       const el = document.getElementById(`velib-${key.toLowerCase()}`);
       if (!el) continue;
-      const { status: st, info } = findVelibStation(target, statuses, infos);
+      const st = stations.find(station => String(station?.stationcode) === target.publicCode);
       if (!st) {
         const cached = lastGoodVelibMarkup.get(key);
         if (cached) { el.innerHTML = cached; el.classList.add("is-stale"); }
         else el.innerHTML = `<div class="velib-name">${esc(target.label)}</div><div class="velib-value unavailable">Données momentanément indisponibles</div><div class="muted">Nouvelle tentative automatique</div>`;
         continue;
       }
-      const { mechanical, electric } = bikeCounts(st);
-      const docks = Number(st?.num_docks_available ?? 0);
-      const renting = st?.is_installed !== 0 && st?.is_installed !== false && st?.is_renting !== 0 && st?.is_renting !== false;
+      const mechanical = Number(st?.mechanical || 0);
+      const electric = Number(st?.ebike || 0);
+      const docks = Number(st?.numdocksavailable || 0);
+      const renting = st?.is_installed === "OUI" && st?.is_renting === "OUI";
       const total = mechanical + electric;
       cache[key] = { mech: mechanical, elec: electric, docks, total };
       const markup = `
-        <div class="velib-name">${esc(text(info?.name || target.label))}</div>
+        <div class="velib-name">${esc(text(st?.name || target.label))}</div>
         <div class="velib-value">${renting ? `<strong>${total}</strong> vélos disponibles` : "Service suspendu"}</div>
         <div class="velib-breakdown"><span>Classiques <strong>${mechanical}</strong></span><span>Électriques <strong>${electric}</strong></span><span>Places <strong>${docks}</strong></span></div>
         <div class="muted">Station ${esc(target.publicCode)}</div>`;
