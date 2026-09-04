@@ -12,25 +12,37 @@ RETURN = "2026-10-25"
 
 CITIES = {
     "dublin": {"name": "Dublin", "dest": "DUB", "origins": ["ORY", "CDG", "BVA"], "transfer": 35, "airport_buffer": 120},
+    "barcelona": {"name": "Barcelone", "dest": "BCN", "origins": ["ORY", "CDG", "BVA"], "transfer": 30, "airport_buffer": 120},
+    "bucharest": {"name": "Bucarest", "dest": "OTP", "origins": ["CDG", "ORY", "BVA"], "transfer": 40, "airport_buffer": 120},
+    "vilnius": {"name": "Vilnius", "dest": "VNO", "origins": ["CDG", "ORY", "BVA"], "transfer": 25, "airport_buffer": 120},
+    "lisbon": {"name": "Lisbonne", "dest": "LIS", "origins": ["ORY", "CDG"], "transfer": 25, "airport_buffer": 120},
+    "porto": {"name": "Porto", "dest": "OPO", "origins": ["ORY", "CDG", "BVA"], "transfer": 35, "airport_buffer": 120},
+    "mallorca": {"name": "Majorque", "dest": "PMI", "origins": ["ORY", "CDG", "BVA"], "transfer": 20, "airport_buffer": 120},
+    "tallinn": {"name": "Tallinn", "dest": "TLL", "origins": ["CDG", "ORY", "BVA"], "transfer": 20, "airport_buffer": 120},
+    "riga": {"name": "Riga", "dest": "RIX", "origins": ["CDG", "ORY", "BVA"], "transfer": 25, "airport_buffer": 120},
+    "split": {"name": "Split", "dest": "SPU", "origins": ["CDG", "ORY"], "transfer": 35, "airport_buffer": 120},
     "liverpool": {"name": "Liverpool", "dest": "LPL", "origins": ["CDG"], "transfer": 40, "airport_buffer": 120},
     "krakow": {"name": "Cracovie", "dest": "KRK", "origins": ["CDG", "BVA", "ORY"], "transfer": 30, "airport_buffer": 120},
+    "bologna": {"name": "Bologne", "dest": "BLQ", "origins": ["ORY", "CDG", "BVA"], "transfer": 25, "airport_buffer": 120},
+    "tirana": {"name": "Tirana", "dest": "TIA", "origins": ["ORY", "CDG", "BVA"], "transfer": 35, "airport_buffer": 120},
+    "prague": {"name": "Prague", "dest": "PRG", "origins": ["CDG", "ORY", "BVA"], "transfer": 35, "airport_buffer": 120},
+    "vienna": {"name": "Vienne", "dest": "VIE", "origins": ["CDG", "ORY"], "transfer": 35, "airport_buffer": 120},
     "valencia": {"name": "Valence", "dest": "VLC", "origins": ["ORY", "CDG"], "transfer": 35, "airport_buffer": 120},
     "belgrade": {"name": "Belgrade", "dest": "BEG", "origins": ["CDG"], "transfer": 40, "airport_buffer": 120},
     "sarajevo": {"name": "Sarajevo", "dest": "SJJ", "origins": ["ORY", "BVA", "CDG"], "transfer": 30, "airport_buffer": 120},
 }
 
 # Pool plus large pour repérer les vrais bons plans du week-end. Uniquement vols directs.
-# local_cost = ordre de grandeur 2 nuits + repas + bars + transports locaux / personne.
+# local_cost = milieu de la fourchette 2 nuits + repas + bars + local + activités.
 DEAL_POOL = {
-    "porto": {"name":"Porto","dest":"OPO","origins":["ORY","CDG","BVA"],"transfer":35,"airport_buffer":120,"local_cost":230,"vibe":"🍷 Porto + Ribeira + bonnes tables"},
-    "prague": {"name":"Prague","dest":"PRG","origins":["CDG","ORY"],"transfer":35,"airport_buffer":120,"local_cost":220,"vibe":"🍺 bière, vieille ville, nightlife"},
-    "budapest": {"name":"Budapest","dest":"BUD","origins":["CDG","ORY","BVA"],"transfer":35,"airport_buffer":120,"local_cost":210,"vibe":"♨️ bains + ruin bars + Danube"},
-    "bologna": {"name":"Bologne","dest":"BLQ","origins":["ORY","CDG","BVA"],"transfer":25,"airport_buffer":120,"local_cost":225,"vibe":"🍝 probablement le meilleur week-end bouffe"},
-    "naples": {"name":"Naples","dest":"NAP","origins":["ORY","CDG"],"transfer":30,"airport_buffer":120,"local_cost":235,"vibe":"🍕 chaos, pizza, mer, énergie"},
-    "lisbon": {"name":"Lisbonne","dest":"LIS","origins":["ORY","CDG"],"transfer":25,"airport_buffer":120,"local_cost":260,"vibe":"🌊 collines, bars, soleil possible"},
-    "malaga": {"name":"Málaga","dest":"AGP","origins":["ORY","CDG","BVA"],"transfer":25,"airport_buffer":120,"local_cost":240,"vibe":"☀️ terrasse + tapas + mer"},
-    "alicante": {"name":"Alicante","dest":"ALC","origins":["ORY","BVA"],"transfer":25,"airport_buffer":120,"local_cost":225,"vibe":"🌴 simple, solaire, pas ruineux"},
-    "seville": {"name":"Séville","dest":"SVQ","origins":["ORY","CDG"],"transfer":25,"airport_buffer":120,"local_cost":245,"vibe":"💃 tapas, chaleur, très beau centre"},
+    "budapest": {"name":"Budapest","dest":"BUD","origins":["CDG","ORY","BVA"],"transfer":35,"airport_buffer":120,"local_cost":225,"local_cost_min":185,"local_cost_max":265,"vibe":"♨️ bains + ruin bars + Danube"},
+    "naples": {"name":"Naples","dest":"NAP","origins":["ORY","CDG"],"transfer":30,"airport_buffer":120,"local_cost":260,"local_cost_min":215,"local_cost_max":305,"vibe":"🍕 chaos, pizza, mer, énergie"},
+    "malaga": {"name":"Málaga","dest":"AGP","origins":["ORY","CDG","BVA"],"transfer":25,"airport_buffer":120,"local_cost":260,"local_cost_min":215,"local_cost_max":305,"vibe":"☀️ terrasse + tapas + mer"},
+    "alicante": {"name":"Alicante","dest":"ALC","origins":["ORY","BVA"],"transfer":25,"airport_buffer":120,"local_cost":245,"local_cost_min":205,"local_cost_max":285,"vibe":"🌴 simple, solaire, pas ruineux"},
+    "seville": {"name":"Séville","dest":"SVQ","origins":["ORY","CDG"],"transfer":25,"airport_buffer":120,"local_cost":270,"local_cost_min":225,"local_cost_max":315,"vibe":"💃 tapas, chaleur, très beau centre"},
+    "munich": {"name":"Munich","dest":"MUC","origins":["CDG","ORY"],"transfer":45,"airport_buffer":120,"local_cost":360,"local_cost_min":300,"local_cost_max":420,"vibe":"🍺 brasseries + musées + centre bavarois"},
+    "milan": {"name":"Milan","dest":"MXP","origins":["CDG","ORY","BVA"],"transfer":55,"airport_buffer":120,"local_cost":360,"local_cost_min":300,"local_cost_max":420,"vibe":"🍸 design + aperitivo + grands quartiers"},
+    "bilbao": {"name":"Bilbao","dest":"BIO","origins":["CDG","ORY"],"transfer":30,"airport_buffer":120,"local_cost":295,"local_cost_min":250,"local_cost_max":340,"vibe":"🍢 pintxos + architecture + centre compact"},
 }
 
 
@@ -230,6 +242,7 @@ def deal_candidate(key, cfg):
         "id": key, "name": cfg["name"], "vibe": cfg["vibe"],
         "flightPrice": rec["price"], "estimatedWeekend": round(total_weekend),
         "localCostEstimate": cfg["local_cost"], "usefulHours": rec["usefulHours"],
+        "onSiteBudget": {"min": cfg["local_cost_min"], "max": cfg["local_cost_max"]},
         "outbound": rec["outbound"], "return": rec["return"],
         "centerArrival": rec["centerArrival"], "leaveCenter": rec["leaveCenter"],
         "valueScore": round(value_score, 1), "currency":"EUR"
@@ -251,20 +264,12 @@ def build_deal_scout(previous):
             print(f"deal {key}: ECHEC {exc}", file=sys.stderr)
     if not candidates:
         old = previous.get("dealScout") or {}
-        if old.get("picks"):
+        if old.get("candidates"):
             old = dict(old); old["stale"] = True; old["errors"] = errors[-5:]
             return old
-        return {"candidates":[],"picks":{},"stale":True,"errors":errors[-5:]}
+        return {"candidates":[],"stale":True,"errors":errors[-5:]}
 
-    cheap = min(candidates, key=lambda x: (x["flightPrice"], -x["usefulHours"]))
-    value = min(candidates, key=lambda x: (x["estimatedWeekend"], -x["usefulHours"]))
-    best = min(candidates, key=lambda x: x["valueScore"])
-    picks = {
-        "cheap_of_week": dict(cheap, award="💸 CHEAP OF THE WEEK", why="Le billet direct le moins cher du radar."),
-        "good_value": dict(value, award="🪙 GOOD VALUE", why="Le meilleur budget global estimé une fois sur place."),
-        "best_deal": dict(best, award="🏆 BEST DEAL", why="Le meilleur mix prix + horaires + temps réellement utile."),
-    }
-    return {"candidates":candidates,"picks":picks,"stale":False,"errors":errors[-5:]}
+    return {"candidates":candidates,"stale":False,"errors":errors[-5:]}
 
 
 def main():
@@ -293,7 +298,7 @@ def main():
         "departDate": DEPART, "returnDate": RETURN,
         "source": "Google Flights via fast-flights (scraper non officiel, sans clé API)",
         "pricingMode": "two_direct_one_ways", "directOnly": True,
-        "priceDisclaimer": "Prix = total des deux vols directs observés au dernier refresh.",
+        "priceDisclaimer": "Transport A/R = somme des deux trajets directs observés au dernier refresh ; tarif final à revérifier avant achat.",
         "successfulCities": ok, "cities": cities, "dealScout": deal_scout,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
