@@ -1,5 +1,5 @@
-/* RATP-inspired display skin for the 1920x1080 recette screens.
-   Loaded after recette.css so layout/data logic stay untouched. */
+/* RATP-inspired 19:9 display skin for recette.html.
+   Goal: behave like a real wide passenger-information board, not a 16:9 dashboard. */
 
 :root {
   --ratp-blue: #050f73;
@@ -12,21 +12,27 @@
 }
 
 html,
-body,
-#app,
-.screen {
-  background: var(--ratp-ink);
+body {
+  background: #d8d8d8;
 }
 
 body {
   font-family: Arial, Helvetica, "DejaVu Sans", sans-serif;
 }
 
+/* Physical screen ratio: 19:9 */
+#app,
 .screen {
-  color: var(--ratp-paper);
+  width: 1920px !important;
+  height: 910px !important;
+  background: var(--ratp-ink);
 }
 
-/* Signature RATP: white information cap + cyan bottom rail */
+.screen {
+  color: var(--ratp-paper);
+  overflow: hidden;
+}
+
 .screen::after {
   content: "";
   position: absolute;
@@ -39,99 +45,69 @@ body {
   pointer-events: none;
 }
 
+/* Much shallower cap, closer to RATP platform displays */
 .header {
-  height: 132px;
-  padding: 0 34px;
+  height: 102px;
+  padding: 0 32px;
   background: var(--ratp-paper);
   color: var(--ratp-blue);
   border-bottom: 8px solid var(--ratp-ink);
   box-shadow: none;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: minmax(360px, 1fr) auto auto auto;
   gap: 0;
 }
 
-.brand {
-  gap: 15px;
-}
-
+.brand { gap: 14px; }
 .brand-mark {
-  width: 70px;
-  height: 70px;
+  width: 62px;
+  height: 62px;
   color: var(--ratp-blue);
-  border: 5px solid var(--ratp-blue);
+  border: 4px solid var(--ratp-blue);
   border-radius: 50%;
-  padding: 10px;
+  padding: 9px;
 }
-
-.brand-copy span {
-  color: var(--ratp-blue);
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.brand-copy strong {
-  color: var(--ratp-blue);
-  font-size: 31px;
-  font-weight: 900;
-  letter-spacing: .01em;
-}
-
-.page-title {
-  color: var(--ratp-blue);
-}
-
-.page-title strong {
-  font-weight: 900;
-}
-
-.page-title span {
-  color: #555;
-}
+.brand-copy span { color: var(--ratp-blue); font-size: 15px; font-weight: 700; }
+.brand-copy strong { color: var(--ratp-blue); font-size: 26px; font-weight: 900; letter-spacing: .01em; }
+.page-title { color: var(--ratp-blue); }
+.page-title strong { font-size: 23px; font-weight: 900; }
+.page-title span { color: #555; font-size: 14px; }
 
 .meta {
-  height: 78px;
-  min-width: 220px;
+  height: 62px;
+  min-width: 188px;
+  padding: 0 24px;
   border-left: 2px solid #d0d0d0;
   color: var(--ratp-blue);
 }
-
-.meta-icon {
-  color: var(--ratp-blue);
-}
-
-.meta-label {
-  color: #505050;
-  font-weight: 700;
-}
+.meta:last-child { min-width: 205px; }
+.meta-icon { width: 38px; height: 38px; color: var(--ratp-blue); }
+.meta-value { font-size: 27px; }
+.meta-label { margin-top: 3px; color: #505050; font-size: 12px; font-weight: 700; }
 
 .workspace {
-  height: 948px;
-  padding: 18px 22px 32px;
+  height: 808px !important;
+  padding: 14px 22px 28px;
   background: var(--ratp-ink);
 }
 
-/* Panels become flat passenger-information cards */
 .panel,
 .panel.soft,
 .panel.idfm {
   background: var(--ratp-paper);
   color: var(--ratp-blue);
   border: 3px solid var(--ratp-paper);
-  border-radius: 4px;
+  border-radius: 3px;
   box-shadow: none;
+  padding: 17px 22px;
 }
-
-.panel.idfm {
-  background: var(--ratp-paper);
-  border-color: var(--ratp-grey);
-}
+.panel.idfm { background: var(--ratp-paper); border-color: var(--ratp-grey); }
 
 .section-title,
 .section-title.white {
   color: var(--ratp-blue);
-  font-size: 25px;
+  font-size: 22px;
   font-weight: 900;
-  letter-spacing: .015em;
+  letter-spacing: .01em;
   text-transform: none;
 }
 
@@ -146,9 +122,7 @@ body {
 .schedule-row .discipline,
 .winner-copy p,
 .mini-transport .sub,
-.exit-head p {
-  color: #444 !important;
-}
+.exit-head p { color: #444 !important; }
 
 .gold,
 .schedule-row .race,
@@ -157,9 +131,7 @@ body {
 .winner-copy .place,
 .flash strong,
 .list-compact time,
-.race-number {
-  color: var(--ratp-blue) !important;
-}
+.race-number { color: var(--ratp-blue) !important; }
 
 .big-time,
 .big-count {
@@ -167,187 +139,130 @@ body {
   background: var(--ratp-ink);
   display: inline-block;
   width: fit-content;
-  padding: 8px 16px 10px;
-  border-radius: 3px;
-  letter-spacing: -.055em;
+  padding: 5px 13px 8px;
+  border-radius: 2px;
+  box-shadow: none !important;
 }
+.time-unit { color: var(--ratp-yellow); }
 
-.time-unit {
-  color: var(--ratp-yellow);
-}
-
-.schedule {
-  gap: 4px;
-}
-
+.schedule { gap: 2px; margin-top: 14px; }
 .schedule-row {
+  min-height: 44px !important;
+  height: 44px;
   color: var(--ratp-blue);
   background: var(--ratp-paper);
-  border-top: 2px solid var(--ratp-ink);
+  border-top: 1px solid #d0d0d0;
+  font-size: 18px;
   font-weight: 700;
 }
-
 .schedule-row.active {
   color: var(--ratp-blue);
-  background: #eef7fa;
-  border-left: 10px solid var(--ratp-cyan);
+  background: #f2c126;
+  border-left: 8px solid var(--ratp-cyan);
   padding-left: 8px;
 }
 
-/* Passenger transport identifiers */
-.mode-badge {
-  color: var(--ratp-blue);
-  border-color: var(--ratp-blue);
-  background: var(--ratp-paper);
-}
-
-.line-badge {
-  border: 2px solid rgba(0, 0, 0, .12);
-}
-
+.mode-badge { color: var(--ratp-blue); border-color: var(--ratp-blue); background: var(--ratp-paper); }
+.line-badge { border: 2px solid rgba(0, 0, 0, .12); }
 .transport-name,
 .transport-direction,
 .rail-main strong,
-.mini-stop {
-  color: var(--ratp-blue) !important;
-}
+.mini-stop { color: var(--ratp-blue) !important; }
 
 .rail-time,
 .minutes,
 .departure-time {
   color: var(--ratp-yellow) !important;
   background: var(--ratp-ink);
-  padding: 5px 12px;
-  border-radius: 3px;
+  padding: 4px 10px;
+  border-radius: 2px;
   font-weight: 900;
 }
-
 .status.green,
-.green {
-  color: var(--ratp-green) !important;
-}
+.green { color: var(--ratp-green) !important; }
 
-/* Strong black separators, like platform screens */
 .arrival-layout,
 .meeting-layout,
 .transition-layout,
 .exit-layout,
 .incident-layout,
 .meeting-bottom,
-.mini-transports {
-  gap: 8px !important;
+.mini-transports { gap: 8px !important; }
+
+/* Compact each 1080-era layout into the real 19:9 board height */
+.arrival-layout {
+  grid-template-columns: 590px 706px 550px;
+  grid-template-rows: 338px 184px 224px;
 }
+.arrival-countdown .kicker { margin-top: 16px; }
+.arrival-countdown .big-count { margin-top: 20px; font-size: 108px; }
+.arrival-countdown .race-ref { padding-top: 12px; font-size: 21px; }
+.visitor-cues { margin-top: 15px; gap: 8px; }
+.visitor-cue { min-height: 70px; padding: 10px 16px; border-radius: 2px; background: #f3f3f3 !important; box-shadow: none !important; }
+.visitor-cue strong { font-size: 20px; }
+.visitor-cue small { margin-top: 3px; font-size: 14px; }
+.list-compact { margin-top: 11px; gap: 7px; }
+.event-name { font-size: 20px; }
+.event-note { margin-top: 3px; font-size: 14px; }
+.transport-rail { padding: 0; }
+.rail-row { grid-template-columns: 132px 1fr 210px; padding: 0 24px; }
+.rail-main strong { font-size: 20px; }
+.rail-main span { margin-top: 3px; font-size: 14px; }
+.rail-time { font-size: 23px; }
+
+.meeting-layout { grid-template-rows: 472px 274px; }
+.next-race .race-number { margin-top: 12px; font-size: 60px; }
+.race-title { font-size: 26px; }
+.next-race .big-time { margin-top: 20px; font-size: 92px; }
+.count-label { margin-top: 18px; }
+.next-race .big-count { margin-top: 8px; font-size: 70px; }
+.winner { margin-top: 15px; grid-template-columns: 140px 1fr; }
+.winner-number { height: 140px; font-size: 66px; color: var(--ratp-yellow); background: var(--ratp-ink); border: 0; }
+.winner-copy h2 { font-size: 31px; }
+.flash { padding-top: 12px; }
+.mini-transport { min-height: 128px; padding: 12px 14px; background: #f3f3f3 !important; color: var(--ratp-blue) !important; border-radius: 2px !important; box-shadow: none !important; }
+.mini-transport .minutes { margin-top: 10px; font-size: 24px; }
+
+.transition-title { height: 74px; }
+.transition-title h1 { font-size: 38px; }
+.transition-layout { height: calc(100% - 74px); }
+.exit-head { height: 74px; }
+.exit-head h1 { font-size: 38px; }
+.exit-layout { height: calc(100% - 74px); }
 
 .rail-label,
 .rail-row,
 .flash,
 .race-ref,
 .event + .event,
-.meta {
-  border-color: #c9c9c9 !important;
-}
+.meta { border-color: #c9c9c9 !important; }
+.rail-row { border-top-width: 1px; }
 
-.rail-row {
-  border-top-width: 2px;
-}
-
-.visitor-cue,
 .remaining-card,
-.brief-item,
-.mini-transport {
-  background: #f3f3f3 !important;
-  color: var(--ratp-blue) !important;
-  border-radius: 2px !important;
-  box-shadow: none !important;
-}
-
+.brief-item { background: #f3f3f3 !important; color: var(--ratp-blue) !important; border-radius: 2px !important; box-shadow: none !important; }
 .visitor-cue span,
 .visitor-cue strong,
 .brief-item b,
-.brief-item span {
-  color: var(--ratp-blue) !important;
-}
+.brief-item span { color: var(--ratp-blue) !important; }
 
-.winner-number {
-  color: var(--ratp-yellow);
-  background: var(--ratp-ink);
-  border: 0;
-}
-
-/* Main screen headings mimic destination display typography */
 .transition-title h1,
-.exit-head h1 {
-  color: var(--ratp-paper);
-  font-weight: 900;
-  letter-spacing: -.02em;
-}
-
+.exit-head h1 { color: var(--ratp-paper); font-weight: 900; letter-spacing: -.02em; }
 .transition-title,
-.exit-head {
-  color: var(--ratp-paper);
-}
+.exit-head,
+.last-count { color: var(--ratp-paper); }
+.last-count strong { color: var(--ratp-yellow); }
 
-.last-count {
-  color: var(--ratp-paper);
-}
-
-.last-count strong {
-  color: var(--ratp-yellow);
-}
-
-/* Incident mode: keep the alert instantly readable, but in a real RATP-board frame */
-.incident-workspace {
-  background: var(--ratp-ink) !important;
-}
-
+.incident-workspace { background: var(--ratp-ink) !important; }
 .incident-banner {
   background: var(--ratp-paper) !important;
   color: var(--ratp-blue) !important;
   border: 3px solid var(--ratp-paper) !important;
   box-shadow: none !important;
 }
-
 .incident-banner .section-title,
 .incident-banner h1,
 .incident-banner h2,
-.incident-banner p {
-  color: var(--ratp-blue) !important;
-}
+.incident-banner p { color: var(--ratp-blue) !important; }
+.alert-text { color: #b90000 !important; }
 
-.alert-text {
-  color: #b90000 !important;
-}
-
-/* Remove dashboard-like decorative effects */
-.panel,
-.visitor-cue,
-.remaining-card,
-.mini-transport,
-.winner-number,
-.big-time,
-.big-count,
-.rail-time,
-.minutes,
-.departure-time {
-  box-shadow: none !important;
-}
-
-.distance-test-label {
-  color: rgba(255, 255, 255, .72);
-  bottom: 21px;
-}
-
-/* Large-screen priority: dense, horizontal information-board proportions */
-@media (min-width: 1200px) {
-  .panel {
-    padding: 20px 24px;
-  }
-
-  .schedule-row {
-    min-height: 54px;
-  }
-
-  .transport-rail {
-    padding: 0;
-  }
-}
+.distance-test-label { display: none; }
