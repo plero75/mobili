@@ -1,38 +1,4 @@
 (()=>{
-const BADGES={
-  krakow:[['best','Best Value'],['cheap','Cheapest Travel']],
-  dublin:[['time','Max Time in City'],['best','Best Deal']],
-  brussels:[['easy','Easy Trip'],['fast','Fastest Route']],
-  bologna:[['best','Best Deal'],['food','Food Lover']],
-  tirana:[['cheap','Budget Pick'],['different','Most Different']],
-  barcelona:[['time','Max Time in City'],['easy','Easy Trip']],
-  bucharest:[['cheap','Budget Pick'],['long','Long Travel']],
-  vilnius:[['different','Hidden Gem'],['long','Long Travel']],
-  lisbon:[['best','Best Value'],['food','Food Lover']],
-  porto:[['best','Best Deal'],['food','Food Lover']],
-  mallorca:[['sun','Sun Escape'],['time','More Time There']],
-  tallinn:[['different','Hidden Gem'],['long','Long Travel']],
-  riga:[['different','Hidden Gem'],['long','Long Travel']],
-  split:[['sun','Sea Escape'],['different','Most Different']],
-  prague:[['best','Best Value'],['easy','Easy Trip']],
-  vienna:[['easy','Easy Trip'],['style','City Break Chic']],
-  rotterdam:[['easy','Easy Trip'],['time','Max Time in City']],
-  amsterdam:[['easy','Easy Trip'],['best','Best Deal']],
-  london:[['fast','Fastest Route'],['time','Max Time in City']],
-  turin:[['best','Best Value'],['food','Food Lover']],
-  bilbao:[['best','Best Value'],['time','Max Time in City']],
-  milan:[['cheap','Cheapest Travel'],['best','Best Deal']],
-  malaga:[['cheap','Cheapest Travel'],['sun','Sun Escape']],
-  naples:[['best','Best Deal'],['food','Food Lover']],
-  budapest:[['best','Best Value'],['night','Nightlife Pick']],
-  liverpool:[['night','Nightlife Pick'],['music','Music City']],
-  valencia:[['sun','Sun Escape'],['food','Food Lover']],
-  belgrade:[['night','Nightlife Pick'],['different','Most Different']],
-  sarajevo:[['different','Hidden Gem'],['cheap','Budget Pick']],
-  alicante:[['sun','Sun Escape'],['cheap','Budget Pick']],
-  seville:[['food','Food Lover'],['sun','Sun Escape']],
-  munich:[['easy','Easy Trip'],['food','Food Lover']]
-};
 const TRAINS={
   brussels:{label:'Paris-Nord → Bruxelles-Midi',url:'https://www.eurostar.com/fr-fr/train/paris-bruxelles',source:'Eurostar',note:'Centre à centre · direct · très peu de temps perdu en transfert.'},
   london:{label:'Paris-Nord → London St Pancras',url:'https://www.eurostar.com/fr-fr/train/paris-londres',source:'Eurostar',note:'Direct · arrivée en plein centre · contrôle frontière à intégrer.'},
@@ -75,13 +41,14 @@ const CITY_GUIDES={
   turin:{areas:['San Salvario — sortie et food','Quadrilatero Romano — central','Vanchiglia — local et vivant'],food:'Aperitivo, chocolat, cuisine piémontaise et marchés.',night:'San Salvario puis Quadrilatero.',must:'Marché Porta Palazzo + aperitivo + centre baroque.',watch:'Trajet train long : vérifier si le temps utile reste suffisant.'}
 };
 function cityIdFromCard(card){return card?.dataset?.openCity||card?.dataset?.radarCity||card?.dataset?.city||card?.id?.replace(/^fiche-/,'')||''}
-function badgeHtml(id,card=false){const rows=BADGES[id]?.slice(0,2)||[];if(!rows.length)return'';return `<div class="trip-badges${card?' trip-badges--card':''}" aria-label="Distinctions de cette destination">${rows.map(([kind,label])=>`<span class="trip-badge trip-badge--${kind}">${label}</span>`).join('')}</div>`}
-function addCardBadges(card){const id=cityIdFromCard(card);if(!id||card.querySelector('.trip-badges--card'))return;const html=badgeHtml(id,true);if(!html)return;const body=card.querySelector('.destination-card-body')||card;const status=body.querySelector('.destination-card-status');if(status)status.insertAdjacentHTML('afterend',html);else body.insertAdjacentHTML('afterbegin',html)}
-function addDetailBadges(id,card){if(card.querySelector('.trip-badges:not(.trip-badges--card)'))return;const html=badgeHtml(id,false);if(!html)return;const head=card.querySelector('.selection-card-head')||card.querySelector('.route-panel')||card;head.insertAdjacentHTML('afterend',html)}
+function cardFor(id){return document.getElementById(`fiche-${id}`)||document.querySelector(`[data-city="${id}"]`)||document.querySelector(`[data-open-city="${id}"]`)||document.querySelector(`[data-radar-city="${id}"]`)}
 function addTrainCheck(id,card){const cfg=TRAINS[id];if(!cfg||card.querySelector('.trip-check'))return;const host=card.querySelector('.route-panel')?.parentElement||card;const el=document.createElement('div');el.className='trip-check';el.innerHTML=`<div class="trip-check__top"><div><div class="trip-check__title">🚆 Check billets de train</div><div class="trip-check__meta"><b>${cfg.label}</b><br>${cfg.note}<br>Tarif A/R à revérifier pour le 23 → 25 octobre 2026.</div></div><a class="trip-check__link" href="${cfg.url}" target="_blank" rel="noopener">Voir sur ${cfg.source} ↗</a></div>`;host.appendChild(el)}
-function guideHtml(id){const g=CITY_GUIDES[id];if(!g)return'';return `<section class="city-guide"><div class="city-guide__head"><span>Le mini-guide utile</span><h4>📍 Où dormir, manger et sortir</h4></div><div class="city-guide__grid"><div class="city-guide__block city-guide__block--wide"><small>🏡 Les quartiers à viser</small><div class="area-pills">${g.areas.map(x=>`<span>${x}</span>`).join('')}</div></div><div class="city-guide__block"><small>🍽️ À manger</small><p>${g.food}</p></div><div class="city-guide__block"><small>🍸 Pour sortir</small><p>${g.night}</p></div><div class="city-guide__block"><small>⭐ Le programme signature</small><p>${g.must}</p></div><div class="city-guide__block city-guide__block--watch"><small>👀 À surveiller</small><p>${g.watch}</p></div></div></section>`}
+function airbnbUrl(name){return `https://www.airbnb.fr/s/${encodeURIComponent(name)}/homes?checkin=2026-10-23&checkout=2026-10-25&adults=6`}
+function bookingUrl(name){return `https://www.booking.com/searchresults.fr.html?ss=${encodeURIComponent(name)}&checkin=2026-10-23&checkout=2026-10-25&group_adults=6&no_rooms=3&group_children=0`}
+function guideHtml(id){const g=CITY_GUIDES[id];if(!g)return'';return `<section class="city-guide"><div class="city-guide__head"><span>Le mini-guide utile</span><h4>📍 Où dormir, manger et sortir</h4></div><div class="city-guide__grid"><div class="city-guide__block city-guide__block--wide"><small>🏡 2–3 zones à viser</small><div class="area-pills">${g.areas.map(x=>`<span>${x}</span>`).join('')}</div><div class="housing-links"><a href="${airbnbUrl(id)}" target="_blank" rel="noopener">Chercher Airbnb ↗</a><a href="${bookingUrl(id)}" target="_blank" rel="noopener">Chercher Booking ↗</a><span>Prix logement non vérifié : à confirmer avant réservation.</span></div></div><div class="city-guide__block"><small>🍽️ À manger</small><p>${g.food}</p></div><div class="city-guide__block"><small>🍸 Pour sortir</small><p>${g.night}</p></div><div class="city-guide__block"><small>⭐ Programme signature</small><p>${g.must}</p></div><div class="city-guide__block city-guide__block--watch"><small>👀 À surveiller</small><p>${g.watch}</p></div></div></section>`}
 function addGuide(id,card){if(card.querySelector('.city-guide'))return;const html=guideHtml(id);if(!html)return;const footer=card.querySelector('.card-footer');if(footer)footer.insertAdjacentHTML('beforebegin',html);else card.insertAdjacentHTML('beforeend',html)}
-function enrichArticle(article,id){if(!article||!id)return;addDetailBadges(id,article);addTrainCheck(id,article);addGuide(id,article)}
+function enrichArticle(article,id){if(!article||!id)return;addTrainCheck(id,article);addGuide(id,article)}
+
 function ensureModal(){let modal=document.getElementById('cityModal');if(modal)return modal;modal=document.createElement('div');modal.id='cityModal';modal.className='city-modal';modal.setAttribute('aria-hidden','true');modal.innerHTML=`<div class="city-modal__backdrop" data-close-city-modal></div><section class="city-modal__panel" role="dialog" aria-modal="true" aria-label="Fiche destination"><button class="city-modal__close" type="button" data-close-city-modal aria-label="Fermer">×</button><div class="city-modal__content" id="cityModalContent"></div></section>`;document.body.appendChild(modal);modal.addEventListener('click',event=>{
   if(event.target.closest('[data-close-city-modal]')){closeModal();return}
   const action=event.target.closest('[data-vote],[data-idea],button[data-origin-id]');if(!action)return;
@@ -94,7 +61,8 @@ function cleanClone(clone){clone.querySelectorAll('[id]').forEach(el=>{el.datase
 function openModal(article,id){const modal=ensureModal(),content=modal.querySelector('#cityModalContent'),clone=cleanClone(article.cloneNode(true));enrichArticle(clone,id);content.replaceChildren(clone);modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('city-modal-open');history.replaceState(null,'',`#fiche-${id}`);setTimeout(()=>modal.querySelector('.city-modal__close')?.focus(),30)}
 function closeModal(){const modal=document.getElementById('cityModal');if(!modal)return;modal.classList.remove('is-open');modal.setAttribute('aria-hidden','true');document.body.classList.remove('city-modal-open');if(location.hash.startsWith('#fiche-'))history.replaceState(null,'',location.pathname+location.search)}
 function openFromStaging(id){const article=document.querySelector(`#cityList #fiche-${CSS.escape(id)}`)||document.querySelector(`#cityList [data-city="${CSS.escape(id)}"]`)||document.querySelector('#cityList article');if(!article)return false;openModal(article,id);return true}
-function wrapCard(card){if(card.dataset.modalWrapped==='1')return;card.dataset.modalWrapped='1';const id=cityIdFromCard(card),original=card.onclick;card.onclick=function(event){if(typeof original==='function')original.call(this,event);setTimeout(()=>openFromStaging(id),0)};addCardBadges(card)}
+
+function wrapCard(card){if(card.dataset.modalWrapped==='1')return;card.dataset.modalWrapped='1';const id=cityIdFromCard(card),original=card.onclick;card.onclick=function(event){if(typeof original==='function')original.call(this,event);setTimeout(()=>openFromStaging(id),0)}}
 function enhanceCards(){document.querySelectorAll('.destination-card[data-open-city],.destination-card[data-radar-city]').forEach(wrapCard);document.querySelectorAll('#cityList article').forEach(article=>enrichArticle(article,cityIdFromCard(article)))}
 function hookPicker(){const picker=document.getElementById('cityPicker');if(!picker||picker.dataset.modalHooked==='1')return;picker.dataset.modalHooked='1';picker.addEventListener('change',()=>{const id=picker.value;setTimeout(()=>{if(openFromStaging(id))return;const card=document.querySelector(`[data-open-city="${CSS.escape(id)}"],[data-radar-city="${CSS.escape(id)}"]`);card?.click()},0)})}
 function openHashIfNeeded(){const id=location.hash.match(/^#fiche-([a-z-]+)$/)?.[1];if(!id)return;if(openFromStaging(id))return;const card=document.querySelector(`[data-open-city="${CSS.escape(id)}"],[data-radar-city="${CSS.escape(id)}"]`);card?.click()}
