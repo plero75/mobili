@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Week-end des petits chats — Choix de la destination</title>
-  <link rel="stylesheet" href="phase1.css?v=8">
+  <link rel="stylesheet" href="phase1.css?v=9">
 </head>
 <body>
   <header class="hero">
@@ -39,7 +39,7 @@
       </div>
     </section>
     <section id="destinations">
-      <div class="w"><div class="intro"><div><div class="script">Une règle simple pour garder un budget de groupe raisonnable.</div><h2>Les fiches destination</h2></div><p>Toutes les villes restent documentées, mais seules celles dont le transport A/R direct vérifié ne dépasse pas <b>250 €</b> peuvent recevoir un vote.</p></div><div class="eligibility-panel"><div><span>Règle du vote</span><h3>250 € A/R maximum</h3><p>Prix absent : vote en attente. Prix supérieur : destination hors vote.</p></div><div id="eligibilitySummary">Calcul des destinations éligibles…</div></div><div class="snapshot-head" id="snapshotHead">Chargement du dernier snapshot direct…</div><div class="carousel-head"><div><b>Choisis une ville</b><span>18 destinations : fais défiler les résumés ou ouvre directement une ville.</span></div><div class="carousel-tools"><label for="cityPicker">Accès direct</label><select id="cityPicker" aria-label="Ouvrir directement une destination"></select><div class="carousel-controls"><button id="carouselPrev" type="button" aria-label="Destinations précédentes">←</button><button id="carouselNext" type="button" aria-label="Destinations suivantes">→</button></div></div></div><div class="destination-carousel" id="destinationJump" aria-label="Carrousel des destinations"></div><div class="selection-list" id="cityList" aria-live="polite"></div></div>
+      <div class="w"><div class="intro"><div><div class="script">Une règle simple pour garder un budget de groupe raisonnable.</div><h2>Les villes encore en course</h2></div><p>Le carrousel ne contient que les destinations dont le transport A/R direct vérifié ne dépasse pas <b>250 €</b>. Dès qu’un prix dépasse ce plafond, la ville sort automatiquement du vote.</p></div><div class="eligibility-panel"><div><span>Règle du vote</span><h3>250 € A/R maximum</h3><p>Prix absent ou trajet direct inexploitable : destination sortie du vote.</p></div><div id="eligibilitySummary">Calcul des destinations éligibles…</div></div><div class="snapshot-head" id="snapshotHead">Chargement du dernier contrôle vols et trains…</div><div class="carousel-head"><div><b>Choisis une ville votable</b><span id="carouselCount">Chargement des destinations sous le plafond…</span></div><div class="carousel-tools"><label for="cityPicker">Accès direct</label><select id="cityPicker" aria-label="Ouvrir directement une destination éligible"></select><div class="carousel-controls"><button id="carouselPrev" type="button" aria-label="Destinations précédentes">←</button><button id="carouselNext" type="button" aria-label="Destinations suivantes">→</button></div></div></div><div class="destination-carousel" id="destinationJump" aria-label="Carrousel des destinations votables"></div><div class="selection-list" id="cityList" aria-live="polite"></div></div>
     </section>
     <section id="radar" class="radar-section">
       <div class="w">
@@ -50,8 +50,8 @@
     </section>
     <section id="comparatif">
       <div class="w">
-        <div class="intro"><div><div class="script">Tout ce qui compte, sur la même ligne.</div><h2>Comparatif express</h2></div><p>Transport, séjour, total, temps utile et logistique : les huit finalistes utilisent exactement les mêmes définitions.</p></div>
-        <div class="compare"><table><thead><tr><th>Destination</th><th>Transport A/R</th><th>Budget sur place</th><th>Total réaliste</th><th>Temps utile</th><th>Simplicité</th><th>Vote</th><th>Vérifier</th></tr></thead><tbody id="compareBody"></tbody></table></div>
+        <div class="intro"><div><div class="script">Elles restent documentées, mais ne peuvent plus recevoir de vote.</div><h2>Les villes non possibles</h2></div><p>Ce tableau réunit toutes les destinations hors budget, sans prix vérifiable, sans vol direct exploitable ou avec un train encore à contrôler.</p></div>
+        <div class="compare"><table><thead><tr><th>Destination</th><th>Transport A/R</th><th>Budget sur place</th><th>Total réaliste</th><th>Temps utile</th><th>Simplicité</th><th>Résultat du contrôle</th><th>Revérifier</th></tr></thead><tbody id="compareBody"></tbody></table></div>
         <p class="transport-legend">* Snapshot tarifaire : somme des deux trajets directs observés pour le vendredi 23 et le dimanche 25 octobre 2026. Le tarif final doit être revérifié avant achat.</p>
       </div>
     </section>
@@ -59,6 +59,6 @@
   </main>
   <footer>À feuilleter avec enthousiasme, mauvaise foi et un sens très personnel des priorités.</footer>
   <div class="modal hidden" id="ideaModal"><div class="modal-card"><h3>💡 Balance ton idée</h3><input type="hidden" id="ideaCity"><label>Nom du lieu / activité</label><input id="ideaTitle" placeholder="Ex. ce bar improbable que j’ai vu sur Instagram"><label>Pourquoi on doit faire ça ?</label><textarea id="ideaWhy" placeholder="Argumentation scientifique facultative."></textarea><label>Lien, si tu en as un</label><input id="ideaLink" placeholder="https://..."><div class="modal-actions"><button class="cancel" id="cancelIdea">Annuler</button><button class="save-idea" id="saveIdea">Ajouter l’idée</button></div></div></div>
-  <script src="phase1.js?v=8"></script>
+  <script src="phase1.js?v=9"></script>
 </body>
 </html>
