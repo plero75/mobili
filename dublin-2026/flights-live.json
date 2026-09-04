@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-04T06:53:13+00:00",
+  "generatedAt": "2026-09-04T07:21:16+00:00",
   "departDate": "2026-10-23",
   "returnDate": "2026-10-25",
   "source": "Google Flights via fast-flights (scraper non officiel, sans clé API)",
@@ -1198,8 +1198,8 @@
         "id": "porto",
         "name": "Porto",
         "vibe": "🍷 Porto + Ribeira + bonnes tables",
-        "flightPrice": 204.0,
-        "estimatedWeekend": 444,
+        "flightPrice": 203.0,
+        "estimatedWeekend": 443,
         "localCostEstimate": 240,
         "usefulHours": 39.9,
         "onSiteBudget": {
@@ -1246,15 +1246,15 @@
         },
         "centerArrival": "2026-10-23T16:30",
         "leaveCenter": "2026-10-25T08:25",
-        "valueScore": 476.4,
+        "valueScore": 475.4,
         "currency": "EUR"
       },
       {
         "id": "budapest",
         "name": "Budapest",
         "vibe": "♨️ bains + ruin bars + Danube",
-        "flightPrice": 311.0,
-        "estimatedWeekend": 536,
+        "flightPrice": 310.0,
+        "estimatedWeekend": 535,
         "localCostEstimate": 225,
         "usefulHours": 48.9,
         "onSiteBudget": {
@@ -1301,7 +1301,7 @@
         },
         "centerArrival": "2026-10-23T16:55",
         "leaveCenter": "2026-10-25T17:50",
-        "valueScore": 536.0,
+        "valueScore": 535.0,
         "currency": "EUR"
       },
       {
