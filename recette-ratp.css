@@ -266,3 +266,209 @@ body {
 .alert-text { color: #b90000 !important; }
 
 .distance-test-label { display: none; }
+
+/* --- Arrival mode v3: closer to a real RATP passenger board --- */
+.arrival-layout {
+  grid-template-columns: 520px 690px 636px;
+  grid-template-rows: 314px 172px 260px;
+}
+
+.arrival-countdown,
+.arrival-program,
+.arrival-highlights,
+.arrival-animations,
+.arrival-events,
+.transport-rail {
+  border-radius: 0 !important;
+}
+
+.arrival-countdown {
+  background: #fff !important;
+  border-left: 10px solid var(--ratp-cyan) !important;
+  padding: 18px 22px 16px 24px !important;
+}
+.arrival-countdown .section-title {
+  color: var(--ratp-blue) !important;
+  font-size: 25px;
+}
+.arrival-countdown .kicker {
+  color: #333;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.arrival-countdown .big-count {
+  margin-top: 14px;
+  font-size: 96px;
+  line-height: .9;
+  padding: 7px 15px 9px;
+}
+.arrival-countdown .race-ref {
+  margin-top: auto;
+  border-top: 2px solid #d4d4d4 !important;
+  color: var(--ratp-blue);
+  font-size: 18px;
+}
+
+.arrival-program {
+  padding: 14px 18px !important;
+}
+.arrival-program .section-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.arrival-program .schedule {
+  margin-top: 0;
+  gap: 0;
+}
+.arrival-program .schedule-row {
+  height: 47px !important;
+  min-height: 47px !important;
+  grid-template-columns: 86px 58px 1fr 84px;
+  padding: 0 12px;
+  border-top: 1px solid #d5d5d5;
+  font-size: 17px;
+}
+.arrival-program .schedule-row:first-child {
+  border-top: 0;
+}
+.arrival-program .schedule-row.active {
+  background: var(--ratp-ink) !important;
+  color: #fff !important;
+  border-left: 0;
+  box-shadow: inset 8px 0 0 var(--ratp-cyan) !important;
+}
+.arrival-program .schedule-row.active time,
+.arrival-program .schedule-row.active .race,
+.arrival-program .schedule-row.active .discipline {
+  color: var(--ratp-yellow) !important;
+}
+.arrival-program .schedule-row.active span:not(.race):not(.discipline) {
+  color: #fff !important;
+}
+
+.arrival-highlights {
+  padding: 14px 18px !important;
+}
+.arrival-highlights .section-title {
+  font-size: 19px;
+  text-transform: uppercase;
+  letter-spacing: .045em;
+}
+.visitor-cues {
+  margin-top: 10px;
+  gap: 0;
+  border-top: 1px solid #d4d4d4;
+}
+.visitor-cue {
+  min-height: 73px;
+  grid-template-columns: 112px 1fr;
+  padding: 9px 12px;
+  background: #fff !important;
+  border-bottom: 1px solid #d4d4d4;
+}
+.visitor-cue span {
+  font-size: 14px;
+}
+.visitor-cue strong {
+  font-size: 19px;
+}
+
+.arrival-animations {
+  padding: 14px 20px !important;
+}
+.arrival-animations .section-title {
+  font-size: 18px;
+}
+.arrival-animations .list-compact {
+  margin-top: 9px;
+}
+.arrival-animations .list-compact div {
+  font-size: 16px;
+}
+
+.arrival-events {
+  padding: 0 !important;
+  overflow: hidden;
+  background: #fff !important;
+}
+.arrival-events .event {
+  height: 50%;
+  grid-template-columns: 126px 1fr;
+  padding: 0 20px;
+  border-top: 1px solid #d4d4d4;
+}
+.arrival-events .event:first-child {
+  border-top: 0;
+}
+.arrival-events .event + .event {
+  border-left: 0 !important;
+  padding-left: 20px;
+}
+.arrival-events .event-date {
+  color: var(--ratp-blue) !important;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.transport-rail {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  background: #fff !important;
+  border: 0 !important;
+  border-top: 8px solid var(--ratp-ink) !important;
+}
+.rail-label {
+  background: #073364;
+  color: #fff;
+  border-right: 0 !important;
+  box-shadow: inset 8px 0 0 #f2c126;
+}
+.rail-label .section-title,
+.rail-label .section-title.white {
+  color: #fff !important;
+  font-size: 24px;
+  line-height: 1.05;
+}
+.rail-label .status {
+  font-size: 15px;
+}
+.rail-list {
+  background: #fff;
+}
+.rail-row {
+  grid-template-columns: 132px 1fr 220px;
+  min-height: 82px;
+  padding: 0 22px;
+  border-top: 1px solid #cfcfcf !important;
+}
+.rail-row:first-child {
+  border-top: 0 !important;
+}
+.rail-main strong {
+  font-size: 21px;
+}
+.rail-time {
+  min-width: 190px;
+  text-align: right;
+  font-size: 25px;
+  line-height: 1;
+}
+
+/* Header: less corporate, more transport signage */
+.header .brand-copy {
+  display: none;
+}
+.header .page-title strong {
+  display: none;
+}
+.header .page-title span {
+  color: #2c2c2c;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
