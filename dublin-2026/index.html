@@ -42,7 +42,7 @@
     <section id="destinations">
       <div class="w"><div class="intro"><div><div class="script">Une règle simple pour garder un budget de groupe raisonnable.</div><h2>Les villes encore en course</h2></div><p>Le carrousel contient toutes les destinations dont le transport A/R direct vérifié ne dépasse pas <b>250 €</b>. Dès qu’un prix dépasse ce plafond — ou qu’il n’est pas vérifiable — la ville passe dans le tableau plus bas.</p></div><div class="eligibility-panel"><div><span>Règle du vote</span><h3>250 € A/R maximum</h3><p>≤ 250 € vérifié : carrousel. &gt; 250 €, prix absent ou trajet inexploitable : tableau.</p></div><div id="eligibilitySummary">Calcul des destinations éligibles…</div></div><div class="snapshot-head" id="snapshotHead">Chargement du dernier contrôle vols et trains…</div><div class="carousel-head"><div><b>Choisis une ville votable</b><span id="carouselCount">Chargement des destinations sous le plafond…</span></div><div class="carousel-tools"><label for="cityPicker">Accès direct</label><select id="cityPicker" aria-label="Ouvrir directement une destination éligible"></select><div class="carousel-controls"><button id="carouselPrev" type="button" aria-label="Destinations précédentes">←</button><button id="carouselNext" type="button" aria-label="Destinations suivantes">→</button></div></div></div><div class="destination-carousel" id="destinationJump" aria-label="Carrousel des destinations votables"></div><div class="selection-list" id="cityList" aria-live="polite"></div></div>
     </section>
-    <section id="radar" hidden aria-hidden="true"><div id="radarTable"><table><tbody id="radarBody"></tbody></table></div></section>
+    <section id="radar" hidden aria-hidden="true"><button id="radarToggle" type="button" aria-expanded="false" hidden>Radar</button><div id="radarTable"><table><tbody id="radarBody"></tbody></table></div></section>
     <section id="comparatif">
       <div class="w">
         <div class="intro"><div><div class="script">Elles restent documentées, mais ne peuvent plus recevoir de vote.</div><h2>Les villes non possibles</h2></div><p>Ce tableau réunit uniquement les destinations hors budget, sans prix vérifiable, sans vol direct exploitable ou avec un train encore à contrôler.</p></div>
@@ -54,7 +54,7 @@
   </main>
   <footer>À feuilleter avec enthousiasme, mauvaise foi et un sens très personnel des priorités.</footer>
   <div class="modal hidden" id="ideaModal"><div class="modal-card"><h3>💡 Balance ton idée</h3><input type="hidden" id="ideaCity"><label>Nom du lieu / activité</label><input id="ideaTitle" placeholder="Ex. ce bar improbable que j’ai vu sur Instagram"><label>Pourquoi on doit faire ça ?</label><textarea id="ideaWhy" placeholder="Argumentation scientifique facultative."></textarea><label>Lien, si tu en as un</label><input id="ideaLink" placeholder="https://..."><div class="modal-actions"><button class="cancel" id="cancelIdea">Annuler</button><button class="save-idea" id="saveIdea">Ajouter l’idée</button></div></div></div>
-  <script src="phase1.js?v=9"></script>
+  <script src="phase1.js?v=10"></script>
   <script src="trip-insights.js?v=1"></script>
   <script src="eligibility-fix.js?v=1"></script>
 </body>
