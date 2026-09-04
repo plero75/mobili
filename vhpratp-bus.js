@@ -119,7 +119,8 @@
         <div class="passages">${items.slice(0,2).map((v,i)=>passageHTML(v,i===0)).join('')}</div>
       </div>`).join('');
     }
-    return `<div class="line-block vhpratp-line" data-line="${escLocal(line.code)}">
+    const directionClass=groups.size>1?' has-multiple-directions':'';
+    return `<div class="line-block vhpratp-line${directionClass}" data-line="${escLocal(line.code)}">
       <div class="line-head"><span class="line-pill" style="background:${line.color}">${escLocal(line.code)}</span><span class="line-name">Ligne ${escLocal(line.code)}</span><span class="mini-source">PRIM</span></div>
       ${body}
     </div>`;
