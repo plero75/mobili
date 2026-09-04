@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-04T07:21:16+00:00",
+  "generatedAt": "2026-09-04T07:26:14+00:00",
   "departDate": "2026-10-23",
   "returnDate": "2026-10-25",
   "source": "Google Flights via fast-flights (scraper non officiel, sans clé API)",
@@ -1696,52 +1696,52 @@
         "flightPrice": 87.0,
         "estimatedWeekend": 447,
         "localCostEstimate": 360,
-        "usefulHours": 50.2,
+        "usefulHours": 45.4,
         "onSiteBudget": {
           "min": 300,
           "max": 420
         },
         "outbound": {
-          "from": "CDG",
+          "from": "ORY",
           "to": "MXP",
-          "departure": "2026-10-23T10:55",
-          "arrival": "2026-10-23T12:25",
+          "departure": "2026-10-23T17:40",
+          "arrival": "2026-10-23T19:05",
           "stops": 0,
-          "durationMinutes": 90,
+          "durationMinutes": 85,
           "carrier": "easyJet",
           "segments": [
             {
-              "from": "CDG",
+              "from": "ORY",
               "to": "MXP",
-              "departure": "2026-10-23T10:55",
-              "arrival": "2026-10-23T12:25",
-              "durationMinutes": 90,
+              "departure": "2026-10-23T17:40",
+              "arrival": "2026-10-23T19:05",
+              "durationMinutes": 85,
               "planeType": "Airbus A320"
             }
           ]
         },
         "return": {
           "from": "MXP",
-          "to": "CDG",
-          "departure": "2026-10-25T18:45",
-          "arrival": "2026-10-25T20:20",
+          "to": "ORY",
+          "departure": "2026-10-25T20:35",
+          "arrival": "2026-10-25T22:10",
           "stops": 0,
           "durationMinutes": 95,
           "carrier": "easyJet",
           "segments": [
             {
               "from": "MXP",
-              "to": "CDG",
-              "departure": "2026-10-25T18:45",
-              "arrival": "2026-10-25T20:20",
+              "to": "ORY",
+              "departure": "2026-10-25T20:35",
+              "arrival": "2026-10-25T22:10",
               "durationMinutes": 95,
-              "planeType": "Airbus A319"
+              "planeType": "Airbus A320"
             }
           ]
         },
-        "centerArrival": "2026-10-23T13:35",
-        "leaveCenter": "2026-10-25T15:50",
-        "valueScore": 447.0,
+        "centerArrival": "2026-10-23T20:15",
+        "leaveCenter": "2026-10-25T17:40",
+        "valueScore": 457.4,
         "currency": "EUR"
       },
       {
@@ -1808,52 +1808,52 @@
         "flightPrice": 87.0,
         "estimatedWeekend": 447,
         "localCostEstimate": 360,
-        "usefulHours": 50.2,
+        "usefulHours": 45.4,
         "onSiteBudget": {
           "min": 300,
           "max": 420
         },
         "outbound": {
-          "from": "CDG",
+          "from": "ORY",
           "to": "MXP",
-          "departure": "2026-10-23T10:55",
-          "arrival": "2026-10-23T12:25",
+          "departure": "2026-10-23T17:40",
+          "arrival": "2026-10-23T19:05",
           "stops": 0,
-          "durationMinutes": 90,
+          "durationMinutes": 85,
           "carrier": "easyJet",
           "segments": [
             {
-              "from": "CDG",
+              "from": "ORY",
               "to": "MXP",
-              "departure": "2026-10-23T10:55",
-              "arrival": "2026-10-23T12:25",
-              "durationMinutes": 90,
+              "departure": "2026-10-23T17:40",
+              "arrival": "2026-10-23T19:05",
+              "durationMinutes": 85,
               "planeType": "Airbus A320"
             }
           ]
         },
         "return": {
           "from": "MXP",
-          "to": "CDG",
-          "departure": "2026-10-25T18:45",
-          "arrival": "2026-10-25T20:20",
+          "to": "ORY",
+          "departure": "2026-10-25T20:35",
+          "arrival": "2026-10-25T22:10",
           "stops": 0,
           "durationMinutes": 95,
           "carrier": "easyJet",
           "segments": [
             {
               "from": "MXP",
-              "to": "CDG",
-              "departure": "2026-10-25T18:45",
-              "arrival": "2026-10-25T20:20",
+              "to": "ORY",
+              "departure": "2026-10-25T20:35",
+              "arrival": "2026-10-25T22:10",
               "durationMinutes": 95,
-              "planeType": "Airbus A319"
+              "planeType": "Airbus A320"
             }
           ]
         },
-        "centerArrival": "2026-10-23T13:35",
-        "leaveCenter": "2026-10-25T15:50",
-        "valueScore": 447.0,
+        "centerArrival": "2026-10-23T20:15",
+        "leaveCenter": "2026-10-25T17:40",
+        "valueScore": 457.4,
         "currency": "EUR",
         "award": "💸 CHEAPEST TRAVEL",
         "why": "Le transport direct vérifié le moins cher."
