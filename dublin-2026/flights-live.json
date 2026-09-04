@@ -5,7 +5,7 @@
   "source": "Google Flights via fast-flights (scraper non officiel, sans clé API)",
   "pricingMode": "two_direct_one_ways",
   "directOnly": true,
-  "priceDisclaimer": "Prix = total des deux vols directs observés au dernier refresh.",
+  "priceDisclaimer": "Transport A/R = somme des deux trajets directs observés au dernier refresh ; tarif final à revérifier avant achat.",
   "successfulCities": 5,
   "cities": {
     "dublin": {
