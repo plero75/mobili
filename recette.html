@@ -4,14 +4,29 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#041326">
-  <meta name="description" content="Recette graphique 1920 × 1080 des huit modes de l’écran Mobili Paris-Vincennes">
+  <meta name="description" content="Recette graphique 19:9 des huit modes de l’écran Mobili Paris-Vincennes">
   <title>Mobili — Recette graphique Paris-Vincennes</title>
   <link rel="stylesheet" href="recette.css?v=20260831-7">
-  <link rel="stylesheet" href="recette-ratp.css?v=20260904-1">
+  <link rel="stylesheet" href="recette-ratp.css?v=20260904-2">
 </head>
 <body>
   <main id="app" aria-live="polite"></main>
   <script src="recette.js?v=20260831-4"></script>
   <script src="recette-live.js?v=20260831-4"></script>
+  <script>
+    (() => {
+      const WIDTH = 1920;
+      const HEIGHT = 910;
+      function fitRatpRecipeScreen() {
+        const app = document.getElementById('app');
+        if (!app) return;
+        const scale = Math.min(window.innerWidth / WIDTH, window.innerHeight / HEIGHT);
+        app.style.transform = `translate(-50%, -50%) scale(${scale})`;
+      }
+      window.addEventListener('resize', fitRatpRecipeScreen);
+      requestAnimationFrame(fitRatpRecipeScreen);
+      setTimeout(fitRatpRecipeScreen, 50);
+    })();
+  </script>
 </body>
 </html>
