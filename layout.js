@@ -1,5 +1,6 @@
 (() => {
   const $id = id => document.getElementById(id);
+  const lastGood = new Map();
 
   const EXTRA_PRIM_STOPS = {
     HIPPODROME: {
@@ -59,60 +60,59 @@
 
   async function loadPrimStop(stop) {
     const data = await fetchStop(stop.ref);
-    const visits = parseVisits(data || {});
+    if (!data) return null;
+    const visits = parseVisits(data);
     return primBusLineHTML(stop, visits);
+  }
+
+  function keepOrShowError(target, key, label) {
+    const cached = lastGood.get(key);
+    if (cached) {
+      target.innerHTML = cached;
+      target.classList.add("is-stale");
+      return;
+    }
+    target.innerHTML = `<div class="error-state"><strong>${esc(label)}</strong><span>Nouvelle tentative automatique</span></div>`;
   }
 
   async function renderHippodrome() {
     const target = $id("hippodrome-stop-view");
     if (!target) return;
-    try {
-      target.innerHTML = await loadPrimStop(EXTRA_PRIM_STOPS.HIPPODROME);
-    } catch (e) {
-      console.error("PRIM Hippodrome", e);
-      target.innerHTML = `<div class="error-state">Temps réel PRIM momentanément indisponible</div>`;
-    }
+    const html = await loadPrimStop(EXTRA_PRIM_STOPS.HIPPODROME);
+    if (!html) { keepOrShowError(target, "hippodrome", "Temps réel momentanément indisponible"); return; }
+    lastGood.set("hippodrome", html);
+    target.classList.remove("is-stale");
+    target.innerHTML = html;
   }
 
   async function renderBreuil77() {
-    try {
-      return await loadPrimStop(EXTRA_PRIM_STOPS.BREUIL_77);
-    } catch (e) {
-      console.error("PRIM Breuil 77", e);
-      return `<div class="line-block"><div class="error-state">Ligne 77 : temps réel PRIM indisponible</div></div>`;
+    const target = $id("breuil-bus-view");
+    if (!target) return;
+    let slot = target.querySelector('[data-live-section="breuil-77"]');
+    if (!slot) {
+      target.textContent = "";
+      slot = document.createElement("div");
+      slot.dataset.liveSection = "breuil-77";
+      target.appendChild(slot);
     }
-  }
-
-  async function syncBusViews() {
-    const stage = $id("bus-blocks");
-    if (!stage) return;
-    const blocks = [...stage.children].filter(el => el.classList.contains("stop-block"));
-
-    const joinville = $id("joinville-bus-view");
-    if (joinville) {
-      joinville.innerHTML = blocks[0]
-        ? `<div class="mirrored-stop"><div class="access-filter-note"><strong>Accès ~12 min</strong><span> • seuls les départs PRIM atteignables sont affichés</span></div>${blocks[0].innerHTML}</div>`
-        : `<div class="empty-state">Chargement PRIM des bus de Joinville…</div>`;
+    const html = await loadPrimStop(EXTRA_PRIM_STOPS.BREUIL_77);
+    if (!html) {
+      const cached = lastGood.get("breuil77");
+      if (cached) { slot.innerHTML = cached; slot.classList.add("is-stale"); }
+      else slot.innerHTML = `<div class="line-block"><div class="error-state">Ligne 77 : temps réel momentanément indisponible</div></div>`;
+      return;
     }
-
-    const breuil = $id("breuil-bus-view");
-    if (breuil) {
-      const realtime201 = blocks[1]
-        ? `<div class="mirrored-stop realtime-breuil"><div class="access-filter-note"><strong>Accès ~7 min</strong><span> • seuls les départs PRIM atteignables sont affichés</span></div>${blocks[1].innerHTML}</div>`
-        : "";
-      const realtime77 = await renderBreuil77();
-      breuil.innerHTML = `${realtime201}${realtime77}` || `<div class="empty-state">Chargement PRIM de l’École du Breuil…</div>`;
-    }
+    lastGood.set("breuil77", html);
+    slot.classList.remove("is-stale");
+    slot.innerHTML = html;
   }
 
   async function refreshLocationLayout() {
-    await Promise.allSettled([syncBusViews(), renderHippodrome()]);
+    await Promise.allSettled([renderBreuil77(), renderHippodrome()]);
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    const stage = $id("bus-blocks");
-    if (stage) new MutationObserver(() => { syncBusViews(); }).observe(stage, { childList: true, subtree: true });
     setTimeout(refreshLocationLayout, 900);
-    setInterval(refreshLocationLayout, 30 * 1000);
+    setInterval(refreshLocationLayout, 60 * 1000);
   });
 })();
