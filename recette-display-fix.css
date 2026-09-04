@@ -1,0 +1,82 @@
+/* Display bugfixes for recette 19:9 — loaded after recette-ratp.css */
+
+/* header() renders 5 children: brand + title + 3 meta blocks.
+   The previous 4-column grid wrapped the last meta to a hidden second row. */
+.header {
+  grid-template-columns: 410px minmax(330px, 1fr) 190px 220px 235px !important;
+  grid-template-rows: 102px !important;
+  height: 102px !important;
+  overflow: hidden;
+  align-items: center;
+}
+.header > * { min-width: 0; }
+.brand { overflow: hidden; min-width: 0; }
+.brand-copy { display: block !important; min-width: 0; white-space: nowrap; }
+.brand-copy span,
+.brand-copy strong { overflow: hidden; text-overflow: ellipsis; }
+.page-title { min-width: 0; text-align: center; overflow: hidden; }
+.page-title strong,
+.page-title span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.meta { min-width: 0 !important; width: auto !important; padding: 0 18px !important; overflow: hidden; }
+.meta:last-child { min-width: 0 !important; padding-right: 12px !important; }
+.meta-value,
+.meta-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* prevent inherited 1080px sizing from creating tiny overflows */
+.workspace,
+.arrival-layout,
+.meeting-layout,
+.transition-layout,
+.exit-layout,
+.incident-layout,
+.panel,
+.rail-list,
+.rail-row { min-height: 0; min-width: 0; }
+
+/* Arrival screen: fit all three bands cleanly inside the 808px workspace */
+.arrival-layout {
+  height: 100% !important;
+  grid-template-columns: 520px 690px 636px !important;
+  grid-template-rows: 314px 184px 248px !important;
+  gap: 8px !important;
+}
+.arrival-animations,
+.arrival-events { min-height: 0; overflow: hidden; }
+.arrival-animations { padding-top: 12px !important; padding-bottom: 10px !important; }
+.arrival-events { padding-top: 0 !important; padding-bottom: 0 !important; }
+
+/* Schedule: keep every column visible and stop labels colliding. */
+.arrival-program { min-width: 0; overflow: hidden; }
+.arrival-program .schedule-row {
+  grid-template-columns: 82px 58px minmax(0, 1fr) 88px !important;
+  column-gap: 8px;
+}
+.arrival-program .schedule-row > span:not(.race):not(.discipline) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.arrival-program .schedule-row .discipline { text-align: right; white-space: nowrap; }
+
+/* Passenger rail: compact without clipping the 3rd row. */
+.transport-rail {
+  min-height: 0 !important;
+  overflow: hidden !important;
+  grid-template-columns: 300px minmax(0, 1fr) !important;
+}
+.rail-label { min-height: 0; padding: 0 22px !important; }
+.rail-list { min-height: 0; height: 100%; grid-template-rows: repeat(3, minmax(0, 1fr)) !important; }
+.rail-row { min-height: 0; height: auto !important; padding: 0 22px !important; grid-template-columns: 132px minmax(0, 1fr) 210px !important; }
+.rail-main { min-width: 0; overflow: hidden; }
+.rail-main strong,
+.rail-main span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rail-time { white-space: nowrap; }
+
+/* Weather / road info: remove accidental vertical clipping. */
+.arrival-animations .list-compact,
+.arrival-events .event { min-height: 0; }
+.arrival-events .event { overflow: hidden; }
+
+/* keep the cyan signature rail clear of content */
+.screen::after { height: 16px !important; }
