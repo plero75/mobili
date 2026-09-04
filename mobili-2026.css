@@ -44,6 +44,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,"Helvet
   .joinville-rer .transport-board>.line-block>.line-head{display:none!important}
   .joinville-rer .transport-board>.line-block{padding:0!important;border:0!important}
   .joinville-rer .mobili-line-alert{margin:0 0 7px!important}
+  .rer-directions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.rer-directions:has(.rer-direction-panel:only-child){grid-template-columns:1fr!important}.rer-direction-panel{min-width:0!important}.rer-direction-panel .direction{margin-top:2px!important}.rer-directions .train-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;margin-bottom:0!important}
   .direction{margin:5px 0 3px!important;font-size:13px!important;line-height:1.1!important;font-weight:950!important;color:#152238!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}.service-meta,.route-diagram,.route-unavailable,.bus-onward{display:none!important}
 
   /* RER : heure absolue dominante, attente secondaire */
