@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Week-end des petits chats — Choix de la destination</title>
-  <link rel="stylesheet" href="phase1.css?v=7">
+  <link rel="stylesheet" href="phase1.css?v=8">
 </head>
 <body>
   <header class="hero">
@@ -39,7 +39,7 @@
       </div>
     </section>
     <section id="destinations">
-      <div class="w"><div class="intro"><div><div class="script">Une règle simple pour garder un budget de groupe raisonnable.</div><h2>Les fiches destination</h2></div><p>Toutes les villes restent documentées, mais seules celles dont le transport A/R direct vérifié ne dépasse pas <b>250 €</b> peuvent recevoir un vote.</p></div><div class="eligibility-panel"><div><span>Règle du vote</span><h3>250 € A/R maximum</h3><p>Prix absent : vote en attente. Prix supérieur : destination hors vote.</p></div><div id="eligibilitySummary">Calcul des destinations éligibles…</div></div><div class="snapshot-head" id="snapshotHead">Chargement du dernier snapshot direct…</div><div class="carousel-head"><div><b>Choisis une ville</b><span>Fais défiler les résumés, puis clique pour ouvrir la fiche complète.</span></div><div class="carousel-controls"><button id="carouselPrev" type="button" aria-label="Destinations précédentes">←</button><button id="carouselNext" type="button" aria-label="Destinations suivantes">→</button></div></div><div class="destination-carousel" id="destinationJump" aria-label="Carrousel des destinations"></div><div class="selection-list" id="cityList" aria-live="polite"></div></div>
+      <div class="w"><div class="intro"><div><div class="script">Une règle simple pour garder un budget de groupe raisonnable.</div><h2>Les fiches destination</h2></div><p>Toutes les villes restent documentées, mais seules celles dont le transport A/R direct vérifié ne dépasse pas <b>250 €</b> peuvent recevoir un vote.</p></div><div class="eligibility-panel"><div><span>Règle du vote</span><h3>250 € A/R maximum</h3><p>Prix absent : vote en attente. Prix supérieur : destination hors vote.</p></div><div id="eligibilitySummary">Calcul des destinations éligibles…</div></div><div class="snapshot-head" id="snapshotHead">Chargement du dernier snapshot direct…</div><div class="carousel-head"><div><b>Choisis une ville</b><span>18 destinations : fais défiler les résumés ou ouvre directement une ville.</span></div><div class="carousel-tools"><label for="cityPicker">Accès direct</label><select id="cityPicker" aria-label="Ouvrir directement une destination"></select><div class="carousel-controls"><button id="carouselPrev" type="button" aria-label="Destinations précédentes">←</button><button id="carouselNext" type="button" aria-label="Destinations suivantes">→</button></div></div></div><div class="destination-carousel" id="destinationJump" aria-label="Carrousel des destinations"></div><div class="selection-list" id="cityList" aria-live="polite"></div></div>
     </section>
     <section id="radar" class="radar-section">
       <div class="w">
@@ -59,6 +59,6 @@
   </main>
   <footer>À feuilleter avec enthousiasme, mauvaise foi et un sens très personnel des priorités.</footer>
   <div class="modal hidden" id="ideaModal"><div class="modal-card"><h3>💡 Balance ton idée</h3><input type="hidden" id="ideaCity"><label>Nom du lieu / activité</label><input id="ideaTitle" placeholder="Ex. ce bar improbable que j’ai vu sur Instagram"><label>Pourquoi on doit faire ça ?</label><textarea id="ideaWhy" placeholder="Argumentation scientifique facultative."></textarea><label>Lien, si tu en as un</label><input id="ideaLink" placeholder="https://..."><div class="modal-actions"><button class="cancel" id="cancelIdea">Annuler</button><button class="save-idea" id="saveIdea">Ajouter l’idée</button></div></div></div>
-  <script src="phase1.js?v=7"></script>
+  <script src="phase1.js?v=8"></script>
 </body>
 </html>

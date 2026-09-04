@@ -107,6 +107,9 @@ section+section{border-top:1px solid var(--line)}
 .carousel-head>div:first-child{display:flex;flex-direction:column;gap:.15rem}
 .carousel-head b{font:760 1.6rem/1 Georgia,serif}
 .carousel-head span{color:var(--muted);font-size:.8rem}
+.carousel-tools{display:flex;align-items:center;gap:var(--space-xs)}
+.carousel-tools label{color:var(--muted);font-size:.72rem;font-weight:800;white-space:nowrap}
+.carousel-tools select{min-height:2.75rem;max-width:13rem;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface);padding:0 2rem 0 var(--space-sm);color:var(--green-strong);font-size:.78rem;font-weight:850}
 .carousel-controls{display:flex;gap:var(--space-xs)}
 .carousel-controls button{width:2.75rem;height:2.75rem;border:1px solid var(--green);border-radius:50%;background:var(--surface);color:var(--green-strong);font-size:1.1rem;font-weight:900;cursor:pointer}
 .carousel-controls button:hover{background:var(--green-soft)}
@@ -270,6 +273,9 @@ body>footer{text-align:center;padding:var(--space-2xl) var(--space-md);color:var
   #eligibilitySummary div{grid-template-columns:1fr;gap:.15rem}
   .carousel-head{align-items:center}
   .carousel-head span{max-width:18rem}
+  .carousel-head{align-items:stretch;flex-direction:column}
+  .carousel-tools{justify-content:space-between}
+  .carousel-tools select{max-width:none;flex:1}
   .destination-carousel{grid-auto-columns:minmax(16.5rem,82vw);margin-inline:0;padding-inline:0}
   .snapshot-head,.route-panel,.card-footer,.selection-card-head{align-items:stretch;flex-direction:column}
   .snapshot-head a,.route-panel>a{width:100%}
