@@ -107,12 +107,35 @@ function polish(card){
   card.querySelectorAll('.trip-check').forEach(el=>el.remove());
   visualGuide(card);makeSpots(card);return true;
 }
+function resetModalScroll(){
+  const panel=document.querySelector('.city-modal.is-open .city-modal__panel');
+  const content=document.querySelector('.city-modal.is-open .city-modal__content');
+  if(panel){panel.scrollTop=0;panel.scrollLeft=0;}
+  if(content){content.scrollTop=0;content.scrollLeft=0;}
+}
+function hardResetModalScroll(){
+  resetModalScroll();
+  requestAnimationFrame(()=>{resetModalScroll();requestAnimationFrame(resetModalScroll);});
+  [40,120,260,500].forEach(ms=>setTimeout(resetModalScroll,ms));
+}
 function run(){
   let fresh=false;
   document.querySelectorAll('#cityModalContent .selection-card').forEach(card=>{if(polish(card))fresh=true;});
-  if(fresh){const panel=document.querySelector('.city-modal.is-open .city-modal__panel');if(panel)requestAnimationFrame(()=>{panel.scrollTop=0;});}
+  if(fresh)hardResetModalScroll();
 }
-const obs=new MutationObserver(()=>setTimeout(run,0));
+try{history.scrollRestoration='manual';}catch(e){}
+document.addEventListener('click',event=>{
+  if(event.target.closest('[data-open-city],[data-radar-city],.destination-card'))hardResetModalScroll();
+},true);
+window.addEventListener('hashchange',()=>{
+  if(location.hash.startsWith('#fiche-'))hardResetModalScroll();
+});
+const obs=new MutationObserver(mutations=>{
+  const modalChanged=mutations.some(m=>[...m.addedNodes].some(node=>node.nodeType===1&&(node.matches?.('#cityModalContent .selection-card')||node.querySelector?.('#cityModalContent .selection-card'))));
+  setTimeout(()=>{run();if(modalChanged)hardResetModalScroll();},0);
+});
 obs.observe(document.documentElement,{subtree:true,childList:true});
-document.addEventListener('DOMContentLoaded',run);setTimeout(run,800);setTimeout(run,1600);
+document.addEventListener('DOMContentLoaded',()=>{run();if(location.hash.startsWith('#fiche-'))hardResetModalScroll();});
+setTimeout(()=>{run();if(location.hash.startsWith('#fiche-'))hardResetModalScroll();},800);
+setTimeout(()=>{run();if(location.hash.startsWith('#fiche-'))hardResetModalScroll();},1600);
 })();
