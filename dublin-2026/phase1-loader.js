@@ -6,6 +6,11 @@
   let src=xhr.responseText;
 
   src=src.replace(
+    "const PARTICIPANTS=['Benjamin Potey','Damien Prigent','Francois Enouf','Gabriel Jamet','Guillaume','Loic Anne','Nicolas Richard','Judeau Pascal','Papy fontaine','Tintin','Vincent Jobert'];",
+    "const PARTICIPANTS=['Paul','Benjamin Potey','Damien Prigent','Francois Enouf','Gabriel Jamet','Guillaume','Loic Anne','Nicolas Richard','Judeau Pascal','Papy fontaine','Tintin','Vincent Jobert'];"
+  );
+
+  src=src.replace(
     "function trainOption(id){const train=TRAIN_CHECKS[id];return train?{price:train.price,usefulHours:null,train}:null}",
     "function trainOption(id){const train=TRAIN_CHECKS[id];return train?{price:train.price??train.fareFrom??null,usefulHours:null,train}:null}"
   );
