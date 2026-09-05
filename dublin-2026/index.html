@@ -6,7 +6,7 @@
   <title>Week-end des petits chats — Choix de la destination</title>
   <link rel="stylesheet" href="phase1.css?v=11">
   <link rel="stylesheet" href="trip-insights.css?v=3">
-  <link rel="stylesheet" href="visual-cards.css?v=1">
+  <link rel="stylesheet" href="visual-cards.css?v=2">
   <link rel="stylesheet" href="detail-compact.css?v=1">
   <link rel="stylesheet" href="overview.css?v=1">
   <link rel="stylesheet" href="visual-detail-v2.css?v=2">
@@ -23,10 +23,10 @@
       </div>
       <aside class="hero-board">
         <h2>Qui a déjà voté ?</h2>
-        <p>On montre la participation, pas le classement. Aucun effet moutonnier : chacun assume ses propres mauvaises décisions.</p>
+        <p>La participation et le classement évoluent maintenant en direct.</p>
         <div class="people" id="people"></div>
         <div class="progress"><i id="progressBar"></i></div>
-        <div class="progress-copy" id="progressCopy">0 vote reçu · résultat révélé à 6</div>
+        <div class="progress-copy" id="progressCopy">0 vote reçu · résultats en direct</div>
       </aside>
       <div class="hero-gallery" aria-label="Aperçu des destinations finalistes">
         <figure class="hero-photo hero-photo-main"><img src="images/destinations/bologna.jpg" alt="Plusieurs vues emblématiques de Bologne" fetchpriority="high"><figcaption>🍝 Bologne</figcaption></figure>
@@ -53,13 +53,13 @@
         <p class="transport-legend">* Pour les vols, le snapshot additionne les trajets directs observés pour le vendredi 23 et le dimanche 25 octobre 2026. Pour les trains, le tarif « dès » officiel sert de repère quand aucun panier daté n’est disponible. Le tarif final doit toujours être revérifié avant achat.</p>
       </div>
     </section>
-    <section id="vote" class="vote-zone"><div class="w"><div class="intro"><div><div class="script">La démocratie, mais avec des pintes et des pierogi.</div><h2>Alors, on part où ?</h2></div><p>Choisis ton prénom puis clique sur le bouton ❤️ de ta destination. Tu peux changer d’avis jusqu’à la clôture. Le classement apparaît dès le <b>6e vote</b>.</p></div><div class="who"><div class="status hidden" id="winner">Résultats cachés jusqu’au 6e vote.</div></div></div></section>
+    <section id="vote" class="vote-zone"><div class="w"><div class="intro"><div><div class="script">La démocratie, mais avec des pintes et des pierogi.</div><h2>Alors, on part où ?</h2></div><p>Choisis ton prénom puis vote directement depuis une carte ou depuis la fiche détaillée. Tu peux changer d’avis : le classement se met à jour en direct.</p></div><div class="who"><div class="status hidden" id="winner">Résultats en direct.</div></div></div></section>
   </main>
   <footer>À feuilleter avec enthousiasme, mauvaise foi et un sens très personnel des priorités.</footer>
   <div class="modal hidden" id="ideaModal"><div class="modal-card"><h3>💡 Balance ton idée</h3><input type="hidden" id="ideaCity"><label>Nom du lieu / activité</label><input id="ideaTitle" placeholder="Ex. ce bar improbable que j’ai vu sur Instagram"><label>Pourquoi on doit faire ça ?</label><textarea id="ideaWhy" placeholder="Argumentation scientifique facultative."></textarea><label>Lien, si tu en as un</label><input id="ideaLink" placeholder="https://..."><div class="modal-actions"><button class="cancel" id="cancelIdea">Annuler</button><button class="save-idea" id="saveIdea">Ajouter l’idée</button></div></div></div>
-  <script src="phase1-loader.js?v=1"></script>
+  <script src="phase1-loader.js?v=2"></script>
   <script src="trip-insights.js?v=3"></script>
-  <script src="visual-cards.js?v=1"></script>
+  <script src="visual-cards.js?v=2"></script>
   <script src="visual-detail-v2.js?v=3"></script>
 </body>
 </html>
