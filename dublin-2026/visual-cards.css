@@ -20,6 +20,12 @@
 .destination-card-metrics>span:nth-child(4)::before{content:'⌛';background:#e5f2ff;color:#27689c}
 .destination-card-metrics small{font-size:.67rem;font-weight:800;color:#647069}
 .destination-card-metrics b{font-size:.94rem;color:#18221d}
+.destination-card-actions{display:grid;grid-template-columns:auto 1fr;gap:.55rem;margin-top:auto;align-items:center}
+.destination-card-actions .destination-card-open{margin-top:0}
+.destination-card-vote{min-height:3.55rem;padding:0 .95rem;border:1px solid #0e4d37;border-radius:999px;background:#fff;color:#0e4d37;font-size:.82rem;font-weight:900;cursor:pointer;white-space:nowrap;transition:.18s ease}
+.destination-card-vote:hover{background:#edf7f1;transform:translateY(-1px)}
+.destination-card-vote.is-voted{background:#0e4d37;color:#fff}
+.destination-card-vote:disabled{opacity:.6;cursor:wait;transform:none}
 .destination-card-open{margin-top:auto;padding:.78rem .9rem;border-radius:999px;background:#0e4d37;color:#fff;font-size:.82rem;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
 .destination-card-open i{width:2.1rem;height:2.1rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.42)}
 .visual-flag-chip,.visual-vibe-chip,.visual-photo-note{position:absolute;z-index:3;pointer-events:none}
@@ -29,4 +35,4 @@
 .visual-city-doodle{position:absolute;right:1rem;top:15.55rem;z-index:2;font-size:1.85rem;opacity:.9;filter:saturate(.75)}
 .destination-card[data-mode="train"] .destination-card-kicker::before{content:'🚆 ';font-family:system-ui}
 .destination-card[data-mode="flight"] .destination-card-kicker::before{content:'✈️ ';font-family:system-ui}
-@media(max-width:760px){.destination-carousel{grid-auto-columns:minmax(17.5rem,86vw)}.destination-card{min-height:32.5rem}.destination-card-photo{height:13rem}.destination-card-body{padding-top:13.9rem}.visual-city-doodle{top:14.25rem}.destination-card-body>strong{font-size:2.15rem}}
+@media(max-width:760px){.destination-carousel{grid-auto-columns:minmax(17.5rem,86vw)}.destination-card{min-height:32.5rem}.destination-card-photo{height:13rem}.destination-card-body{padding-top:13.9rem}.visual-city-doodle{top:14.25rem}.destination-card-body>strong{font-size:2.15rem}.destination-card-actions{grid-template-columns:1fr}.destination-card-vote,.destination-card-actions .destination-card-open{width:100%}}
