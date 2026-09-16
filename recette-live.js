@@ -13,8 +13,10 @@
 
   const SOURCES = {
     rer: { line: "A", ref: "STIF:StopArea:SP:43135:", name: "Joinville-le-Pont" },
-    bus77: { line: "77", ref: "STIF:StopPoint:Q:22452:", destination: "Gare de Lyon" },
-    bus101: { line: "101", ref: "STIF:StopPoint:Q:21252:", destination: "Joinville-le-Pont" }
+    bus77: { line: "77", ref: "STIF:StopPoint:Q:463647:", destination: "Gare de Lyon", label: "Hippodrome de Vincennes" },
+    bus77Return: { line: "77", ref: "STIF:StopPoint:Q:463640:", destination: "Porte de Charenton", label: "Hippodrome de Vincennes" },
+    bus101: { line: "101", ref: "STIF:StopPoint:Q:21252:", destination: "Joinville-le-Pont", label: "Joinville-le-Pont RER" },
+    bus101Return: { line: "101", ref: "STIF:StopPoint:Q:39402:", destination: "Maisons-Alfort", label: "Joinville-le-Pont RER" }
   };
   const VELIB = {
     hippodrome: { ids: ["1074333296", "12163"], code: "12163", label: "Hippodrome" },
@@ -33,7 +35,9 @@
     meeting: null,
     rer: [],
     bus77: [],
+    bus77Return: [],
     bus101: [],
+    bus101Return: [],
     velib: {},
     incidents: { A: [], 77: [], 101: [] },
     events: [],
@@ -772,11 +776,13 @@
     set(".mob-rer-access-detail", "à pied depuis Porte C");
 
     const bus77 = state.bus77[0];
+    const bus77Return = state.bus77Return[0];
     const bus101 = state.bus101[0];
+    const bus101Return = state.bus101Return[0];
     set(".mob-bus77-a-time", atTime(bus77));
+    set(".mob-bus77-b-time", atTime(bus77Return));
     set(".mob-bus101-a-time", atTime(bus101));
-    set(".mob-bus77-b-time", "à connecter");
-    set(".mob-bus101-b-time", "à connecter");
+    set(".mob-bus101-b-time", atTime(bus101Return));
 
     const h = state.velib.hippodrome;
     const b = state.velib.breuil;
@@ -786,7 +792,8 @@
     set(".mob-velib-breuil", b ? `${b.total} vélos / ${b.docks} places` : "donnée en attente");
 
     const bus101Near = bus101 && bus101.wait <= 8;
-    const joinvilleMode = bus101Near ? `bus 101 à ${atTime(bus101)} puis RER A` : h?.total > 0 ? "Vélib ou 12 min à pied vers Joinville-le-Pont" : "12 min à pied vers Joinville-le-Pont";
+    const bus77Near = bus77 && bus77.wait <= 8;
+    const joinvilleMode = bus101Near ? `bus 101 à ${atTime(bus101)} depuis Joinville RER` : bus77Near ? `bus 77 à ${atTime(bus77)} jusqu’à Joinville RER` : h?.total > 0 ? "Vélib ou 12 min à pied vers Joinville-le-Pont" : "12 min à pied vers Joinville-le-Pont";
     set(".mob-route-joinville", joinvilleMode);
     set(".mob-route-joinville-next", firstRer ? `Prochain RER : ${atTime(firstRer)}` : "Prochain RER : chargement…");
 
@@ -827,15 +834,21 @@
 
   async function refreshFast() {
     const results = await Promise.allSettled([
-      loadPassages(SOURCES.rer), loadPassages(SOURCES.bus77), loadPassages(SOURCES.bus101),
+      loadPassages(SOURCES.rer),
+      loadPassages(SOURCES.bus77),
+      loadPassages(SOURCES.bus77Return),
+      loadPassages(SOURCES.bus101),
+      loadPassages(SOURCES.bus101Return),
       loadMessages("A"), loadMessages("77"), loadMessages("101")
     ]);
     if (results[0].status === "fulfilled") state.rer = results[0].value;
     if (results[1].status === "fulfilled") state.bus77 = results[1].value;
-    if (results[2].status === "fulfilled") state.bus101 = results[2].value;
-    if (results[3].status === "fulfilled") state.incidents.A = results[3].value;
-    if (results[4].status === "fulfilled") state.incidents[77] = results[4].value;
-    if (results[5].status === "fulfilled") state.incidents[101] = results[5].value;
+    if (results[2].status === "fulfilled") state.bus77Return = results[2].value;
+    if (results[3].status === "fulfilled") state.bus101 = results[3].value;
+    if (results[4].status === "fulfilled") state.bus101Return = results[4].value;
+    if (results[5].status === "fulfilled") state.incidents.A = results[5].value;
+    if (results[6].status === "fulfilled") state.incidents[77] = results[6].value;
+    if (results[7].status === "fulfilled") state.incidents[101] = results[7].value;
     state.updatedAt = new Date(); state.pending = false; render();
   }
   async function refreshSlow() {
