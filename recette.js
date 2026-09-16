@@ -230,9 +230,9 @@ const mobilityBoard = () => `
           </div>
           <div class="local-bus-row pending">
             <span class="line-badge bus">77</span>
-            <div><strong>Vers Hippodrome / Joinville</strong><small>Sens retour à connecter au point d’arrêt Porte C</small></div>
+            <div><strong>Vers Porte de Charenton</strong><small>Arrêt Hippodrome de Vincennes</small></div>
             <b>proche</b>
-            <time class="mob-bus77-b-time">à connecter</time>
+            <time class="mob-bus77-b-time">--</time>
           </div>
           <div class="local-bus-row live">
             <span class="line-badge bus green">101</span>
@@ -242,12 +242,12 @@ const mobilityBoard = () => `
           </div>
           <div class="local-bus-row pending">
             <span class="line-badge bus green">101</span>
-            <div><strong>Vers Maisons-Alfort / retour</strong><small>Sens opposé à connecter au point d’arrêt Porte C</small></div>
+            <div><strong>Vers Maisons-Alfort</strong><small>Depuis Joinville-le-Pont RER</small></div>
             <b>proche</b>
-            <time class="mob-bus101-b-time">à connecter</time>
+            <time class="mob-bus101-b-time">--</time>
           </div>
         </div>
-        <footer>Les sens “à connecter” restent affichés pour préparer le branchement PRIM exact.</footer>
+        <footer>Temps réel PRIM par point d’arrêt · sens séparés.</footer>
       </article>
 
       <article class="mobility-card mobility-rer local-rer-card">
