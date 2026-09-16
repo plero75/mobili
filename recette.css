@@ -2271,3 +2271,198 @@ body { background: #dce4ee; }
 .mobility-alert strong {
   font-size: 24px;
 }
+
+
+/* Mobility Porte C priority board */
+.mobility-screen-local .mobility-title {
+  align-items: center;
+}
+.mobility-screen-local .mobility-title strong {
+  font-size: 70px;
+}
+.mobility-screen-local .mobility-title span {
+  font-size: 42px;
+  color: #fff;
+}
+.local-board {
+  grid-template-columns: 720px 540px 1fr;
+  grid-template-rows: 82px 390px 226px 74px 44px;
+}
+.local-board .mobility-status {
+  grid-column: 1 / 2;
+}
+.local-board .mobility-info-strip {
+  grid-column: 2 / 4;
+}
+.local-bus-card {
+  grid-column: 1;
+  grid-row: 2;
+}
+.local-rer-card {
+  grid-column: 2;
+  grid-row: 2;
+}
+.local-velib-card {
+  grid-column: 3;
+  grid-row: 2;
+}
+.mobility-routes {
+  grid-column: 1 / 4;
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.local-bottom {
+  grid-column: 1 / 4;
+  grid-row: 4;
+  grid-template-columns: 260px 260px 260px 300px 1fr;
+}
+.local-board .mobility-alert {
+  grid-column: 1 / 4;
+  grid-row: 5;
+}
+.local-bus-card h2 {
+  background: linear-gradient(90deg, #0e58b8, #073982);
+  color: #fff;
+}
+.local-bus-grid {
+  display: grid;
+  gap: 0;
+  padding: 16px 26px 0;
+}
+.local-bus-row {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 82px 1fr 90px 132px;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid #c9d5df;
+}
+.local-bus-row .line-badge {
+  width: 66px;
+  height: 48px;
+  border-radius: 10px;
+  font-size: 30px;
+}
+.local-bus-row strong,
+.local-bus-row small {
+  display: block;
+}
+.local-bus-row strong {
+  font-size: 21px;
+  text-transform: uppercase;
+}
+.local-bus-row small {
+  margin-top: 3px;
+  font-size: 15px;
+  color: #2c4964;
+}
+.local-bus-row b {
+  font-size: 18px;
+  color: #063768;
+}
+.local-bus-row time {
+  color: #004b9b;
+  font-size: 26px;
+  font-weight: 900;
+  text-align: right;
+}
+.local-bus-row.pending {
+  background: linear-gradient(90deg, rgba(255,196,0,.12), transparent);
+}
+.local-bus-row.pending time {
+  color: #926600;
+  font-size: 20px;
+}
+.local-rer-card .rer-focus {
+  margin-top: 18px;
+}
+.local-rer-card .traffic-pill {
+  margin-top: 14px;
+}
+.local-velib-card .velib-gauges {
+  padding-top: 22px;
+}
+.route-choice {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  min-height: 100%;
+  padding: 24px 36px 24px 128px;
+  border-radius: 8px;
+  background: linear-gradient(110deg, #fff, #e5f4eb);
+  color: #062546;
+  box-shadow: 0 10px 24px rgba(4,19,38,.14);
+}
+.route-choice::before {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  width: 74px;
+  height: 74px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 38px;
+  font-weight: 900;
+}
+.primary-route::before {
+  content: "RER";
+  background: #078743;
+  font-size: 24px;
+}
+.paris-route::before {
+  content: "A";
+  background: #ee002b;
+}
+.route-choice span {
+  color: #006f3c;
+  font-size: 21px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.route-choice strong {
+  margin-top: 4px;
+  color: #006f3c;
+  font-size: 40px;
+  line-height: 1.02;
+  text-transform: uppercase;
+}
+.route-choice em {
+  margin-top: 10px;
+  font-size: 23px;
+  font-style: normal;
+}
+.route-choice b {
+  margin-top: 14px;
+  width: fit-content;
+  padding: 10px 22px;
+  border-radius: 6px;
+  background: #cfe8d6;
+  color: #006f3c;
+  font-size: 22px;
+  text-transform: uppercase;
+}
+.paris-route {
+  background: linear-gradient(110deg, #ffffff, #e9f0ff);
+}
+.paris-route span,
+.paris-route strong,
+.paris-route b {
+  color: #063f91;
+}
+.paris-route b {
+  background: #d7e5ff;
+}
+.local-bottom > div:first-child strong {
+  font-size: 31px;
+}
+.local-bottom > div:first-child span {
+  display: block;
+  margin-top: 4px;
+  text-transform: none;
+}
