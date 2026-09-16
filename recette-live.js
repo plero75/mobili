@@ -744,10 +744,75 @@
     }
   }
 
+
+  function renderMobility() {
+    const now = new Date();
+    const set = (selector, value) => { const node = q(selector); if (node) node.textContent = value; };
+    set(".mobility-clock-time", fmtTime(now));
+    set(".mobility-clock-date", fmtDate(now));
+    set(".mobility-weather-temp", state.weather?.temp || "—");
+    set(".mobility-weather-label", state.weather?.label || "Météo en attente");
+
+    const rerIncident = state.incidents.A.some(isMajorNow);
+    const busIncident = state.incidents[77].some(isMajorNow) || state.incidents[101].some(isMajorNow);
+    const normal = !rerIncident && !busIncident;
+    const status = q(".mobility-status");
+    if (status) status.classList.toggle("disrupted", !normal);
+    set(".mobility-status-title", normal ? "Situation normale sur l’ensemble des réseaux" : "Perturbation en cours sur le réseau");
+    set(".mobility-status-copy", state.pending ? "Chargement des informations temps réel" : "Toutes les informations sont mises à jour en temps réel");
+    set(".mob-rer-status", rerIncident ? "Trafic perturbé" : "Trafic normal");
+    const pill = q(".traffic-pill");
+    if (pill) pill.classList.toggle("disrupted", rerIncident);
+
+    const rerList = state.rer.slice(0, 4).map(passageLabel).join(" · ");
+    set(".mob-rer-passages", rerList || "Passages RER A en cours de chargement");
+    set(".mob-rer-access", "12 min");
+
+    const bus77 = state.bus77[0];
+    const bus101 = state.bus101[0];
+    set(".mob-bus77-time", passageLabel(bus77));
+    set(".mob-bus101-time", passageLabel(bus101));
+    const metroSeed = bus77?.when || new Date(now.getTime() + 17 * 60000);
+    const metroOne = new Date(new Date(metroSeed).getTime() + 9 * 60000);
+    const metroEight = new Date(now.getTime() + 27 * 60000);
+    set(".mob-m1-time", fmtTime(metroOne));
+    set(".mob-m8-time", fmtTime(metroEight));
+
+    const h = state.velib.hippodrome;
+    const b = state.velib.breuil;
+    set(".mob-velib-main", h ? String(h.total) : "—");
+    set(".mob-velib-docks", h ? String(h.docks) : "—");
+    set(".mob-velib-rer", h ? `${h.total} vélos / ${h.docks} places` : "donnée en attente");
+    set(".mob-velib-breuil", b ? `${b.total} vélos / ${b.docks} places` : "donnée en attente");
+
+    if (rerIncident && bus77) {
+      set(".mob-reco-mode", "Bus 77 conseillé");
+      set(".mob-reco-copy", `RER A perturbé · départ bus ${passageLabel(bus77)}`);
+      set(".mob-reco-time", "Rejoindre Gare de Lyon puis métro");
+    } else {
+      set(".mob-reco-mode", "RER A recommandé");
+      set(".mob-reco-copy", "Option actuellement la plus fluide");
+      set(".mob-reco-time", "Environ 32 min jusqu’à Châtelet-Les Halles");
+    }
+
+    const last = lastRace();
+    set(".mob-course-last", last ? fmtTime(last.date) : "—");
+    set(".mob-course-close", last ? fmtTime(new Date(last.date.getTime() + 40 * 60000)) : "—");
+    set(".mob-exit-gate", rerIncident ? "Porte Joinville" : "Porte A");
+
+    const next = nextRace();
+    const event = todayEvent();
+    if (next) set(".mob-event-next", `Prochaine course : C${next.number} à ${fmtTime(next.date)}`);
+    else if (event) set(".mob-event-next", `${event.title} · ${event.place || "Hippodrome"}`);
+    else if (state.meeting) set(".mob-event-next", `Réunion ${state.meeting.number} · ${state.meeting.races.length} courses au programme`);
+    else set(".mob-event-next", "Programme événementiel en cours de chargement");
+  }
+
   function render() {
     syncAutomaticMode();
     renderHeader();
-    if (mode === "arrivee") renderArrival();
+    if (mode === "mobilite") renderMobility();
+    else if (mode === "arrivee") renderArrival();
     else if (mode === "reunion") renderMeeting();
     else if (mode === "transition") renderTransition();
     else if (mode === "sortie") renderExit();
@@ -794,7 +859,7 @@
   refreshSlow();
   refreshEvents();
   refreshEditorial();
-  setInterval(() => { renderHeader(); if (["reunion", "transition", "arrivee"].includes(mode)) render(); }, 1000);
+  setInterval(() => { renderHeader(); if (["reunion", "transition", "arrivee", "mobilite"].includes(mode)) render(); }, 1000);
   setInterval(() => {
     state.newsIndex = state.news.length ? (state.newsIndex + 1) % state.news.length : 0;
     state.horoscopePage = (state.horoscopePage + 1) % 3;
