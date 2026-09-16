@@ -199,6 +199,98 @@ const incidentBus = () => `
     <span class="distance-test-label">MAQUETTE DE RECETTE · 1920 × 1080</span>
   </section>`;
 
+
+const mobilityBoard = () => `
+  <section class="screen mobility-screen">
+    <header class="mobility-hero">
+      <div class="mobility-brand">${icons.brand}<div><span>HIPPODROME</span><strong>PARIS-VINCENNES</strong></div></div>
+      <div class="mobility-title"><strong>MOBILITÉ</strong><span>AU DÉPART DE L’HIPPODROME PARIS-VINCENNES</span></div>
+      <div class="mobility-clock"><strong class="mobility-clock-time">--:--</strong><span class="mobility-clock-date">DATE EN ATTENTE</span></div>
+      <div class="mobility-weather">${icons.weather}<strong class="mobility-weather-temp">--°C</strong><span class="mobility-weather-label">Météo en attente</span></div>
+    </header>
+
+    <main class="mobility-board">
+      <section class="mobility-status good">
+        <div class="mobility-status-icon">✓</div>
+        <div><strong class="mobility-status-title">Situation normale sur l’ensemble des réseaux</strong><span class="mobility-status-copy">Toutes les informations sont mises à jour en temps réel</span></div>
+      </section>
+      <section class="mobility-info-strip">
+        <span>Informations trafic Île-de-France</span>
+        <strong>iledefrance-mobilites.fr</strong>
+      </section>
+
+      <article class="mobility-card mobility-rer">
+        <h2><span class="rail-icon">RER</span>RER / Train</h2>
+        <div class="rer-focus"><span class="line-badge round rer">A</span><div><strong>Joinville-le-Pont</strong><span>Correspondances : Paris centre</span></div></div>
+        <div class="rer-time"><span>à pied depuis le site</span><strong class="mob-rer-access">12 min</strong><small>ou navette / bus 77</small></div>
+        <div class="traffic-pill normal"><span>✓</span><strong class="mob-rer-status">Trafic normal</strong></div>
+        <div class="next-label">Prochains passages</div>
+        <div class="passage-row mob-rer-passages">Chargement des passages RER A…</div>
+      </article>
+
+      <article class="mobility-card mobility-metro">
+        <h2><span class="metro-symbol">M</span>Métro</h2>
+        <div class="metro-option"><span class="line-badge metro-one">1</span><div><strong>Château de Vincennes</strong><span>21 min à pied ou bus 77</span></div><b class="mob-m1-time">--:--</b></div>
+        <div class="metro-option"><span class="line-badge metro-eight">8</span><div><strong>Liberté</strong><span>24 min à pied ou bus 77 + 201</span></div><b class="mob-m8-time">--:--</b></div>
+      </article>
+
+      <article class="mobility-card mobility-bus light">
+        <h2>Bus <span>Temps d’accès · prochain passage</span></h2>
+        <div class="bus-table">
+          <div><span class="line-badge bus">77</span><strong>Gare de Lyon</strong><small>via Joinville-le-Pont RER</small><b class="mob-bus77-access">4 min</b><time class="mob-bus77-time">--</time></div>
+          <div><span class="line-badge bus warm">201</span><strong>Porte Dorée</strong><small>via Charenton-Écoles</small><b>7 min</b><time class="mob-bus201-time">indicatif</time></div>
+          <div><span class="line-badge bus violet">112</span><strong>Mairie de Montreuil</strong><small>correspondance locale</small><b>9 min</b><time class="mob-bus112-time">indicatif</time></div>
+          <div><span class="line-badge bus green">101</span><strong>Joinville-le-Pont</strong><small>RER A</small><b class="mob-bus101-access">4 min</b><time class="mob-bus101-time">--</time></div>
+        </div>
+        <footer>Horaires temps réel quand disponibles</footer>
+      </article>
+
+      <article class="mobility-card mobility-velib light teal">
+        <h2>Vélib’ <span>Station Hippodrome</span></h2>
+        <div class="velib-gauges">
+          <div class="gauge"><strong class="mob-velib-main">--</strong><span>vélos disponibles</span></div>
+          <div class="gauge pale"><strong class="mob-velib-docks">--</strong><span>places disponibles</span></div>
+        </div>
+        <div class="nearby-velib">
+          <strong>Autres stations à proximité</strong>
+          <span>Joinville-le-Pont RER <b class="mob-velib-rer">--</b></span>
+          <span>École du Breuil <b class="mob-velib-breuil">--</b></span>
+        </div>
+      </article>
+
+      <section class="mobility-reco">
+        <div class="star">★</div>
+        <div><span>Pour rejoindre Paris actuellement</span><strong class="mob-reco-mode">RER A recommandé</strong><em class="mob-reco-copy">Option actuellement la plus fluide</em><b class="mob-reco-time">Environ 32 min jusqu’à Châtelet-Les Halles</b></div>
+      </section>
+
+      <article class="mobility-card mobility-car light purple">
+        <h2>Voiture</h2>
+        <div class="road-list"><span>Sortie Gravelle <b class="ok">Trafic fluide</b></span><span>Périphérique intérieur <b class="warn">+8 min</b></span><span>A4 <b class="alert">Circulation dense</b></span></div>
+        <footer>Plus d’infos trafic : bison-fute.gouv.fr</footer>
+      </article>
+
+      <article class="mobility-card mobility-taxi light">
+        <h2>Taxis / VTC</h2>
+        <p>Point prise en charge</p>
+        <strong class="mob-taxi-gate">Porte A</strong>
+        <span>Temps d’attente estimé</span>
+        <b class="mob-taxi-wait">5 - 10 min</b>
+      </article>
+
+      <section class="mobility-bottom">
+        <div><strong>Courses</strong></div>
+        <div><span>Dernière course</span><strong class="mob-course-last">--:--</strong></div>
+        <div><span>Fermeture du site</span><strong class="mob-course-close">--:--</strong></div>
+        <div><span>Sortie recommandée</span><strong class="mob-exit-gate">Porte A</strong></div>
+        <div><span>Merci de quitter l’hippodrome dans le calme et en sécurité</span></div>
+        <div class="help-box"><strong>Besoin d’aide ?</strong><span>Agents disponibles aux points information</span></div>
+      </section>
+
+      <section class="mobility-alert"><strong>Info événement</strong><span class="mob-event-next">Prochaine réunion en cours de chargement</span><span class="mob-screen-index">Écran mobilité dynamique</span></section>
+    </main>
+    <span class="distance-test-label">DONNÉES TEMPS RÉEL · CHARGEMENT</span>
+  </section>`;
+
 const noRaceEvent = () => `
   <section class="screen">
     ${header({meeting:'AUJOURD’HUI', races:'PAS DE COURSES'})}
@@ -250,7 +342,7 @@ const noRaceIdle = () => `
     <span class="distance-test-label">DONNÉES TEMPS RÉEL · CHARGEMENT</span>
   </section>`;
 
-const renderers = { arrivee: arrival, reunion: meeting, transition, sortie: exit, incident_rer_a: incidentRer, incident_bus: incidentBus, no_race_event: noRaceEvent, no_race_idle: noRaceIdle };
+const renderers = { mobilite: mobilityBoard, arrivee: arrival, reunion: meeting, transition, sortie: exit, incident_rer_a: incidentRer, incident_bus: incidentBus, no_race_event: noRaceEvent, no_race_idle: noRaceIdle };
 document.getElementById('app').innerHTML = (renderers[mode] || arrival)();
 
 function fitRecipeScreen() {
@@ -271,6 +363,7 @@ const keyboardModes = {
   '6': 'incident_bus',
   '7': 'no_race_event',
   '8': 'no_race_idle',
+  '9': 'mobilite',
   '0': 'auto'
 };
 
