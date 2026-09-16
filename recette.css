@@ -2039,3 +2039,235 @@ body { background: #dce4ee; }
     height: 1080px;
   }
 }
+
+
+/* Mobility board compact 1920x910 correction */
+.mobility-screen {
+  height: 910px;
+  background: linear-gradient(180deg, #061f3d 0%, #0b335e 44%, #f2f7fa 44%, #edf4f8 100%);
+}
+.mobility-hero {
+  height: 116px;
+  grid-template-columns: 420px 1fr 255px 210px;
+  gap: 18px;
+  padding: 18px 28px;
+}
+.mobility-brand .brand-mark {
+  width: 112px;
+  height: 72px;
+}
+.mobility-title {
+  gap: 16px;
+  white-space: nowrap;
+}
+.mobility-title strong {
+  font-size: 68px;
+  letter-spacing: -1.4px;
+}
+.mobility-title span {
+  font-size: 31px;
+}
+.mobility-clock strong {
+  font-size: 45px;
+}
+.mobility-board {
+  height: 794px;
+  padding: 10px 14px 12px;
+  grid-template-columns: 670px 455px 1fr 410px;
+  grid-template-rows: 82px 330px 236px 78px 44px;
+  gap: 10px;
+}
+.mobility-status {
+  padding: 0 28px;
+  gap: 20px;
+}
+.mobility-status-icon {
+  width: 52px;
+  height: 52px;
+  font-size: 39px;
+}
+.mobility-status strong {
+  font-size: 26px;
+}
+.mobility-status span {
+  font-size: 15px;
+  margin-top: 3px;
+}
+.mobility-info-strip {
+  font-size: 20px;
+}
+.mobility-info-strip::after {
+  width: 54px;
+  height: 54px;
+  border-width: 5px;
+}
+.mobility-card h2 {
+  min-height: 60px;
+  padding: 0 22px;
+  font-size: 28px;
+}
+.mobility-rer {
+  padding: 0 22px 16px;
+}
+.rer-focus {
+  margin-top: 20px;
+  grid-template-columns: 76px 1fr;
+  gap: 18px;
+}
+.rer-focus .line-badge {
+  width: 76px;
+  height: 76px;
+  font-size: 52px;
+}
+.rer-focus strong {
+  font-size: 25px;
+}
+.rer-time {
+  margin-top: 20px;
+  grid-template-columns: 70px 1fr;
+  gap: 0 20px;
+}
+.rer-time::before {
+  font-size: 68px;
+}
+.rer-time strong {
+  font-size: 31px;
+}
+.traffic-pill {
+  margin: 16px 0 12px 90px;
+  font-size: 25px;
+}
+.traffic-pill span {
+  width: 40px;
+  height: 40px;
+}
+.next-label,
+.passage-row {
+  margin-left: 90px;
+}
+.passage-row {
+  font-size: 25px;
+}
+.metro-option {
+  grid-template-columns: 60px 1fr 86px;
+  gap: 15px;
+  padding: 18px 20px;
+}
+.metro-option span {
+  font-size: 20px;
+}
+.metro-option b {
+  font-size: 29px;
+}
+.metro-one,
+.metro-eight {
+  width: 54px;
+  height: 54px;
+}
+.bus-table {
+  padding: 10px 24px 0;
+}
+.bus-table > div {
+  min-height: 48px;
+  grid-template-columns: 70px 1fr 78px 92px;
+}
+.bus-table strong {
+  font-size: 18px;
+}
+.bus-table small {
+  font-size: 13px;
+}
+.bus-table b {
+  font-size: 15px;
+}
+.bus-table time {
+  font-size: 21px;
+}
+.mobility-card footer {
+  padding: 7px 20px;
+  font-size: 13px;
+}
+.velib-gauges {
+  gap: 28px;
+  padding: 20px 14px 14px;
+}
+.gauge {
+  width: 112px;
+  height: 112px;
+  border-width: 9px;
+}
+.gauge strong {
+  font-size: 34px;
+}
+.nearby-velib {
+  margin: 0 24px;
+  padding-top: 13px;
+  gap: 8px;
+  font-size: 15px;
+}
+.mobility-reco {
+  grid-template-columns: 120px 1fr;
+  gap: 22px;
+  padding: 24px 34px;
+}
+.mobility-reco .star {
+  width: 100px;
+  height: 100px;
+  font-size: 58px;
+}
+.mobility-reco span {
+  font-size: 24px;
+}
+.mobility-reco strong {
+  font-size: 52px;
+}
+.mobility-reco em {
+  font-size: 27px;
+}
+.mobility-reco b {
+  margin-top: 18px;
+  padding: 11px 30px;
+  font-size: 23px;
+}
+.road-list span {
+  padding: 15px 26px;
+  font-size: 17px;
+}
+.mobility-taxi p,
+.mobility-taxi span {
+  margin: 20px 28px 3px;
+}
+.mobility-taxi strong {
+  margin-bottom: 24px;
+  font-size: 30px;
+}
+.mobility-bottom {
+  grid-template-columns: 250px 260px 260px 300px 380px 1fr;
+}
+.mobility-bottom > div {
+  padding: 0 20px;
+}
+.mobility-bottom span {
+  font-size: 14px;
+}
+.mobility-bottom strong {
+  font-size: 30px;
+}
+.mobility-bottom > div:first-child strong {
+  font-size: 27px;
+}
+.help-box strong {
+  font-size: 21px;
+}
+.help-box span {
+  font-size: 16px;
+}
+.mobility-alert {
+  grid-template-columns: 250px 1fr 360px;
+  gap: 20px;
+  padding: 0 32px;
+  font-size: 20px;
+}
+.mobility-alert strong {
+  font-size: 24px;
+}
