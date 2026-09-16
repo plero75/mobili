@@ -764,14 +764,14 @@
     const pill = q(".traffic-pill");
     if (pill) pill.classList.toggle("disrupted", rerIncident);
 
-    const rerList = state.rer.slice(0, 4).map(passageLabel).join(" · ");
+    const rerList = state.rer.slice(0, 4).map(p => p?.when ? fmtTime(p.when) : passageLabel(p)).join(" · ");
     set(".mob-rer-passages", rerList || "Passages RER A en cours de chargement");
     set(".mob-rer-access", "12 min");
 
     const bus77 = state.bus77[0];
     const bus101 = state.bus101[0];
-    set(".mob-bus77-time", passageLabel(bus77));
-    set(".mob-bus101-time", passageLabel(bus101));
+    set(".mob-bus77-time", bus77?.when ? fmtTime(bus77.when) : passageLabel(bus77));
+    set(".mob-bus101-time", bus101?.when ? fmtTime(bus101.when) : passageLabel(bus101));
     const metroSeed = bus77?.when || new Date(now.getTime() + 17 * 60000);
     const metroOne = new Date(new Date(metroSeed).getTime() + 9 * 60000);
     const metroEight = new Date(now.getTime() + 27 * 60000);
