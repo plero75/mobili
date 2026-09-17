@@ -201,103 +201,42 @@ const incidentBus = () => `
 
 
 const mobilityBoard = () => `
-  <section class="screen mobility-screen mobility-screen-local">
-    <header class="mobility-hero">
-      <div class="mobility-brand">${icons.brand}<div><span>HIPPODROME</span><strong>PARIS-VINCENNES</strong></div></div>
-      <div class="mobility-title"><strong>MOBILITÉ</strong><span>DÉPART PORTE C</span></div>
-      <div class="mobility-clock"><strong class="mobility-clock-time">--:--</strong><span class="mobility-clock-date">DATE EN ATTENTE</span></div>
-      <div class="mobility-weather">${icons.weather}<strong class="mobility-weather-temp">--°C</strong><span class="mobility-weather-label">Météo en attente</span></div>
+  <section class="screen idfm-board">
+    <header class="iv-header">
+      <div class="iv-brand">${icons.brand}<span>Hippodrome<strong>Paris-Vincennes</strong></span></div>
+      <div><h1>Prochains passages</h1><p>Votre départ depuis la porte C</p></div>
+      <div class="iv-clock"><strong class="mobility-clock-time">--:--</strong><span class="mobility-clock-date">Chargement</span></div>
+      <div class="iv-weather"><strong class="mobility-weather-temp">—</strong><span class="mobility-weather-label">Météo indisponible</span></div>
     </header>
-
-    <main class="mobility-board local-board">
-      <section class="mobility-status good">
-        <div class="mobility-status-icon">✓</div>
-        <div><strong class="mobility-status-title">Départs Porte C suivis en temps réel</strong><span class="mobility-status-copy">Bus, RER A et vélos proches de l’hippodrome</span></div>
+    <div class="iv-body">
+      <section class="iv-departures" aria-label="Prochains passages des bus">
+        <h2><span class="iv-mode">BUS</span> Bus à proximité <span class="iv-update">Chargement des flux</span></h2>
+        <div class="iv-columns"><span>Ligne · destination · arrêt</span><span>1er passage</span><span>2e passage</span></div>
+        <div id="iv-bus-rows"></div>
+        <p class="iv-legend">* Horaire théorique · Attentes calculées à l’arrêt, hors temps de marche.</p>
+        <section class="iv-rer" aria-label="Prochains RER à Joinville-le-Pont">
+          <h2><span class="iv-mode">RER</span><span class="iv-line iv-line-a">A</span> Joinville-le-Pont</h2>
+          <p class="iv-access">Depuis porte C : environ 12 min à pied + 2 min de marge. Estimation à valider sur site.</p>
+          <div id="iv-rer-rows"></div>
+        </section>
       </section>
-      <section class="mobility-info-strip">
-        <span>Point de départ conseillé : Porte C · Hippodrome Paris-Vincennes</span>
-        <strong class="mobility-live-label">Données temps réel</strong>
+      <aside class="iv-sidebar">
+        <section class="iv-traffic" aria-label="Information trafic">
+          <h2>Information trafic</h2>
+          <div id="iv-traffic-messages" aria-live="polite">Vérification des informations…</div>
+          <a href="https://www.iledefrance-mobilites.fr/" target="_blank" rel="noopener">Plus d’informations : Île-de-France Mobilités</a>
+        </section>
+        <section class="iv-bikes" aria-label="Vélos à proximité">
+          <h2>${icons.bike} Vélib’ à proximité</h2>
+          <div id="iv-bike-stations">Disponibilités en cours de chargement…</div>
+        </section>
+      </aside>
+      <section class="iv-routes" aria-label="Rejoindre votre destination">
+        <article><h2>Rejoindre Joinville-le-Pont RER</h2><strong class="mob-route-joinville">À pied depuis porte C</strong><p class="mob-route-joinville-next">Comparaison des passages en cours.</p></article>
+        <article><h2>Rejoindre Châtelet–Les Halles</h2><strong class="mob-route-chatelet">Via Joinville-le-Pont · RER A vers Paris</strong><p class="mob-route-chatelet-time">Horaire d’arrivée non disponible.</p></article>
       </section>
-
-      <article class="mobility-card mobility-bus local-bus-card light">
-        <h2>Bus au départ de la Porte C <span>77 et 101 · deux sens</span></h2>
-        <div class="local-bus-grid">
-          <div class="local-bus-row live">
-            <span class="line-badge bus">77</span>
-            <div><strong>Vers Gare de Lyon</strong><small>via Joinville-le-Pont RER</small></div>
-            <b class="mob-bus77-a-access">4 min</b>
-            <time class="mob-bus77-a-time">--</time>
-          </div>
-          <div class="local-bus-row pending">
-            <span class="line-badge bus">77</span>
-            <div><strong>Vers Porte de Charenton</strong><small>Arrêt Hippodrome de Vincennes</small></div>
-            <b>proche</b>
-            <time class="mob-bus77-b-time">--</time>
-          </div>
-          <div class="local-bus-row live">
-            <span class="line-badge bus green">101</span>
-            <div><strong>Vers Joinville-le-Pont RER</strong><small>Correspondance RER A</small></div>
-            <b class="mob-bus101-a-access">4 min</b>
-            <time class="mob-bus101-a-time">--</time>
-          </div>
-          <div class="local-bus-row pending">
-            <span class="line-badge bus green">101</span>
-            <div><strong>Vers Maisons-Alfort</strong><small>Depuis Joinville-le-Pont RER</small></div>
-            <b>proche</b>
-            <time class="mob-bus101-b-time">--</time>
-          </div>
-        </div>
-        <footer>Temps réel PRIM par point d’arrêt · sens séparés.</footer>
-      </article>
-
-      <article class="mobility-card mobility-rer local-rer-card">
-        <h2><span class="rail-icon">RER</span>RER A accessible</h2>
-        <div class="rer-focus"><span class="line-badge round rer">A</span><div><strong>Joinville-le-Pont</strong><span>Depuis Porte C : à pied, vélo ou bus 101</span></div></div>
-        <div class="rer-time"><span>accès conseillé</span><strong class="mob-rer-access">12 min</strong><small class="mob-rer-access-detail">à pied depuis Porte C</small></div>
-        <div class="traffic-pill normal"><span>✓</span><strong class="mob-rer-status">Trafic normal</strong></div>
-        <div class="next-label">Prochains RER vers Paris</div>
-        <div class="passage-row mob-rer-passages">Chargement des passages RER A…</div>
-      </article>
-
-      <article class="mobility-card mobility-velib local-velib-card light teal">
-        <h2>Vélib’ <span>Stations proches</span></h2>
-        <div class="velib-gauges">
-          <div class="gauge"><strong class="mob-velib-main">--</strong><span>vélos Hippodrome</span></div>
-          <div class="gauge pale"><strong class="mob-velib-docks">--</strong><span>places libres</span></div>
-        </div>
-        <div class="nearby-velib">
-          <strong>Autres stations utiles</strong>
-          <span>Joinville-le-Pont RER <b class="mob-velib-rer">--</b></span>
-          <span>École du Breuil <b class="mob-velib-breuil">--</b></span>
-        </div>
-      </article>
-
-      <section class="mobility-routes">
-        <article class="route-choice primary-route">
-          <span>Meilleur itinéraire local</span>
-          <strong>Porte C → Joinville-le-Pont RER</strong>
-          <em class="mob-route-joinville">12 min à pied · bus 101 si passage proche · Vélib selon disponibilité</em>
-          <b class="mob-route-joinville-next">Prochain RER : chargement…</b>
-        </article>
-        <article class="route-choice paris-route">
-          <span>Pour rejoindre Paris centre</span>
-          <strong>Porte C → Châtelet-les-Halles</strong>
-          <em class="mob-route-chatelet">Joinville-le-Pont RER A puis direction Paris</em>
-          <b class="mob-route-chatelet-time">Environ 32 min selon correspondance</b>
-        </article>
-      </section>
-
-      <section class="mobility-bottom local-bottom">
-        <div><strong>Porte C</strong><span>Point de départ écran</span></div>
-        <div><span>Dernière course</span><strong class="mob-course-last">--:--</strong></div>
-        <div><span>Fermeture du site</span><strong class="mob-course-close">--:--</strong></div>
-        <div><span>Sortie recommandée</span><strong class="mob-exit-gate">Porte C</strong></div>
-        <div class="help-box"><strong>Besoin d’aide ?</strong><span>Agents disponibles aux points information</span></div>
-      </section>
-
-      <section class="mobility-alert"><strong>Info événement</strong><span class="mob-event-next">Prochaine réunion en cours de chargement</span><span class="mob-screen-index">Écran mobilité dynamique</span></section>
-    </main>
-    <span class="distance-test-label">DONNÉES TEMPS RÉEL · CHARGEMENT</span>
+    </div>
+    <footer class="iv-footer"><span class="iv-source-summary">PRIM / IDFM · Vélib’ · Open-Meteo</span><nav aria-label="Navigation des écrans"><a href="?mode=arrivee">Accueil</a><a href="?mode=sortie">Sortie</a><a href="?mode=mobilite" aria-current="page">Mobilité</a><button type="button" id="iv-fullscreen">Plein écran</button></nav></footer>
   </section>`;
 
 const noRaceEvent = () => `
@@ -356,12 +295,21 @@ document.getElementById('app').innerHTML = (renderers[mode] || arrival)();
 
 function fitRecipeScreen() {
   const app = document.getElementById('app');
+  const mobile = mode === 'mobilite' && window.innerWidth < 900;
+  document.body.classList.toggle('iv-mobile', mobile);
+  document.body.classList.toggle('iv-active', mode === 'mobilite');
+  if (mobile) { app.style.transform = 'none'; return; }
   const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
   app.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
 window.addEventListener('resize', fitRecipeScreen);
 fitRecipeScreen();
+document.addEventListener('click', event => {
+  if (event.target.id !== 'iv-fullscreen') return;
+  if (document.fullscreenElement) document.exitFullscreen?.();
+  else document.documentElement.requestFullscreen?.().catch(() => { event.target.textContent = 'Plein écran indisponible'; });
+});
 
 const keyboardModes = {
   '1': 'arrivee',

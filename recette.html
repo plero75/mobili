@@ -3,22 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#041326">
-  <meta name="description" content="Recette graphique 19:9 des modes de l’écran Mobili Paris-Vincennes">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Information voyageurs depuis la porte C de Paris-Vincennes : bus, RER et vélos. Écran mobilité 1920 × 1080.">
   <title>Mobili — Recette graphique Paris-Vincennes</title>
-  <link rel="stylesheet" href="recette.css?v=20260916-4">
+  <link rel="stylesheet" href="recette.css?v=20260916-idfm1">
   <link rel="stylesheet" href="recette-ratp.css?v=20260904-3">
   <link rel="stylesheet" href="recette-display-fix.css?v=20260904-1">
 </head>
 <body>
-  <main id="app" aria-live="polite"></main>
-  <script src="recette.js?v=20260916-4"></script>
-  <script src="recette-live.js?v=20260916-4"></script>
+  <main id="app"></main>
+  <script src="mobility-data.js?v=20260916-idfm1"></script>
+  <script src="recette.js?v=20260916-idfm1"></script>
+  <script src="recette-live.js?v=20260916-idfm1"></script>
   <script>
     (() => {
       const WIDTH = 1920;
       const HEIGHT = 910;
       function fitRatpRecipeScreen() {
+        if (mode === 'mobilite') { fitRecipeScreen(); return; }
         const app = document.getElementById('app');
         if (!app) return;
         const scale = Math.min(window.innerWidth / WIDTH, window.innerHeight / HEIGHT);

@@ -1,5 +1,7 @@
 (() => {
   "use strict";
+  const IV = window.MobiliData;
+  const health = {};
 
   const PROXY = "https://ratp-proxy.hippodrome-proxy42.workers.dev/?url=";
   const PRIM = "https://prim.iledefrance-mobilites.fr/marketplace";
@@ -14,9 +16,9 @@
   const SOURCES = {
     rer: { line: "A", ref: "STIF:StopArea:SP:43135:", name: "Joinville-le-Pont" },
     bus77: { line: "77", ref: "STIF:StopPoint:Q:463647:", destination: "Gare de Lyon", label: "Hippodrome de Vincennes" },
-    bus77Return: { line: "77", ref: "STIF:StopPoint:Q:463640:", destination: "Porte de Charenton", label: "Hippodrome de Vincennes" },
+    bus77Return: { line: "77", ref: "STIF:StopPoint:Q:463640:", destination: "Joinville-le-Pont RER", label: "Hippodrome de Vincennes" },
     bus101: { line: "101", ref: "STIF:StopPoint:Q:21252:", destination: "Joinville-le-Pont", label: "Joinville-le-Pont RER" },
-    bus101Return: { line: "101", ref: "STIF:StopPoint:Q:39402:", destination: "Maisons-Alfort", label: "Joinville-le-Pont RER" }
+    bus101Return: { line: "101", ref: "STIF:StopPoint:Q:39402:", destination: "Direction à confirmer", label: "Joinville-le-Pont RER" }
   };
   const VELIB = {
     hippodrome: { ids: ["1074333296", "12163"], code: "12163", label: "Hippodrome" },
@@ -59,9 +61,9 @@
   const clean = value => String(scalar(value)).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
   const fmtTime = value => {
     const date = value instanceof Date ? value : new Date(value);
-    return Number.isNaN(date.getTime()) ? "—" : date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    return Number.isNaN(date.getTime()) ? "—" : IV.time(date);
   };
-  const fmtDate = date => date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }).toUpperCase();
+  const fmtDate = date => date.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", weekday: "long", day: "numeric", month: "long" }).toUpperCase();
   const minutesUntil = value => {
     const date = value instanceof Date ? value : new Date(value);
     return Number.isNaN(date.getTime()) ? null : Math.max(0, Math.round((date.getTime() - Date.now()) / 60000));
@@ -83,7 +85,7 @@
     const published = String(visit.published || "").toUpperCase().replace(/\s/g, "");
     const ref = String(visit.lineRef || "").toUpperCase();
     const idfm = { A: "C01742", 77: "C02251", 101: "C01130" }[code];
-    return !published || published === code || ref.includes(`::${code}:`) || (idfm && ref.includes(idfm));
+    return idfm && ref ? ref.includes(idfm) : published === String(code);
   };
 
   async function fetchJSON(url, timeout = 14000) {
@@ -136,14 +138,16 @@
         time: stop?.ExpectedArrivalTime || stop?.AimedArrivalTime || stop?.ExpectedDepartureTime || stop?.AimedDepartureTime
       })).filter(stop => stop.name);
       return {
+        journeyRef: clean(journey.FramedVehicleJourneyRef?.DatedVehicleJourneyRef || journey.VehicleJourneyRef),
+        directionRef: clean(journey.DirectionRef),
         lineRef: clean(journey.LineRef),
         published: clean(journey?.PublishedLineName?.[0]),
         destination: clean(call?.DestinationDisplay?.[0] || journey?.DestinationName?.[0] || journey?.DirectionName?.[0]) || "Destination non communiquée",
         expected, aimed, when,
         wait: minutesUntil(when),
-        status: String(call.DepartureStatus || call.ArrivalStatus || "onTime"),
-        monitored: journey?.Monitored !== false,
-        vehicleAtStop: Boolean(call.VehicleAtStop),
+        status: clean(call.DepartureStatus || call.ArrivalStatus || "unknown"),
+        monitored: (scalar(journey.Monitored) === true || scalar(journey.Monitored) === "true") && !!expected,
+        vehicleAtStop: scalar(call.VehicleAtStop) === true || scalar(call.VehicleAtStop) === "true",
         onward
       };
     }).filter(row => row.when && new Date(row.when).getTime() >= Date.now() - 90000);
@@ -151,7 +155,8 @@
 
   async function loadPassages(source) {
     const data = await fetchCandidates([primUrl(`/stop-monitoring?MonitoringRef=${encodeURIComponent(source.ref)}`)]);
-    return parseVisits(data || {}).filter(row => lineMatches(row, source.line)).sort((a, b) => new Date(a.when) - new Date(b.when)).slice(0, 6);
+    IV.validDelivery(data, 'StopMonitoringDelivery');
+    return IV.unique(parseVisits(data).filter(row => lineMatches(row, source.line))).slice(0, 20);
   }
 
   function messageText(message) {
@@ -165,6 +170,7 @@
     const messages = [];
     for (const ref of refs) {
       const data = await fetchCandidates([primUrl(`/general-message?LineRef=${encodeURIComponent(ref)}`)]);
+      IV.validDelivery(data, 'GeneralMessageDelivery');
       for (const delivery of data?.Siri?.ServiceDelivery?.GeneralMessageDelivery || []) {
         for (const message of delivery?.InfoMessage || []) {
           const text = messageText(message);
@@ -253,11 +259,13 @@
     await Promise.all(Object.entries(VELIB).map(async ([key, target]) => {
       const direct = `https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/velib-disponibilite-en-temps-reel/exports/json?lang=fr&qv1=(${target.code})&timezone=Europe%2FParis`;
       const data = await fetchCandidates([direct, PROXY + encodeURIComponent(direct)]);
-      const status = Array.isArray(data) ? data[0] : null;
+      const status = Array.isArray(data) ? data.find(row => String(row.stationcode) === target.code) : null;
       if (!status) return;
       const mechanical = Number(status?.mechanical ?? status?.numbikesavailable ?? 0);
       const electric = Number(status?.ebike ?? status?.ebikeavailable ?? 0);
       out[key] = {
+        at: Date.now(),
+        recordedAt: status.duedate || null,
         name: clean(status?.name) || target.label,
         mechanical,
         electric,
@@ -373,12 +381,10 @@
   }
   function lastRace() { return state.meeting?.races.at(-1) || null; }
   function passageLabel(passage) {
-    if (!passage) return "Donnée indisponible";
-    if (String(passage.status).toLowerCase() === "cancelled") return "Supprimé";
-    if (passage.vehicleAtStop) return "À quai";
-    return passage.wait <= 1 ? "À l’approche" : `${passage.wait} min`;
+    return IV.label(passage);
   }
-  function sourceState(messages) {
+  function sourceState(messages, code) {
+    if (!IV.fresh(health['traffic' + code])) return { title: 'Information trafic non disponible', message: 'La source ne permet pas de confirmer la situation. Nouvelle tentative automatique.', recovery: '—', active: false, unknown: true };
     const message = messages.find(isMajorNow);
     if (!message) return { title: "Aucune perturbation majeure", message: "Aucune perturbation majeure en cours n’est publiée pour cette ligne.", recovery: "—", active: false };
     const recovery = message.match(/(?:reprise|jusqu(?:'|’)à|fin)[^0-9]{0,25}(\d{1,2}[h:]\d{0,2})/i)?.[1]?.replace(":", "h") || "Non précisée";
@@ -393,7 +399,13 @@
     const today = new Date(); today.setHours(12,0,0,0);
     return today >= range.start && today <= range.end;
   }
-  function trafficNormal() { return !state.incidents.A.some(isMajorNow) && !state.incidents[77].some(isMajorNow) && !state.incidents[101].some(isMajorNow); }
+  function trafficNormal() { return ['A', '77', '101'].every(code => IV.fresh(health['traffic' + code]) && state.incidents[code].length === 0); }
+  function trafficLabel(code) {
+    const codes = code ? [String(code)] : ['A', '77', '101'];
+    if (codes.some(c => IV.fresh(health['traffic' + c]) && state.incidents[c].length)) return 'Information trafic publiée';
+    if (codes.some(c => !IV.fresh(health['traffic' + c]))) return 'Information trafic non disponible';
+    return 'Aucun message trafic reçu';
+  }
   function todayEvent() { const today = new Date(); today.setHours(12,0,0,0); return state.events.find(event => today >= event.start && today <= event.end) || null; }
 
   function weatherPlusHTML(compact = false) {
@@ -484,7 +496,7 @@
       }
     }
     const label = q(".distance-test-label");
-    if (label) label.textContent = state.pending ? "DONNÉES TEMPS RÉEL · CHARGEMENT" : `DONNÉES TEMPS RÉEL · MAJ ${fmtTime(state.updatedAt)}`;
+    if (label) label.textContent = state.pending ? 'CHARGEMENT DES SOURCES' : 'Horaires théoriques marqués * · ' + trafficLabel();
   }
 
   function scheduleHTML(races, active) {
@@ -539,7 +551,7 @@
       passengerRailRowHTML("bus", "101", "École du Breuil", "Direction Joinville-le-Pont RER", b101 ? passageLabel(b101) : "Donnée indisponible")
     ].join("");
     const status = q(".transport-rail .status");
-    if (status) status.textContent = trafficNormal() ? "Trafic normal" : "Perturbation majeure";
+    if (status) { status.textContent = trafficLabel(); status.classList.remove('green'); }
   }
 
   function renderMeeting() {
@@ -583,7 +595,7 @@
     const remaining = q(".remaining-schedule");
     if (remaining) remaining.innerHTML = ((state.meeting?.races || []).filter(item => item.date.getTime() >= Date.now()).slice(-2).map(item => `<div class="remaining-card"><strong>C${item.number} · ${fmtTime(item.date)}</strong><span>${esc(item.title)} · ${esc(item.discipline)}</span></div>`).join("") || `<div class="live-empty">Aucune course restante</div>`);
     renderTransportRows(".rer-preview");
-    const rerStatus = q(".rer-preview .status"); if (rerStatus) rerStatus.textContent = state.incidents.A.length ? "Information trafic active" : "Aucune alerte active";
+    const rerStatus = q(".rer-preview .status"); if (rerStatus) rerStatus.textContent = trafficLabel('A');
     const cards = qa(".transition-modes .mode-card");
     if (cards[0]) { q(".minutes", cards[0]).textContent = passageLabel(state.bus77[0]); q(".sub", cards[0]).textContent = state.bus77[0]?.destination || "Horaires indisponibles"; }
     if (cards[1]) { q(".minutes", cards[1]).textContent = passageLabel(state.bus101[0]); q(".sub", cards[1]).textContent = state.bus101[0]?.destination || "Horaires indisponibles"; }
@@ -591,7 +603,7 @@
   }
 
   function renderExit() {
-    const head = q(".exit-head p"); if (head) head.textContent = `Départs calculés à ${fmtTime(new Date())} · ${trafficNormal() ? "aucune alerte active" : "information trafic active"}`;
+    const head = q(".exit-head p"); if (head) head.textContent = `Départs calculés à ${fmtTime(new Date())} · ${trafficLabel()}`;
     const departures = qa(".rer-departure");
     departures.forEach((card, index) => {
       const passage = state.rer[index];
@@ -601,7 +613,7 @@
       if (h3) h3.textContent = passage ? `Direction ${passage.destination}` : "Destination non communiquée";
       if (p) p.textContent = passage ? (passage.wait >= 12 ? `Atteignable avec environ ${passage.wait - 12} min de marge` : "Départ trop proche à pied") : "Aucun passage reçu";
     });
-    const rerStatus = q(".rer-main .status"); if (rerStatus) rerStatus.textContent = state.incidents.A.length ? "Information trafic active" : "Aucune alerte active";
+    const rerStatus = q(".rer-main .status"); if (rerStatus) rerStatus.textContent = trafficLabel('A');
     const stops = q(".stop-line");
     const onward = state.rer[0]?.onward?.slice(0, 5) || [];
     if (stops) stops.innerHTML = onward.length ? onward.map(stop => `<div class="stop"><strong>${esc(stop.name)}</strong><span>${fmtTime(stop.time)}</span></div>`).join("") : `<div class="live-empty">Desserte détaillée momentanément indisponible</div>`;
@@ -720,12 +732,12 @@
   }
 
   function renderIncident(code) {
-    const info = sourceState(state.incidents[code]);
+    const info = sourceState(state.incidents[code], code);
     const banner = q(".incident-banner");
     if (banner) banner.classList.toggle("clear", !info.active);
     const heading = q(".incident-banner h1"); if (heading) heading.innerHTML = `${code === "A" ? "RER A" : "BUS 77"}<span>${esc(info.title)}</span>`;
     const timeLabel = q(".incident-time span"); if (timeLabel) timeLabel.textContent = info.active ? "Reprise estimée" : "État du flux";
-    const time = q(".incident-time strong"); if (time) time.textContent = info.active ? info.recovery : "À jour";
+    const time = q(".incident-time strong"); if (time) time.textContent = info.unknown ? 'Indisponible' : info.active ? info.recovery : 'À jour';
     const impactTitle = q(".incident-impact h2"); if (impactTitle) impactTitle.textContent = info.active ? "Information voyageurs" : "Situation actuelle";
     const message = q(".impact-message"); if (message) message.textContent = info.message;
     const zone = q(".impact-zone"); if (zone) zone.textContent = info.active ? `Ligne ${code === "A" ? "RER A" : "77"} · message officiel actif` : "Aucun scénario fictif affiché";
@@ -749,73 +761,79 @@
   }
 
 
+  function liveRows(key) {
+    return IV.fresh(health[key]) ? IV.unique(state[key] || []) : [];
+  }
+  function passageHTML(p) {
+    const unavailable = !p;
+    const delay = p?.expected && p?.aimed ? Math.round((new Date(p.expected) - new Date(p.aimed)) / 60000) : 0;
+    return `<div class="iv-passage ${unavailable ? 'unavailable' : IV.cancelled(p) ? 'cancelled' : ''}"><strong>${esc(IV.label(p))}</strong>${delay > 0 && !IV.cancelled(p) ? `<small>Retard +${delay} min</small>` : ''}</div>`;
+  }
+  function busRowHTML(line, title, stop, rows, note = '') {
+    return `<div class="iv-bus-row"><div class="iv-direction"><span class="iv-line iv-line-${line}">${line}</span><div><strong>${esc(title)}</strong><small>${esc(stop)}${note ? ' · ' + esc(note) : ''}</small></div></div>${passageHTML(rows[0])}${passageHTML(rows[1])}</div>`;
+  }
   function renderMobility() {
-    const now = new Date();
     const set = (selector, value) => { const node = q(selector); if (node) node.textContent = value; };
-    const atTime = passage => passage?.when ? fmtTime(passage.when) : passageLabel(passage);
-    set(".mobility-clock-time", fmtTime(now));
-    set(".mobility-clock-date", fmtDate(now));
+    set(".mobility-clock-time", fmtTime(new Date()));
+    set(".mobility-clock-date", fmtDate(new Date()));
     set(".mobility-weather-temp", state.weather?.temp || "—");
-    set(".mobility-weather-label", state.weather?.label || "Météo en attente");
-
-    const rerIncident = state.incidents.A.some(isMajorNow);
-    const busIncident = state.incidents[77].some(isMajorNow) || state.incidents[101].some(isMajorNow);
-    const normal = !rerIncident && !busIncident;
-    const status = q(".mobility-status");
-    if (status) status.classList.toggle("disrupted", !normal);
-    set(".mobility-status-title", normal ? "Départs Porte C suivis en temps réel" : "Perturbation à prendre en compte depuis Porte C");
-    set(".mobility-status-copy", state.pending ? "Chargement des informations temps réel" : "Bus, RER A et vélos proches de l’hippodrome");
-    set(".mob-rer-status", rerIncident ? "Trafic perturbé" : "Trafic normal");
-    const pill = q(".traffic-pill");
-    if (pill) pill.classList.toggle("disrupted", rerIncident);
-
-    const rerList = state.rer.slice(0, 4).map(atTime).join(" · ");
-    const firstRer = state.rer[0];
-    set(".mob-rer-passages", rerList || "Passages RER A en cours de chargement");
-    set(".mob-rer-access", "12 min");
-    set(".mob-rer-access-detail", "à pied depuis Porte C");
-
-    const bus77 = state.bus77[0];
-    const bus77Return = state.bus77Return[0];
-    const bus101 = state.bus101[0];
-    const bus101Return = state.bus101Return[0];
-    set(".mob-bus77-a-time", atTime(bus77));
-    set(".mob-bus77-b-time", atTime(bus77Return));
-    set(".mob-bus101-a-time", atTime(bus101));
-    set(".mob-bus101-b-time", atTime(bus101Return));
-
-    const h = state.velib.hippodrome;
-    const b = state.velib.breuil;
-    set(".mob-velib-main", h ? String(h.total) : "—");
-    set(".mob-velib-docks", h ? String(h.docks) : "—");
-    set(".mob-velib-rer", h ? `${h.total} vélos / ${h.docks} places` : "donnée en attente");
-    set(".mob-velib-breuil", b ? `${b.total} vélos / ${b.docks} places` : "donnée en attente");
-
-    const bus101Near = bus101 && bus101.wait <= 8;
-    const bus77Near = bus77 && bus77.wait <= 8;
-    const joinvilleMode = bus101Near ? `bus 101 à ${atTime(bus101)} depuis Joinville RER` : bus77Near ? `bus 77 à ${atTime(bus77)} jusqu’à Joinville RER` : h?.total > 0 ? "Vélib ou 12 min à pied vers Joinville-le-Pont" : "12 min à pied vers Joinville-le-Pont";
-    set(".mob-route-joinville", joinvilleMode);
-    set(".mob-route-joinville-next", firstRer ? `Prochain RER : ${atTime(firstRer)}` : "Prochain RER : chargement…");
-
-    if (rerIncident && bus77) {
-      set(".mob-route-chatelet", `RER A perturbé · envisager bus 77 à ${atTime(bus77)} vers Gare de Lyon`);
-      set(".mob-route-chatelet-time", "Temps variable selon reprise du trafic");
-    } else {
-      set(".mob-route-chatelet", "Porte C → Joinville-le-Pont RER A → Châtelet-les-Halles");
-      set(".mob-route-chatelet-time", "Environ 32 min selon correspondance");
+    set(".mobility-weather-label", state.weather?.label || "Météo indisponible");
+    const sourceKeys = Object.keys(SOURCES);
+    const ok = sourceKeys.filter(key => IV.fresh(health[key]));
+    const times = ok.map(key => health[key].at);
+    set(".iv-update", times.length ? `PRIM · reçu à ${fmtTime(Math.min(...times))} · ${ok.length}/5 flux disponibles` : "PRIM · information non disponible");
+    const buses = IV.unique([...liveRows('bus77'), ...liveRows('bus77Return')]);
+    const towardParis = buses.filter(p => /gare de lyon/.test(IV.normalize(p.destination)));
+    const towardJoinville = buses.filter(p => /joinville/.test(IV.normalize(p.destination)));
+    const bus101 = IV.unique([...liveRows('bus101'), ...liveRows('bus101Return')]);
+    const towardTerminus = bus101.filter(p => /joinville/.test(IV.normalize(p.destination)));
+    const other101 = bus101.filter(p => !/joinville/.test(IV.normalize(p.destination)));
+    const busRows = q('#iv-bus-rows');
+    if (busRows) busRows.innerHTML =
+      busRowHTML('77', towardParis[0]?.destination || 'Gare de Lyon', 'Hippodrome de Vincennes', towardParis, 'marche ≈ 4 min¹') +
+      busRowHTML('77', towardJoinville[0]?.destination || 'Joinville-le-Pont RER', 'Hippodrome de Vincennes', towardJoinville, 'marche ≈ 4 min¹') +
+      busRowHTML('101', towardTerminus[0]?.destination || 'Vers Joinville-le-Pont RER', 'Secteur Joinville RER', towardTerminus, 'desserte à vérifier') +
+      busRowHTML('101', other101[0]?.destination || 'Autre sens · à confirmer', 'Secteur Joinville RER', other101, 'pas au départ de porte C');
+    const trains = liveRows('rer');
+    const west = IV.reachable(trains.filter(IV.west), 14).slice(0, 4);
+    const east = IV.reachable(trains.filter(IV.east), 14).slice(0, 4);
+    const rerRows = q('#iv-rer-rows');
+    if (rerRows) rerRows.innerHTML = [['Vers Paris', west], ['Vers Boissy', east]].map(([label, rows]) =>
+      `<div class="iv-rer-row"><strong>${label}</strong><div class="iv-rer-times">${rows.length ? rows.map(p => `<span>${esc(fmtTime(p.when))}${p.monitored ? '' : '*'} <small>${esc(p.destination)}</small></span>`).join('') : '<small>Aucun départ atteignable confirmé · information non disponible</small>'}</div></div>`).join('');
+    const traffic = q('#iv-traffic-messages');
+    const trafficPages = ['A', '77', '101'].flatMap(code => {
+      const known = IV.fresh(health['traffic' + code]);
+      const messages = known ? state.incidents[code] : [];
+      return (messages.length ? messages : [known ? 'Aucun message reçu pour cette ligne.' : 'Information trafic non disponible']).flatMap(message => IV.pages(message).map((text, part, chunks) => ({code, text, alert:messages.length > 0, part, count:chunks.length})));
+    });
+    if (traffic) {
+      const index = Math.floor(Date.now() / 12000) % trafficPages.length;
+      const page = trafficPages[index];
+      traffic.innerHTML = `<div class="iv-traffic-item ${page.alert ? 'alert' : ''}"><strong>${page.code === 'A' ? 'RER A' : 'Bus ' + page.code}</strong><p>${esc(page.text)}</p>${page.count > 1 ? `<small>Suite ${page.part + 1} / ${page.count}</small>` : ''}</div><p class="iv-traffic-pagination">Information ${index + 1} / ${trafficPages.length} · page suivante dans ${12 - Math.floor(Date.now() / 1000) % 12} s</p>`;
     }
-
-    const last = lastRace();
-    set(".mob-course-last", last ? fmtTime(last.date) : "—");
-    set(".mob-course-close", last ? fmtTime(new Date(last.date.getTime() + 40 * 60000)) : "—");
-    set(".mob-exit-gate", "Porte C");
-
-    const next = nextRace();
-    const event = todayEvent();
-    if (next) set(".mob-event-next", `Prochaine course : C${next.number} à ${fmtTime(next.date)}`);
-    else if (event) set(".mob-event-next", `${event.title} · ${event.place || "Hippodrome"}`);
-    else if (state.meeting) set(".mob-event-next", `Réunion ${state.meeting.number} · ${state.meeting.races.length} courses au programme`);
-    else set(".mob-event-next", "Programme événementiel en cours de chargement");
+    const bikes = q('#iv-bike-stations');
+    if (bikes) bikes.innerHTML = Object.entries(VELIB).map(([key, target]) => {
+      const station = state.velib[key];
+      const recorded = station?.recordedAt ? new Date(station.recordedAt).getTime() : station?.at;
+      const available = station && Date.now() - station.at < 180000 && Number.isFinite(recorded) && Date.now() - recorded < 600000;
+      return `<div class="iv-bike-station"><strong>${esc(station?.name || target.label)}</strong><p>${available && station.active ? `<b>${station.total}</b> vélos · <b>${station.docks}</b> places` : 'Information non disponible'}</p><small>${available ? `${station.mechanical} mécaniques · ${station.electric} électriques · ${fmtTime(recorded)}` : 'Nouvelle tentative automatique'}</small></div>`;
+    }).join('');
+    // Only compare candidates with a published onward arrival. No invented bus runtime.
+    const now = Date.now(), walkArrival = now + 12 * 60000;
+    const candidates = IV.reachable(towardJoinville, 5).map(p => ({ p, stop: IV.onward(p, /joinville/) }))
+      .filter(c => c.stop && new Date(c.stop.time).getTime() > new Date(c.p.when).getTime() && !IV.cancelled(c.p))
+      .sort((a,b) => new Date(a.stop.time) - new Date(b.stop.time));
+    const bus = candidates.find(c => new Date(c.stop.time).getTime() < walkArrival);
+    const stationArrival = bus ? new Date(bus.stop.time).getTime() : walkArrival;
+    set('.mob-route-joinville', bus ? `Bus 77 vers Joinville · départ ${fmtTime(bus.p.when)}` : 'À pied · environ 12 min¹');
+    set('.mob-route-joinville-next', bus ? `Marche ≈ 4 min¹ · arrivée RER publiée à ${fmtTime(bus.stop.time)}` : 'Trajet piéton de référence. Bus comparé seulement si son arrivée est publiée.');
+    const catchable = IV.reachable(trains.filter(IV.west), (stationArrival - now) / 60000 + 2);
+    const next = catchable[0];
+    const arrival = IV.onward(next, /chatelet/);
+    const alert = IV.fresh(health.trafficA) && state.incidents.A.some(isMajorNow);
+    set('.mob-route-chatelet', alert ? 'RER A : vérifier la perturbation avant de partir' : next ? `Via Joinville · RER A à ${fmtTime(next.when)}` : 'Via Joinville · prochain RER non confirmé');
+    set('.mob-route-chatelet-time', !alert && next && arrival && new Date(arrival.time) > new Date(next.when) ? `Arrivée publiée à ${fmtTime(arrival.time)}${next.monitored ? '' : ' (théorique)'} · marge de correspondance incluse` : 'Durée totale non confirmée : consulter le calculateur IDFM.');
+    set('.iv-source-summary', '¹ Marche estimée, à valider sur site · Mise à jour automatique 30 s · IDFM / PRIM');
   }
 
   function render() {
@@ -841,19 +859,18 @@
       loadPassages(SOURCES.bus101Return),
       loadMessages("A"), loadMessages("77"), loadMessages("101")
     ]);
-    if (results[0].status === "fulfilled") state.rer = results[0].value;
-    if (results[1].status === "fulfilled") state.bus77 = results[1].value;
-    if (results[2].status === "fulfilled") state.bus77Return = results[2].value;
-    if (results[3].status === "fulfilled") state.bus101 = results[3].value;
-    if (results[4].status === "fulfilled") state.bus101Return = results[4].value;
-    if (results[5].status === "fulfilled") state.incidents.A = results[5].value;
-    if (results[6].status === "fulfilled") state.incidents[77] = results[6].value;
-    if (results[7].status === "fulfilled") state.incidents[101] = results[7].value;
+    const keys = ['rer', 'bus77', 'bus77Return', 'bus101', 'bus101Return', 'trafficA', 'traffic77', 'traffic101'];
+    results.forEach((result, index) => {
+      const key = keys[index], ok = result.status === 'fulfilled';
+      health[key] = { ok, at: ok ? Date.now() : null };
+      if (index < 5) state[key] = ok ? result.value : [];
+      else state.incidents[key.replace('traffic', '')] = ok ? result.value : [];
+    });
     state.updatedAt = new Date(); state.pending = false; render();
   }
   async function refreshSlow() {
     const results = await Promise.allSettled([loadWeather(), loadMeeting(), loadVelib()]);
-    if (results[0].status === "fulfilled" && results[0].value) state.weather = results[0].value;
+    state.weather = results[0].status === "fulfilled" ? results[0].value : null;
     if (results[1].status === "fulfilled") state.meeting = results[1].value;
     if (results[2].status === "fulfilled") state.velib = results[2].value;
     state.updatedAt = new Date(); state.pending = false; render();
