@@ -297,6 +297,7 @@ function fitRecipeScreen() {
   const app = document.getElementById('app');
   const mobile = mode === 'mobilite' && window.innerWidth < 900;
   document.body.classList.toggle('iv-mobile', mobile);
+  document.documentElement.classList.toggle('iv-mobile-root', mobile);
   document.body.classList.toggle('iv-active', mode === 'mobilite');
   if (mobile) { app.style.transform = 'none'; return; }
   const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);

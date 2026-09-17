@@ -1536,7 +1536,7 @@ body { background: #dce4ee; }
 .iv-footer a:hover,.iv-footer button:hover { background:#d8eaf2; }
 .idfm-board :focus-visible { outline:3px solid #005779; outline-offset:3px; }
 .idfm-board ::selection { background:#bee5f5; color:#20252b; }
-.iv-mobile { overflow:auto; height:auto; }
+.iv-mobile-root, .iv-mobile { overflow:auto; height:auto; }
 .iv-mobile.iv-active #app { position:static; width:100% !important; height:auto !important; overflow:visible; }
 .iv-mobile.iv-active .screen.idfm-board { width:100% !important; height:auto !important; min-height:100dvh; display:block; overflow:visible; padding:0 16px; }
 .iv-mobile .iv-header { grid-template-columns:1fr auto; gap:16px; padding:20px 0; }
