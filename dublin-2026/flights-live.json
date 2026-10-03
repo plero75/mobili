@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-03T10:21:03+00:00",
+  "generatedAt": "2026-10-03T15:08:41+00:00",
   "departDate": "2026-10-23",
   "returnDate": "2026-10-25",
   "source": "Google Flights via fast-flights (scraper non officiel, sans clé API)",
@@ -24,7 +24,7 @@
         },
         {
           "origin": "CDG",
-          "outboundCandidates": 3,
+          "outboundCandidates": 4,
           "returnCandidates": 5
         },
         {
@@ -140,7 +140,7 @@
           "kind": "cheapest"
         }
       ],
-      "combinationsSeen": 25,
+      "combinationsSeen": 30,
       "errors": [],
       "stale": false
     },
@@ -752,8 +752,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "BVA-OPO-2026-10-23T14:25:00-2026-10-25T19:10:00-319.0",
-          "price": 319.0,
+          "id": "BVA-OPO-2026-10-23T14:25:00-2026-10-25T19:10:00-329.0",
+          "price": 329.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -799,9 +799,61 @@
           "leaveCenter": "2026-10-25T16:35",
           "usefulHours": 48.1,
           "totalStops": 0,
-          "score": 319.0,
+          "score": 329.0,
           "earlyReturn": false,
           "kind": "recommended"
+        },
+        {
+          "id": "BVA-OPO-2026-10-23T14:25:00-2026-10-25T14:00:00-326.0",
+          "price": 326.0,
+          "currency": "EUR",
+          "pricingMode": "two_direct_one_ways",
+          "priceNote": "Total des deux vols directs observés au dernier refresh.",
+          "outbound": {
+            "from": "BVA",
+            "to": "OPO",
+            "departure": "2026-10-23T14:25",
+            "arrival": "2026-10-23T15:40",
+            "stops": 0,
+            "durationMinutes": 135,
+            "carrier": "Ryanair",
+            "segments": [
+              {
+                "from": "BVA",
+                "to": "OPO",
+                "departure": "2026-10-23T14:25",
+                "arrival": "2026-10-23T15:40",
+                "durationMinutes": 135,
+                "planeType": "Boeing 737"
+              }
+            ]
+          },
+          "return": {
+            "from": "OPO",
+            "to": "BVA",
+            "departure": "2026-10-25T14:00",
+            "arrival": "2026-10-25T17:10",
+            "stops": 0,
+            "durationMinutes": 130,
+            "carrier": "Ryanair",
+            "segments": [
+              {
+                "from": "OPO",
+                "to": "BVA",
+                "departure": "2026-10-25T14:00",
+                "arrival": "2026-10-25T17:10",
+                "durationMinutes": 130,
+                "planeType": "Boeing 737MAX 8 Passenger"
+              }
+            ]
+          },
+          "centerArrival": "2026-10-23T16:30",
+          "leaveCenter": "2026-10-25T11:25",
+          "usefulHours": 42.9,
+          "totalStops": 0,
+          "score": 338.33,
+          "earlyReturn": false,
+          "kind": "cheapest"
         },
         {
           "id": "ORY-OPO-2026-10-23T06:05:00-2026-10-25T18:50:00-418.0",
@@ -888,8 +940,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "BVA-PMI-2026-10-23T17:00:00-2026-10-25T17:45:00-203.0",
-          "price": 203.0,
+          "id": "BVA-PMI-2026-10-23T17:00:00-2026-10-25T17:45:00-204.0",
+          "price": 204.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -935,13 +987,13 @@
           "leaveCenter": "2026-10-25T15:25",
           "usefulHours": 43.8,
           "totalStops": 0,
-          "score": 211.67,
+          "score": 212.67,
           "earlyReturn": false,
           "kind": "recommended"
         },
         {
-          "id": "ORY-PMI-2026-10-23T06:40:00-2026-10-25T20:45:00-379.0",
-          "price": 379.0,
+          "id": "ORY-PMI-2026-10-23T06:40:00-2026-10-25T20:45:00-386.0",
+          "price": 386.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -987,7 +1039,7 @@
           "leaveCenter": "2026-10-25T18:25",
           "usefulHours": 57.2,
           "totalStops": 0,
-          "score": 379.0,
+          "score": 386.0,
           "earlyReturn": false,
           "kind": "max_weekend"
         }
@@ -1091,8 +1143,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "CDG-RIX-2026-10-23T09:50:00-2026-10-25T16:35:00-451.0",
-          "price": 451.0,
+          "id": "CDG-RIX-2026-10-23T09:50:00-2026-10-25T16:35:00-506.0",
+          "price": 506.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1138,7 +1190,7 @@
           "leaveCenter": "2026-10-25T14:10",
           "usefulHours": 48.0,
           "totalStops": 0,
-          "score": 451.0,
+          "score": 506.0,
           "earlyReturn": false,
           "kind": "recommended"
         }
@@ -1173,8 +1225,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "CDG-LPL-2026-10-23T16:45:00-2026-10-25T17:40:00-292.0",
-          "price": 292.0,
+          "id": "CDG-LPL-2026-10-23T16:45:00-2026-10-25T17:40:00-293.0",
+          "price": 293.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1220,7 +1272,7 @@
           "leaveCenter": "2026-10-25T15:00",
           "usefulHours": 44.8,
           "totalStops": 0,
-          "score": 296.67,
+          "score": 297.67,
           "earlyReturn": false,
           "kind": "recommended"
         }
@@ -1252,8 +1304,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "BVA-KRK-2026-10-23T08:40:00-2026-10-25T17:10:00-217.0",
-          "price": 217.0,
+          "id": "BVA-KRK-2026-10-23T08:40:00-2026-10-25T17:10:00-216.0",
+          "price": 216.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1299,13 +1351,13 @@
           "leaveCenter": "2026-10-25T14:40",
           "usefulHours": 51.1,
           "totalStops": 0,
-          "score": 217.0,
+          "score": 216.0,
           "earlyReturn": false,
           "kind": "recommended"
         },
         {
-          "id": "BVA-KRK-2026-10-23T08:40:00-2026-10-25T06:50:00-199.0",
-          "price": 199.0,
+          "id": "BVA-KRK-2026-10-23T08:40:00-2026-10-25T06:50:00-198.0",
+          "price": 198.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1351,7 +1403,7 @@
           "leaveCenter": "2026-10-25T04:20",
           "usefulHours": 40.8,
           "totalStops": 0,
-          "score": 396.0,
+          "score": 395.0,
           "earlyReturn": true,
           "kind": "cheapest"
         },
@@ -1489,8 +1541,8 @@
           "kind": "recommended"
         },
         {
-          "id": "CDG-BLQ-2026-10-23T07:20:00-2026-10-25T18:05:00-691.0",
-          "price": 691.0,
+          "id": "CDG-BLQ-2026-10-23T07:20:00-2026-10-25T18:05:00-695.0",
+          "price": 695.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1536,7 +1588,7 @@
           "leaveCenter": "2026-10-25T15:40",
           "usefulHours": 54.0,
           "totalStops": 0,
-          "score": 691.0,
+          "score": 695.0,
           "earlyReturn": false,
           "kind": "max_weekend"
         }
@@ -1570,8 +1622,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "ORY-TIA-2026-10-23T16:45:00-2026-10-25T18:10:00-292.0",
-          "price": 292.0,
+          "id": "ORY-TIA-2026-10-23T16:45:00-2026-10-25T18:10:00-313.0",
+          "price": 313.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1617,7 +1669,7 @@
           "leaveCenter": "2026-10-25T15:35",
           "usefulHours": 43.4,
           "totalStops": 0,
-          "score": 302.33,
+          "score": 323.33,
           "earlyReturn": false,
           "kind": "recommended"
         },
@@ -1703,8 +1755,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "CDG-PRG-2026-10-23T15:00:00-2026-10-25T12:10:00-494.0",
-          "price": 494.0,
+          "id": "CDG-PRG-2026-10-23T15:00:00-2026-10-25T12:10:00-506.0",
+          "price": 506.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1750,13 +1802,13 @@
           "leaveCenter": "2026-10-25T09:35",
           "usefulHours": 40.0,
           "totalStops": 0,
-          "score": 518.0,
+          "score": 530.0,
           "earlyReturn": false,
           "kind": "recommended"
         },
         {
-          "id": "ORY-PRG-2026-10-23T14:10:00-2026-10-25T10:30:00-367.0",
-          "price": 367.0,
+          "id": "ORY-PRG-2026-10-23T14:10:00-2026-10-25T10:30:00-368.0",
+          "price": 368.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1802,7 +1854,7 @@
           "leaveCenter": "2026-10-25T07:55",
           "usefulHours": 39.2,
           "totalStops": 0,
-          "score": 398.0,
+          "score": 399.0,
           "earlyReturn": true,
           "kind": "cheapest"
         },
@@ -2477,8 +2529,8 @@
         "id": "malaga",
         "name": "Málaga",
         "vibe": "☀️ terrasse + tapas + mer",
-        "flightPrice": 293.0,
-        "estimatedWeekend": 553,
+        "flightPrice": 304.0,
+        "estimatedWeekend": 564,
         "localCostEstimate": 260,
         "usefulHours": 35.6,
         "onSiteBudget": {
@@ -2525,7 +2577,7 @@
         },
         "centerArrival": "2026-10-23T21:15",
         "leaveCenter": "2026-10-25T08:50",
-        "valueScore": 602.6,
+        "valueScore": 613.6,
         "currency": "EUR"
       },
       {
@@ -2642,8 +2694,8 @@
         "id": "munich",
         "name": "Munich",
         "vibe": "🍺 brasseries + musées + centre bavarois",
-        "flightPrice": 328.0,
-        "estimatedWeekend": 688,
+        "flightPrice": 333.0,
+        "estimatedWeekend": 693,
         "localCostEstimate": 360,
         "usefulHours": 51.5,
         "onSiteBudget": {
@@ -2690,7 +2742,7 @@
         },
         "centerArrival": "2026-10-23T09:40",
         "leaveCenter": "2026-10-25T13:10",
-        "valueScore": 688.0,
+        "valueScore": 693.0,
         "currency": "EUR"
       },
       {
