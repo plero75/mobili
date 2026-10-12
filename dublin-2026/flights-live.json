@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-12T13:07:00+00:00",
+  "generatedAt": "2026-10-12T23:35:46+00:00",
   "departDate": "2026-10-23",
   "returnDate": "2026-10-25",
   "source": "Google Flights via fast-flights (scraper non officiel, sans clé API)",
   "pricingMode": "two_direct_one_ways",
   "directOnly": true,
   "priceDisclaimer": "Transport A/R = somme des deux trajets directs observés au dernier refresh ; tarif final à revérifier avant achat.",
-  "successfulCities": 9,
+  "successfulCities": 15,
   "cities": {
     "dublin": {
       "name": "Dublin",
@@ -17,11 +17,6 @@
         "BVA"
       ],
       "searchDetails": [
-        {
-          "origin": "ORY",
-          "outboundCandidates": 1,
-          "returnCandidates": 2
-        },
         {
           "origin": "CDG",
           "outboundCandidates": 5,
@@ -36,8 +31,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "BVA-DUB-2026-10-23T06:55:00-2026-10-25T12:10:00-271.0",
-          "price": 271.0,
+          "id": "BVA-DUB-2026-10-23T06:55:00-2026-10-25T12:10:00-281.0",
+          "price": 281.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -83,13 +78,13 @@
           "leaveCenter": "2026-10-25T09:35",
           "usefulHours": 49.2,
           "totalStops": 0,
-          "score": 271.0,
+          "score": 281.0,
           "earlyReturn": false,
           "kind": "recommended"
         },
         {
-          "id": "BVA-DUB-2026-10-23T06:55:00-2026-10-25T08:25:00-241.0",
-          "price": 241.0,
+          "id": "BVA-DUB-2026-10-23T06:55:00-2026-10-25T08:25:00-251.0",
+          "price": 251.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -135,13 +130,13 @@
           "leaveCenter": "2026-10-25T05:50",
           "usefulHours": 45.5,
           "totalStops": 0,
-          "score": 347.0,
+          "score": 357.0,
           "earlyReturn": true,
           "kind": "cheapest"
         },
         {
-          "id": "BVA-DUB-2026-10-23T06:55:00-2026-10-25T19:55:00-315.0",
-          "price": 315.0,
+          "id": "BVA-DUB-2026-10-23T06:55:00-2026-10-25T19:55:00-325.0",
+          "price": 325.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -187,13 +182,15 @@
           "leaveCenter": "2026-10-25T17:20",
           "usefulHours": 57.0,
           "totalStops": 0,
-          "score": 315.0,
+          "score": 325.0,
           "earlyReturn": false,
           "kind": "max_weekend"
         }
       ],
-      "combinationsSeen": 30,
-      "errors": [],
+      "combinationsSeen": 28,
+      "errors": [
+        "ORY: FlightsNotFound: no flights found; received error"
+      ],
       "stale": false
     },
     "barcelona": {
@@ -213,7 +210,7 @@
         {
           "origin": "CDG",
           "outboundCandidates": 7,
-          "returnCandidates": 5
+          "returnCandidates": 6
         },
         {
           "origin": "BVA",
@@ -224,54 +221,54 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "BVA-BCN-2026-10-23T13:30:00-2026-10-25T19:10:00-335.0",
-          "price": 335.0,
+          "id": "ORY-BCN-2026-10-23T07:10:00-2026-10-25T20:50:00-329.0",
+          "price": 329.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
           "outbound": {
-            "from": "BVA",
+            "from": "ORY",
             "to": "BCN",
-            "departure": "2026-10-23T13:30",
-            "arrival": "2026-10-23T15:15",
+            "departure": "2026-10-23T07:10",
+            "arrival": "2026-10-23T08:50",
             "stops": 0,
-            "durationMinutes": 105,
-            "carrier": "Ryanair",
+            "durationMinutes": 100,
+            "carrier": "Vueling",
             "segments": [
               {
-                "from": "BVA",
+                "from": "ORY",
                 "to": "BCN",
-                "departure": "2026-10-23T13:30",
-                "arrival": "2026-10-23T15:15",
-                "durationMinutes": 105,
-                "planeType": "Boeing 737"
+                "departure": "2026-10-23T07:10",
+                "arrival": "2026-10-23T08:50",
+                "durationMinutes": 100,
+                "planeType": "Airbus A320"
               }
             ]
           },
           "return": {
             "from": "BCN",
-            "to": "BVA",
-            "departure": "2026-10-25T19:10",
-            "arrival": "2026-10-25T21:10",
+            "to": "ORY",
+            "departure": "2026-10-25T20:50",
+            "arrival": "2026-10-25T22:50",
             "stops": 0,
             "durationMinutes": 120,
-            "carrier": "Ryanair",
+            "carrier": "Transavia",
             "segments": [
               {
                 "from": "BCN",
-                "to": "BVA",
-                "departure": "2026-10-25T19:10",
-                "arrival": "2026-10-25T21:10",
+                "to": "ORY",
+                "departure": "2026-10-25T20:50",
+                "arrival": "2026-10-25T22:50",
                 "durationMinutes": 120,
-                "planeType": "Boeing 737"
+                "planeType": "Airbus A320neo"
               }
             ]
           },
-          "centerArrival": "2026-10-23T16:00",
-          "leaveCenter": "2026-10-25T16:40",
-          "usefulHours": 48.7,
+          "centerArrival": "2026-10-23T09:35",
+          "leaveCenter": "2026-10-25T18:20",
+          "usefulHours": 56.8,
           "totalStops": 0,
-          "score": 335.0,
+          "score": 329.0,
           "earlyReturn": false,
           "kind": "recommended"
         },
@@ -328,8 +325,8 @@
           "kind": "cheapest"
         },
         {
-          "id": "ORY-BCN-2026-10-23T06:55:00-2026-10-25T20:50:00-371.0",
-          "price": 371.0,
+          "id": "ORY-BCN-2026-10-23T06:55:00-2026-10-25T20:50:00-358.0",
+          "price": 358.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -375,12 +372,12 @@
           "leaveCenter": "2026-10-25T18:20",
           "usefulHours": 57.0,
           "totalStops": 0,
-          "score": 371.0,
+          "score": 358.0,
           "earlyReturn": false,
           "kind": "max_weekend"
         }
       ],
-      "combinationsSeen": 102,
+      "combinationsSeen": 109,
       "errors": [],
       "stale": false
     },
@@ -395,7 +392,7 @@
       "searchDetails": [
         {
           "origin": "CDG",
-          "outboundCandidates": 2,
+          "outboundCandidates": 1,
           "returnCandidates": 3
         },
         {
@@ -407,27 +404,27 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "CDG-OTP-2026-10-23T12:00:00-2026-10-25T15:10:00-770.0",
-          "price": 770.0,
+          "id": "CDG-OTP-2026-10-23T08:50:00-2026-10-25T15:10:00-821.0",
+          "price": 821.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
           "outbound": {
             "from": "CDG",
             "to": "OTP",
-            "departure": "2026-10-23T12:00",
-            "arrival": "2026-10-23T15:50",
+            "departure": "2026-10-23T08:50",
+            "arrival": "2026-10-23T12:45",
             "stops": 0,
-            "durationMinutes": 170,
-            "carrier": "TAROM",
+            "durationMinutes": 175,
+            "carrier": "Air France",
             "segments": [
               {
                 "from": "CDG",
                 "to": "OTP",
-                "departure": "2026-10-23T12:00",
-                "arrival": "2026-10-23T15:50",
-                "durationMinutes": 170,
-                "planeType": "Boeing 737MAX 8 Passenger"
+                "departure": "2026-10-23T08:50",
+                "arrival": "2026-10-23T12:45",
+                "durationMinutes": 175,
+                "planeType": "Airbus A220-300 Passenger"
               }
             ]
           },
@@ -450,36 +447,36 @@
               }
             ]
           },
-          "centerArrival": "2026-10-23T16:45",
+          "centerArrival": "2026-10-23T13:40",
           "leaveCenter": "2026-10-25T12:30",
-          "usefulHours": 43.8,
+          "usefulHours": 46.8,
           "totalStops": 0,
-          "score": 779.0,
+          "score": 821.0,
           "earlyReturn": false,
           "kind": "recommended"
         },
         {
-          "id": "BVA-OTP-2026-10-23T09:45:00-2026-10-25T10:20:00-366.0",
-          "price": 366.0,
+          "id": "BVA-OTP-2026-10-23T09:05:00-2026-10-25T10:20:00-375.0",
+          "price": 375.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
           "outbound": {
             "from": "BVA",
             "to": "OTP",
-            "departure": "2026-10-23T09:45",
-            "arrival": "2026-10-23T13:40",
+            "departure": "2026-10-23T09:05",
+            "arrival": "2026-10-23T12:55",
             "stops": 0,
-            "durationMinutes": 175,
-            "carrier": "Wizz Air",
+            "durationMinutes": 170,
+            "carrier": "Ryanair",
             "segments": [
               {
                 "from": "BVA",
                 "to": "OTP",
-                "departure": "2026-10-23T09:45",
-                "arrival": "2026-10-23T13:40",
-                "durationMinutes": 175,
-                "planeType": "Airbus A321"
+                "departure": "2026-10-23T09:05",
+                "arrival": "2026-10-23T12:55",
+                "durationMinutes": 170,
+                "planeType": "Boeing 737"
               }
             ]
           },
@@ -502,16 +499,16 @@
               }
             ]
           },
-          "centerArrival": "2026-10-23T14:35",
+          "centerArrival": "2026-10-23T13:50",
           "leaveCenter": "2026-10-25T07:40",
-          "usefulHours": 41.1,
+          "usefulHours": 41.8,
           "totalStops": 0,
-          "score": 401.67,
+          "score": 407.67,
           "earlyReturn": true,
           "kind": "cheapest"
         }
       ],
-      "combinationsSeen": 10,
+      "combinationsSeen": 7,
       "errors": [
         "ORY: TypeError: 'NoneType' object is not subscriptable"
       ],
@@ -535,8 +532,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "CDG-VNO-2026-10-23T18:15:00-2026-10-25T16:05:00-666.0",
-          "price": 666.0,
+          "id": "CDG-VNO-2026-10-23T18:15:00-2026-10-25T16:05:00-796.0",
+          "price": 796.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -582,7 +579,7 @@
           "leaveCenter": "2026-10-25T13:40",
           "usefulHours": 39.1,
           "totalStops": 0,
-          "score": 705.92,
+          "score": 835.92,
           "earlyReturn": false,
           "kind": "recommended"
         }
@@ -592,8 +589,7 @@
         "ORY: TypeError: 'NoneType' object is not subscriptable",
         "BVA: TypeError: 'NoneType' object is not subscriptable"
       ],
-      "stale": true,
-      "refreshError": "RuntimeError: aucun vol direct aller+retour exploitable"
+      "stale": false
     },
     "lisbon": {
       "name": "Lisbonne",
@@ -605,8 +601,8 @@
       "searchDetails": [
         {
           "origin": "ORY",
-          "outboundCandidates": 9,
-          "returnCandidates": 5
+          "outboundCandidates": 8,
+          "returnCandidates": 7
         },
         {
           "origin": "CDG",
@@ -617,8 +613,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "ORY-LIS-2026-10-23T07:20:00-2026-10-25T12:55:00-621.0",
-          "price": 621.0,
+          "id": "ORY-LIS-2026-10-23T07:20:00-2026-10-25T15:40:00-581.0",
+          "price": 581.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -644,8 +640,8 @@
           "return": {
             "from": "LIS",
             "to": "ORY",
-            "departure": "2026-10-25T12:55",
-            "arrival": "2026-10-25T16:30",
+            "departure": "2026-10-25T15:40",
+            "arrival": "2026-10-25T19:15",
             "stops": 0,
             "durationMinutes": 155,
             "carrier": "Transavia",
@@ -653,18 +649,18 @@
               {
                 "from": "LIS",
                 "to": "ORY",
-                "departure": "2026-10-25T12:55",
-                "arrival": "2026-10-25T16:30",
+                "departure": "2026-10-25T15:40",
+                "arrival": "2026-10-25T19:15",
                 "durationMinutes": 155,
                 "planeType": "Boeing 737"
               }
             ]
           },
           "centerArrival": "2026-10-23T09:40",
-          "leaveCenter": "2026-10-25T10:30",
-          "usefulHours": 48.8,
+          "leaveCenter": "2026-10-25T13:15",
+          "usefulHours": 51.6,
           "totalStops": 0,
-          "score": 621.0,
+          "score": 581.0,
           "earlyReturn": false,
           "kind": "recommended"
         },
@@ -721,10 +717,9 @@
           "kind": "max_weekend"
         }
       ],
-      "combinationsSeen": 61,
+      "combinationsSeen": 72,
       "errors": [],
-      "stale": true,
-      "refreshError": "RuntimeError: aucun vol direct aller+retour exploitable"
+      "stale": false
     },
     "porto": {
       "name": "Porto",
@@ -737,8 +732,13 @@
       "searchDetails": [
         {
           "origin": "ORY",
-          "outboundCandidates": 5,
-          "returnCandidates": 4
+          "outboundCandidates": 4,
+          "returnCandidates": 5
+        },
+        {
+          "origin": "CDG",
+          "outboundCandidates": 3,
+          "returnCandidates": 2
         },
         {
           "origin": "BVA",
@@ -748,58 +748,6 @@
       ],
       "pricingMode": "two_direct_one_ways",
       "options": [
-        {
-          "id": "BVA-OPO-2026-10-23T14:25:00-2026-10-25T19:10:00-355.0",
-          "price": 355.0,
-          "currency": "EUR",
-          "pricingMode": "two_direct_one_ways",
-          "priceNote": "Total des deux vols directs observés au dernier refresh.",
-          "outbound": {
-            "from": "BVA",
-            "to": "OPO",
-            "departure": "2026-10-23T14:25",
-            "arrival": "2026-10-23T15:40",
-            "stops": 0,
-            "durationMinutes": 135,
-            "carrier": "Ryanair",
-            "segments": [
-              {
-                "from": "BVA",
-                "to": "OPO",
-                "departure": "2026-10-23T14:25",
-                "arrival": "2026-10-23T15:40",
-                "durationMinutes": 135,
-                "planeType": "Boeing 737"
-              }
-            ]
-          },
-          "return": {
-            "from": "OPO",
-            "to": "BVA",
-            "departure": "2026-10-25T19:10",
-            "arrival": "2026-10-25T22:20",
-            "stops": 0,
-            "durationMinutes": 130,
-            "carrier": "Ryanair",
-            "segments": [
-              {
-                "from": "OPO",
-                "to": "BVA",
-                "departure": "2026-10-25T19:10",
-                "arrival": "2026-10-25T22:20",
-                "durationMinutes": 130,
-                "planeType": "Boeing 737MAX 8 Passenger"
-              }
-            ]
-          },
-          "centerArrival": "2026-10-23T16:30",
-          "leaveCenter": "2026-10-25T16:35",
-          "usefulHours": 48.1,
-          "totalStops": 0,
-          "score": 355.0,
-          "earlyReturn": false,
-          "kind": "recommended"
-        },
         {
           "id": "BVA-OPO-2026-10-23T14:25:00-2026-10-25T11:00:00-346.0",
           "price": 346.0,
@@ -850,10 +798,10 @@
           "totalStops": 0,
           "score": 370.33,
           "earlyReturn": false,
-          "kind": "cheapest"
+          "kind": "recommended"
         },
         {
-          "id": "ORY-OPO-2026-10-23T08:50:00-2026-10-25T18:50:00-457.0",
+          "id": "ORY-OPO-2026-10-23T06:05:00-2026-10-25T18:50:00-457.0",
           "price": 457.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
@@ -861,18 +809,18 @@
           "outbound": {
             "from": "ORY",
             "to": "OPO",
-            "departure": "2026-10-23T08:50",
-            "arrival": "2026-10-23T10:15",
+            "departure": "2026-10-23T06:05",
+            "arrival": "2026-10-23T07:25",
             "stops": 0,
-            "durationMinutes": 145,
+            "durationMinutes": 140,
             "carrier": "Transavia",
             "segments": [
               {
                 "from": "ORY",
                 "to": "OPO",
-                "departure": "2026-10-23T08:50",
-                "arrival": "2026-10-23T10:15",
-                "durationMinutes": 145,
+                "departure": "2026-10-23T06:05",
+                "arrival": "2026-10-23T07:25",
+                "durationMinutes": 140,
                 "planeType": "Boeing 737"
               }
             ]
@@ -896,19 +844,17 @@
               }
             ]
           },
-          "centerArrival": "2026-10-23T11:05",
+          "centerArrival": "2026-10-23T08:15",
           "leaveCenter": "2026-10-25T16:15",
-          "usefulHours": 53.2,
+          "usefulHours": 56.0,
           "totalStops": 0,
           "score": 457.0,
           "earlyReturn": false,
           "kind": "max_weekend"
         }
       ],
-      "combinationsSeen": 26,
-      "errors": [
-        "CDG: FlightsNotFound: no flights found; received error"
-      ],
+      "combinationsSeen": 32,
+      "errors": [],
       "stale": false
     },
     "mallorca": {
@@ -921,12 +867,12 @@
       ],
       "searchDetails": [
         {
-          "origin": "ORY",
-          "outboundCandidates": 2,
-          "returnCandidates": 2
+          "origin": "CDG",
+          "outboundCandidates": 1,
+          "returnCandidates": 1
         },
         {
-          "origin": "CDG",
+          "origin": "BVA",
           "outboundCandidates": 1,
           "returnCandidates": 1
         }
@@ -934,113 +880,113 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "ORY-PMI-2026-10-23T06:40:00-2026-10-25T19:50:00-378.0",
-          "price": 378.0,
+          "id": "BVA-PMI-2026-10-23T17:00:00-2026-10-25T17:45:00-260.0",
+          "price": 260.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
           "outbound": {
-            "from": "ORY",
+            "from": "BVA",
             "to": "PMI",
-            "departure": "2026-10-23T06:40",
-            "arrival": "2026-10-23T08:35",
-            "stops": 0,
-            "durationMinutes": 115,
-            "carrier": "Vueling",
-            "segments": [
-              {
-                "from": "ORY",
-                "to": "PMI",
-                "departure": "2026-10-23T06:40",
-                "arrival": "2026-10-23T08:35",
-                "durationMinutes": 115,
-                "planeType": "Airbus A320"
-              }
-            ]
-          },
-          "return": {
-            "from": "PMI",
-            "to": "ORY",
-            "departure": "2026-10-25T19:50",
-            "arrival": "2026-10-25T21:50",
+            "departure": "2026-10-23T17:00",
+            "arrival": "2026-10-23T19:00",
             "stops": 0,
             "durationMinutes": 120,
-            "carrier": "Vueling",
+            "carrier": "Ryanair",
             "segments": [
               {
-                "from": "PMI",
-                "to": "ORY",
-                "departure": "2026-10-25T19:50",
-                "arrival": "2026-10-25T21:50",
-                "durationMinutes": 120,
-                "planeType": "Airbus A320"
-              }
-            ]
-          },
-          "centerArrival": "2026-10-23T09:10",
-          "leaveCenter": "2026-10-25T17:30",
-          "usefulHours": 56.3,
-          "totalStops": 0,
-          "score": 378.0,
-          "earlyReturn": false,
-          "kind": "recommended"
-        },
-        {
-          "id": "ORY-PMI-2026-10-23T06:40:00-2026-10-25T20:45:00-384.0",
-          "price": 384.0,
-          "currency": "EUR",
-          "pricingMode": "two_direct_one_ways",
-          "priceNote": "Total des deux vols directs observés au dernier refresh.",
-          "outbound": {
-            "from": "ORY",
-            "to": "PMI",
-            "departure": "2026-10-23T06:40",
-            "arrival": "2026-10-23T08:35",
-            "stops": 0,
-            "durationMinutes": 115,
-            "carrier": "Vueling",
-            "segments": [
-              {
-                "from": "ORY",
+                "from": "BVA",
                 "to": "PMI",
-                "departure": "2026-10-23T06:40",
-                "arrival": "2026-10-23T08:35",
-                "durationMinutes": 115,
-                "planeType": "Airbus A320"
-              }
-            ]
-          },
-          "return": {
-            "from": "PMI",
-            "to": "ORY",
-            "departure": "2026-10-25T20:45",
-            "arrival": "2026-10-25T22:50",
-            "stops": 0,
-            "durationMinutes": 125,
-            "carrier": "Transavia",
-            "segments": [
-              {
-                "from": "PMI",
-                "to": "ORY",
-                "departure": "2026-10-25T20:45",
-                "arrival": "2026-10-25T22:50",
-                "durationMinutes": 125,
+                "departure": "2026-10-23T17:00",
+                "arrival": "2026-10-23T19:00",
+                "durationMinutes": 120,
                 "planeType": "Boeing 737"
               }
             ]
           },
-          "centerArrival": "2026-10-23T09:10",
-          "leaveCenter": "2026-10-25T18:25",
-          "usefulHours": 57.2,
+          "return": {
+            "from": "PMI",
+            "to": "BVA",
+            "departure": "2026-10-25T17:45",
+            "arrival": "2026-10-25T19:55",
+            "stops": 0,
+            "durationMinutes": 130,
+            "carrier": "Ryanair",
+            "segments": [
+              {
+                "from": "PMI",
+                "to": "BVA",
+                "departure": "2026-10-25T17:45",
+                "arrival": "2026-10-25T19:55",
+                "durationMinutes": 130,
+                "planeType": "Boeing 737MAX 8 Passenger"
+              }
+            ]
+          },
+          "centerArrival": "2026-10-23T19:35",
+          "leaveCenter": "2026-10-25T15:25",
+          "usefulHours": 43.8,
           "totalStops": 0,
-          "score": 384.0,
+          "score": 268.67,
+          "earlyReturn": false,
+          "kind": "recommended"
+        },
+        {
+          "id": "CDG-PMI-2026-10-23T09:30:00-2026-10-25T12:15:00-737.0",
+          "price": 737.0,
+          "currency": "EUR",
+          "pricingMode": "two_direct_one_ways",
+          "priceNote": "Total des deux vols directs observés au dernier refresh.",
+          "outbound": {
+            "from": "CDG",
+            "to": "PMI",
+            "departure": "2026-10-23T09:30",
+            "arrival": "2026-10-23T11:30",
+            "stops": 0,
+            "durationMinutes": 120,
+            "carrier": "Air France",
+            "segments": [
+              {
+                "from": "CDG",
+                "to": "PMI",
+                "departure": "2026-10-23T09:30",
+                "arrival": "2026-10-23T11:30",
+                "durationMinutes": 120,
+                "planeType": "Embraer 190"
+              }
+            ]
+          },
+          "return": {
+            "from": "PMI",
+            "to": "CDG",
+            "departure": "2026-10-25T12:15",
+            "arrival": "2026-10-25T14:25",
+            "stops": 0,
+            "durationMinutes": 130,
+            "carrier": "Air France",
+            "segments": [
+              {
+                "from": "PMI",
+                "to": "CDG",
+                "departure": "2026-10-25T12:15",
+                "arrival": "2026-10-25T14:25",
+                "durationMinutes": 130,
+                "planeType": "Embraer 190"
+              }
+            ]
+          },
+          "centerArrival": "2026-10-23T12:05",
+          "leaveCenter": "2026-10-25T09:55",
+          "usefulHours": 45.8,
+          "totalStops": 0,
+          "score": 737.67,
           "earlyReturn": false,
           "kind": "max_weekend"
         }
       ],
-      "combinationsSeen": 5,
+      "combinationsSeen": 2,
       "errors": [
-        "BVA: FlightsNotFound: no flights found; received error"
+        "ORY: FlightsNotFound: no flights found; received error"
       ],
       "stale": false
     },
@@ -1140,8 +1086,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "CDG-RIX-2026-10-23T09:50:00-2026-10-25T16:45:00-677.0",
-          "price": 677.0,
+          "id": "CDG-RIX-2026-10-23T09:50:00-2026-10-25T16:45:00-722.0",
+          "price": 722.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1187,7 +1133,7 @@
           "leaveCenter": "2026-10-25T14:20",
           "usefulHours": 48.2,
           "totalStops": 0,
-          "score": 677.0,
+          "score": 722.0,
           "earlyReturn": false,
           "kind": "recommended"
         }
@@ -1197,8 +1143,7 @@
         "ORY: TypeError: 'NoneType' object is not subscriptable",
         "BVA: IndexError: list index out of range"
       ],
-      "stale": true,
-      "refreshError": "RuntimeError: aucun vol direct aller+retour exploitable"
+      "stale": false
     },
     "split": {
       "name": "Split",
@@ -1292,67 +1237,10 @@
           "origin": "CDG",
           "outboundCandidates": 3,
           "returnCandidates": 2
-        },
-        {
-          "origin": "BVA",
-          "outboundCandidates": 2,
-          "returnCandidates": 2
         }
       ],
       "pricingMode": "two_direct_one_ways",
       "options": [
-        {
-          "id": "BVA-KRK-2026-10-23T08:40:00-2026-10-25T17:10:00-257.0",
-          "price": 257.0,
-          "currency": "EUR",
-          "pricingMode": "two_direct_one_ways",
-          "priceNote": "Total des deux vols directs observés au dernier refresh.",
-          "outbound": {
-            "from": "BVA",
-            "to": "KRK",
-            "departure": "2026-10-23T08:40",
-            "arrival": "2026-10-23T10:50",
-            "stops": 0,
-            "durationMinutes": 130,
-            "carrier": "Ryanair",
-            "segments": [
-              {
-                "from": "BVA",
-                "to": "KRK",
-                "departure": "2026-10-23T08:40",
-                "arrival": "2026-10-23T10:50",
-                "durationMinutes": 130,
-                "planeType": "Boeing 737MAX 8 Passenger"
-              }
-            ]
-          },
-          "return": {
-            "from": "KRK",
-            "to": "BVA",
-            "departure": "2026-10-25T17:10",
-            "arrival": "2026-10-25T19:30",
-            "stops": 0,
-            "durationMinutes": 140,
-            "carrier": "Ryanair",
-            "segments": [
-              {
-                "from": "KRK",
-                "to": "BVA",
-                "departure": "2026-10-25T17:10",
-                "arrival": "2026-10-25T19:30",
-                "durationMinutes": 140,
-                "planeType": "Boeing 737MAX 8 Passenger"
-              }
-            ]
-          },
-          "centerArrival": "2026-10-23T11:35",
-          "leaveCenter": "2026-10-25T14:40",
-          "usefulHours": 51.1,
-          "totalStops": 0,
-          "score": 257.0,
-          "earlyReturn": false,
-          "kind": "recommended"
-        },
         {
           "id": "CDG-KRK-2026-10-23T07:20:00-2026-10-25T20:30:00-282.0",
           "price": 282.0,
@@ -1403,11 +1291,12 @@
           "totalStops": 0,
           "score": 282.0,
           "earlyReturn": false,
-          "kind": "max_weekend"
+          "kind": "recommended"
         }
       ],
-      "combinationsSeen": 10,
+      "combinationsSeen": 6,
       "errors": [
+        "BVA: FlightsNotFound: no flights found; received error",
         "ORY: TypeError: 'NoneType' object is not subscriptable"
       ],
       "stale": false
@@ -1425,70 +1314,117 @@
           "origin": "CDG",
           "outboundCandidates": 4,
           "returnCandidates": 4
-        },
-        {
-          "origin": "BVA",
-          "outboundCandidates": 1,
-          "returnCandidates": 1
         }
       ],
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "BVA-BLQ-2026-10-23T13:25:00-2026-10-25T14:40:00-422.0",
-          "price": 422.0,
+          "id": "CDG-BLQ-2026-10-23T07:20:00-2026-10-25T10:40:00-578.0",
+          "price": 578.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
           "outbound": {
-            "from": "BVA",
+            "from": "CDG",
             "to": "BLQ",
-            "departure": "2026-10-23T13:25",
-            "arrival": "2026-10-23T15:05",
+            "departure": "2026-10-23T07:20",
+            "arrival": "2026-10-23T09:00",
             "stops": 0,
             "durationMinutes": 100,
-            "carrier": "Ryanair",
+            "carrier": "Air France",
             "segments": [
               {
-                "from": "BVA",
+                "from": "CDG",
                 "to": "BLQ",
-                "departure": "2026-10-23T13:25",
-                "arrival": "2026-10-23T15:05",
+                "departure": "2026-10-23T07:20",
+                "arrival": "2026-10-23T09:00",
                 "durationMinutes": 100,
-                "planeType": "Boeing 737"
+                "planeType": "Airbus A220-300 Passenger"
               }
             ]
           },
           "return": {
             "from": "BLQ",
-            "to": "BVA",
-            "departure": "2026-10-25T14:40",
-            "arrival": "2026-10-25T16:35",
+            "to": "CDG",
+            "departure": "2026-10-25T10:40",
+            "arrival": "2026-10-25T12:30",
             "stops": 0,
-            "durationMinutes": 115,
-            "carrier": "Ryanair",
+            "durationMinutes": 110,
+            "carrier": "Air France",
             "segments": [
               {
                 "from": "BLQ",
-                "to": "BVA",
-                "departure": "2026-10-25T14:40",
-                "arrival": "2026-10-25T16:35",
-                "durationMinutes": 115,
-                "planeType": "Boeing 737"
+                "to": "CDG",
+                "departure": "2026-10-25T10:40",
+                "arrival": "2026-10-25T12:30",
+                "durationMinutes": 110,
+                "planeType": "Embraer 190"
               }
             ]
           },
-          "centerArrival": "2026-10-23T15:45",
-          "leaveCenter": "2026-10-25T12:15",
-          "usefulHours": 44.5,
+          "centerArrival": "2026-10-23T09:40",
+          "leaveCenter": "2026-10-25T08:15",
+          "usefulHours": 46.6,
           "totalStops": 0,
-          "score": 428.0,
+          "score": 578.0,
           "earlyReturn": false,
           "kind": "recommended"
         },
         {
-          "id": "CDG-BLQ-2026-10-23T07:20:00-2026-10-25T18:05:00-591.0",
-          "price": 591.0,
+          "id": "CDG-BLQ-2026-10-23T21:30:00-2026-10-25T06:00:00-522.0",
+          "price": 522.0,
+          "currency": "EUR",
+          "pricingMode": "two_direct_one_ways",
+          "priceNote": "Total des deux vols directs observés au dernier refresh.",
+          "outbound": {
+            "from": "CDG",
+            "to": "BLQ",
+            "departure": "2026-10-23T21:30",
+            "arrival": "2026-10-23T23:10",
+            "stops": 0,
+            "durationMinutes": 100,
+            "carrier": "Air France",
+            "segments": [
+              {
+                "from": "CDG",
+                "to": "BLQ",
+                "departure": "2026-10-23T21:30",
+                "arrival": "2026-10-23T23:10",
+                "durationMinutes": 100,
+                "planeType": "Airbus A220-300 Passenger"
+              }
+            ]
+          },
+          "return": {
+            "from": "BLQ",
+            "to": "CDG",
+            "departure": "2026-10-25T06:00",
+            "arrival": "2026-10-25T07:55",
+            "stops": 0,
+            "durationMinutes": 115,
+            "carrier": "Air France",
+            "segments": [
+              {
+                "from": "BLQ",
+                "to": "CDG",
+                "departure": "2026-10-25T06:00",
+                "arrival": "2026-10-25T07:55",
+                "durationMinutes": 115,
+                "planeType": "Airbus A220-300 Passenger"
+              }
+            ]
+          },
+          "centerArrival": "2026-10-23T23:50",
+          "leaveCenter": "2026-10-25T03:35",
+          "usefulHours": 27.8,
+          "totalStops": 0,
+          "score": 845.5,
+          "earlyReturn": true,
+          "kind": "cheapest"
+        },
+        {
+          "id": "CDG-BLQ-2026-10-23T07:20:00-2026-10-25T18:05:00-629.0",
+          "price": 629.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1534,17 +1470,17 @@
           "leaveCenter": "2026-10-25T15:40",
           "usefulHours": 54.0,
           "totalStops": 0,
-          "score": 591.0,
+          "score": 629.0,
           "earlyReturn": false,
           "kind": "max_weekend"
         }
       ],
-      "combinationsSeen": 17,
+      "combinationsSeen": 16,
       "errors": [
-        "ORY: TypeError: 'NoneType' object is not subscriptable"
+        "ORY: TypeError: 'NoneType' object is not subscriptable",
+        "BVA: FlightsNotFound: no flights found; received error"
       ],
-      "stale": true,
-      "refreshError": "RuntimeError: aucun vol direct aller+retour exploitable"
+      "stale": false
     },
     "tirana": {
       "name": "Tirana",
@@ -1559,18 +1495,13 @@
           "origin": "ORY",
           "outboundCandidates": 1,
           "returnCandidates": 1
-        },
-        {
-          "origin": "BVA",
-          "outboundCandidates": 2,
-          "returnCandidates": 1
         }
       ],
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "ORY-TIA-2026-10-23T16:45:00-2026-10-25T09:55:00-358.0",
-          "price": 358.0,
+          "id": "ORY-TIA-2026-10-23T16:45:00-2026-10-25T09:55:00-319.0",
+          "price": 319.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1616,118 +1547,15 @@
           "leaveCenter": "2026-10-25T07:20",
           "usefulHours": 35.2,
           "totalStops": 0,
-          "score": 433.33,
+          "score": 394.33,
           "earlyReturn": true,
           "kind": "recommended"
-        },
-        {
-          "id": "BVA-TIA-2026-10-23T21:50:00-2026-10-25T06:15:00-222.0",
-          "price": 222.0,
-          "currency": "EUR",
-          "pricingMode": "two_direct_one_ways",
-          "priceNote": "Total des deux vols directs observés au dernier refresh.",
-          "outbound": {
-            "from": "BVA",
-            "to": "TIA",
-            "departure": "2026-10-23T21:50",
-            "arrival": "2026-10-24T00:20",
-            "stops": 0,
-            "durationMinutes": 150,
-            "carrier": "Ryanair",
-            "segments": [
-              {
-                "from": "BVA",
-                "to": "TIA",
-                "departure": "2026-10-23T21:50",
-                "arrival": "2026-10-24T00:20",
-                "durationMinutes": 150,
-                "planeType": "Boeing 737"
-              }
-            ]
-          },
-          "return": {
-            "from": "TIA",
-            "to": "BVA",
-            "departure": "2026-10-25T06:15",
-            "arrival": "2026-10-25T09:15",
-            "stops": 0,
-            "durationMinutes": 180,
-            "carrier": "Wizz Air",
-            "segments": [
-              {
-                "from": "TIA",
-                "to": "BVA",
-                "departure": "2026-10-25T06:15",
-                "arrival": "2026-10-25T09:15",
-                "durationMinutes": 180,
-                "planeType": "Airbus A321"
-              }
-            ]
-          },
-          "centerArrival": "2026-10-24T01:10",
-          "leaveCenter": "2026-10-25T03:40",
-          "usefulHours": 26.5,
-          "totalStops": 0,
-          "score": 508.0,
-          "earlyReturn": true,
-          "kind": "cheapest"
-        },
-        {
-          "id": "BVA-TIA-2026-10-23T09:40:00-2026-10-25T06:15:00-236.0",
-          "price": 236.0,
-          "currency": "EUR",
-          "pricingMode": "two_direct_one_ways",
-          "priceNote": "Total des deux vols directs observés au dernier refresh.",
-          "outbound": {
-            "from": "BVA",
-            "to": "TIA",
-            "departure": "2026-10-23T09:40",
-            "arrival": "2026-10-23T12:15",
-            "stops": 0,
-            "durationMinutes": 155,
-            "carrier": "Wizz Air",
-            "segments": [
-              {
-                "from": "BVA",
-                "to": "TIA",
-                "departure": "2026-10-23T09:40",
-                "arrival": "2026-10-23T12:15",
-                "durationMinutes": 155,
-                "planeType": "Airbus A321neo"
-              }
-            ]
-          },
-          "return": {
-            "from": "TIA",
-            "to": "BVA",
-            "departure": "2026-10-25T06:15",
-            "arrival": "2026-10-25T09:15",
-            "stops": 0,
-            "durationMinutes": 180,
-            "carrier": "Wizz Air",
-            "segments": [
-              {
-                "from": "TIA",
-                "to": "BVA",
-                "departure": "2026-10-25T06:15",
-                "arrival": "2026-10-25T09:15",
-                "durationMinutes": 180,
-                "planeType": "Airbus A321"
-              }
-            ]
-          },
-          "centerArrival": "2026-10-23T13:05",
-          "leaveCenter": "2026-10-25T03:40",
-          "usefulHours": 38.6,
-          "totalStops": 0,
-          "score": 473.67,
-          "earlyReturn": true,
-          "kind": "max_weekend"
         }
       ],
-      "combinationsSeen": 3,
+      "combinationsSeen": 1,
       "errors": [
-        "CDG: TypeError: 'NoneType' object is not subscriptable"
+        "CDG: TypeError: 'NoneType' object is not subscriptable",
+        "BVA: FlightsNotFound: no flights found; received error"
       ],
       "stale": false
     },
@@ -1744,122 +1572,13 @@
           "origin": "CDG",
           "outboundCandidates": 6,
           "returnCandidates": 4
-        },
-        {
-          "origin": "ORY",
-          "outboundCandidates": 1,
-          "returnCandidates": 2
         }
       ],
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "ORY-PRG-2026-10-23T14:10:00-2026-10-25T14:20:00-415.0",
-          "price": 415.0,
-          "currency": "EUR",
-          "pricingMode": "two_direct_one_ways",
-          "priceNote": "Total des deux vols directs observés au dernier refresh.",
-          "outbound": {
-            "from": "ORY",
-            "to": "PRG",
-            "departure": "2026-10-23T14:10",
-            "arrival": "2026-10-23T15:50",
-            "stops": 0,
-            "durationMinutes": 100,
-            "carrier": "Transavia",
-            "segments": [
-              {
-                "from": "ORY",
-                "to": "PRG",
-                "departure": "2026-10-23T14:10",
-                "arrival": "2026-10-23T15:50",
-                "durationMinutes": 100,
-                "planeType": "Airbus A320neo"
-              }
-            ]
-          },
-          "return": {
-            "from": "PRG",
-            "to": "ORY",
-            "departure": "2026-10-25T14:20",
-            "arrival": "2026-10-25T16:15",
-            "stops": 0,
-            "durationMinutes": 115,
-            "carrier": "Transavia",
-            "segments": [
-              {
-                "from": "PRG",
-                "to": "ORY",
-                "departure": "2026-10-25T14:20",
-                "arrival": "2026-10-25T16:15",
-                "durationMinutes": 115,
-                "planeType": "Airbus A320neo"
-              }
-            ]
-          },
-          "centerArrival": "2026-10-23T16:40",
-          "leaveCenter": "2026-10-25T11:45",
-          "usefulHours": 43.1,
-          "totalStops": 0,
-          "score": 426.67,
-          "earlyReturn": false,
-          "kind": "recommended"
-        },
-        {
-          "id": "ORY-PRG-2026-10-23T14:10:00-2026-10-25T10:30:00-380.0",
-          "price": 380.0,
-          "currency": "EUR",
-          "pricingMode": "two_direct_one_ways",
-          "priceNote": "Total des deux vols directs observés au dernier refresh.",
-          "outbound": {
-            "from": "ORY",
-            "to": "PRG",
-            "departure": "2026-10-23T14:10",
-            "arrival": "2026-10-23T15:50",
-            "stops": 0,
-            "durationMinutes": 100,
-            "carrier": "Transavia",
-            "segments": [
-              {
-                "from": "ORY",
-                "to": "PRG",
-                "departure": "2026-10-23T14:10",
-                "arrival": "2026-10-23T15:50",
-                "durationMinutes": 100,
-                "planeType": "Airbus A320neo"
-              }
-            ]
-          },
-          "return": {
-            "from": "PRG",
-            "to": "ORY",
-            "departure": "2026-10-25T10:30",
-            "arrival": "2026-10-25T12:25",
-            "stops": 0,
-            "durationMinutes": 115,
-            "carrier": "Transavia",
-            "segments": [
-              {
-                "from": "PRG",
-                "to": "ORY",
-                "departure": "2026-10-25T10:30",
-                "arrival": "2026-10-25T12:25",
-                "durationMinutes": 115,
-                "planeType": "Airbus A320neo"
-              }
-            ]
-          },
-          "centerArrival": "2026-10-23T16:40",
-          "leaveCenter": "2026-10-25T07:55",
-          "usefulHours": 39.2,
-          "totalStops": 0,
-          "score": 411.0,
-          "earlyReturn": true,
-          "kind": "cheapest"
-        },
-        {
-          "id": "CDG-PRG-2026-10-23T07:45:00-2026-10-25T17:55:00-538.0",
-          "price": 538.0,
+          "id": "CDG-PRG-2026-10-23T07:45:00-2026-10-25T17:55:00-487.0",
+          "price": 487.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1905,17 +1624,17 @@
           "leaveCenter": "2026-10-25T15:20",
           "usefulHours": 52.8,
           "totalStops": 0,
-          "score": 538.0,
+          "score": 487.0,
           "earlyReturn": false,
-          "kind": "max_weekend"
+          "kind": "recommended"
         }
       ],
-      "combinationsSeen": 26,
+      "combinationsSeen": 24,
       "errors": [
+        "ORY: FlightsNotFound: no flights found; received error",
         "BVA: TypeError: 'NoneType' object is not subscriptable"
       ],
-      "stale": true,
-      "refreshError": "RuntimeError: aucun vol direct aller+retour exploitable"
+      "stale": false
     },
     "vienna": {
       "name": "Vienne",
@@ -1934,8 +1653,8 @@
       "pricingMode": "two_direct_one_ways",
       "options": [
         {
-          "id": "ORY-VIE-2026-10-23T10:45:00-2026-10-25T20:40:00-376.0",
-          "price": 376.0,
+          "id": "ORY-VIE-2026-10-23T10:45:00-2026-10-25T20:40:00-358.0",
+          "price": 358.0,
           "currency": "EUR",
           "pricingMode": "two_direct_one_ways",
           "priceNote": "Total des deux vols directs observés au dernier refresh.",
@@ -1981,69 +1700,16 @@
           "leaveCenter": "2026-10-25T18:05",
           "usefulHours": 52.5,
           "totalStops": 0,
-          "score": 376.0,
+          "score": 358.0,
           "earlyReturn": false,
           "kind": "recommended"
-        },
-        {
-          "id": "ORY-VIE-2026-10-23T10:45:00-2026-10-25T08:45:00-360.0",
-          "price": 360.0,
-          "currency": "EUR",
-          "pricingMode": "two_direct_one_ways",
-          "priceNote": "Total des deux vols directs observés au dernier refresh.",
-          "outbound": {
-            "from": "ORY",
-            "to": "VIE",
-            "departure": "2026-10-23T10:45",
-            "arrival": "2026-10-23T12:45",
-            "stops": 0,
-            "durationMinutes": 120,
-            "carrier": "Transavia",
-            "segments": [
-              {
-                "from": "ORY",
-                "to": "VIE",
-                "departure": "2026-10-23T10:45",
-                "arrival": "2026-10-23T12:45",
-                "durationMinutes": 120,
-                "planeType": "Airbus A320neo"
-              }
-            ]
-          },
-          "return": {
-            "from": "VIE",
-            "to": "ORY",
-            "departure": "2026-10-25T08:45",
-            "arrival": "2026-10-25T10:55",
-            "stops": 0,
-            "durationMinutes": 130,
-            "carrier": "Transavia",
-            "segments": [
-              {
-                "from": "VIE",
-                "to": "ORY",
-                "departure": "2026-10-25T08:45",
-                "arrival": "2026-10-25T10:55",
-                "durationMinutes": 130,
-                "planeType": "Boeing 737"
-              }
-            ]
-          },
-          "centerArrival": "2026-10-23T13:35",
-          "leaveCenter": "2026-10-25T06:10",
-          "usefulHours": 40.6,
-          "totalStops": 0,
-          "score": 469.67,
-          "earlyReturn": true,
-          "kind": "cheapest"
         }
       ],
       "combinationsSeen": 2,
       "errors": [
         "CDG: FlightsNotFound: no flights found; received error"
       ],
-      "stale": true,
-      "refreshError": "RuntimeError: aucun vol direct aller+retour exploitable"
+      "stale": false
     },
     "valencia": {
       "name": "Valence",
@@ -2057,6 +1723,11 @@
           "origin": "ORY",
           "outboundCandidates": 3,
           "returnCandidates": 2
+        },
+        {
+          "origin": "CDG",
+          "outboundCandidates": 3,
+          "returnCandidates": 3
         }
       ],
       "pricingMode": "two_direct_one_ways",
@@ -2114,10 +1785,8 @@
           "kind": "recommended"
         }
       ],
-      "combinationsSeen": 6,
-      "errors": [
-        "CDG: FlightsNotFound: no flights found; received error"
-      ],
+      "combinationsSeen": 15,
+      "errors": [],
       "stale": false
     },
     "belgrade": {
@@ -2256,11 +1925,121 @@
   "dealScout": {
     "candidates": [
       {
+        "id": "budapest",
+        "name": "Budapest",
+        "vibe": "♨️ bains + ruin bars + Danube",
+        "flightPrice": 417.0,
+        "estimatedWeekend": 642,
+        "localCostEstimate": 225,
+        "usefulHours": 48.9,
+        "onSiteBudget": {
+          "min": 185,
+          "max": 265
+        },
+        "outbound": {
+          "from": "CDG",
+          "to": "BUD",
+          "departure": "2026-10-23T13:55",
+          "arrival": "2026-10-23T16:05",
+          "stops": 0,
+          "durationMinutes": 130,
+          "carrier": "easyJet",
+          "segments": [
+            {
+              "from": "CDG",
+              "to": "BUD",
+              "departure": "2026-10-23T13:55",
+              "arrival": "2026-10-23T16:05",
+              "durationMinutes": 130,
+              "planeType": "Airbus A319"
+            }
+          ]
+        },
+        "return": {
+          "from": "BUD",
+          "to": "CDG",
+          "departure": "2026-10-25T20:25",
+          "arrival": "2026-10-25T22:50",
+          "stops": 0,
+          "durationMinutes": 145,
+          "carrier": "easyJet",
+          "segments": [
+            {
+              "from": "BUD",
+              "to": "CDG",
+              "departure": "2026-10-25T20:25",
+              "arrival": "2026-10-25T22:50",
+              "durationMinutes": 145,
+              "planeType": "Airbus A320"
+            }
+          ]
+        },
+        "centerArrival": "2026-10-23T16:55",
+        "leaveCenter": "2026-10-25T17:50",
+        "valueScore": 642.0,
+        "currency": "EUR"
+      },
+      {
+        "id": "naples",
+        "name": "Naples",
+        "vibe": "🍕 chaos, pizza, mer, énergie",
+        "flightPrice": 921.0,
+        "estimatedWeekend": 1181,
+        "localCostEstimate": 260,
+        "usefulHours": 50.0,
+        "onSiteBudget": {
+          "min": 215,
+          "max": 305
+        },
+        "outbound": {
+          "from": "CDG",
+          "to": "NAP",
+          "departure": "2026-10-23T09:15",
+          "arrival": "2026-10-23T11:30",
+          "stops": 0,
+          "durationMinutes": 135,
+          "carrier": "Air France",
+          "segments": [
+            {
+              "from": "CDG",
+              "to": "NAP",
+              "departure": "2026-10-23T09:15",
+              "arrival": "2026-10-23T11:30",
+              "durationMinutes": 135,
+              "planeType": "Airbus A320"
+            }
+          ]
+        },
+        "return": {
+          "from": "NAP",
+          "to": "CDG",
+          "departure": "2026-10-25T16:45",
+          "arrival": "2026-10-25T19:10",
+          "stops": 0,
+          "durationMinutes": 145,
+          "carrier": "Air France",
+          "segments": [
+            {
+              "from": "NAP",
+              "to": "CDG",
+              "departure": "2026-10-25T16:45",
+              "arrival": "2026-10-25T19:10",
+              "durationMinutes": 145,
+              "planeType": "Embraer 190"
+            }
+          ]
+        },
+        "centerArrival": "2026-10-23T12:15",
+        "leaveCenter": "2026-10-25T14:15",
+        "valueScore": 1181.0,
+        "currency": "EUR"
+      },
+      {
         "id": "malaga",
         "name": "Málaga",
         "vibe": "☀️ terrasse + tapas + mer",
-        "flightPrice": 304.0,
-        "estimatedWeekend": 564,
+        "flightPrice": 346.0,
+        "estimatedWeekend": 606,
         "localCostEstimate": 260,
         "usefulHours": 35.6,
         "onSiteBudget": {
@@ -2307,62 +2086,282 @@
         },
         "centerArrival": "2026-10-23T21:15",
         "leaveCenter": "2026-10-25T08:50",
-        "valueScore": 613.6,
+        "valueScore": 655.6,
+        "currency": "EUR"
+      },
+      {
+        "id": "alicante",
+        "name": "Alicante",
+        "vibe": "🌴 simple, solaire, pas ruineux",
+        "flightPrice": 323.0,
+        "estimatedWeekend": 568,
+        "localCostEstimate": 245,
+        "usefulHours": 55.1,
+        "onSiteBudget": {
+          "min": 205,
+          "max": 285
+        },
+        "outbound": {
+          "from": "ORY",
+          "to": "ALC",
+          "departure": "2026-10-23T07:20",
+          "arrival": "2026-10-23T09:30",
+          "stops": 0,
+          "durationMinutes": 130,
+          "carrier": "Vueling",
+          "segments": [
+            {
+              "from": "ORY",
+              "to": "ALC",
+              "departure": "2026-10-23T07:20",
+              "arrival": "2026-10-23T09:30",
+              "durationMinutes": 130,
+              "planeType": "Airbus A320"
+            }
+          ]
+        },
+        "return": {
+          "from": "ALC",
+          "to": "ORY",
+          "departure": "2026-10-25T19:40",
+          "arrival": "2026-10-25T22:00",
+          "stops": 0,
+          "durationMinutes": 140,
+          "carrier": "Vueling",
+          "segments": [
+            {
+              "from": "ALC",
+              "to": "ORY",
+              "departure": "2026-10-25T19:40",
+              "arrival": "2026-10-25T22:00",
+              "durationMinutes": 140,
+              "planeType": "Airbus A320"
+            }
+          ]
+        },
+        "centerArrival": "2026-10-23T10:10",
+        "leaveCenter": "2026-10-25T17:15",
+        "valueScore": 568.0,
         "currency": "EUR"
       },
       {
         "id": "seville",
         "name": "Séville",
         "vibe": "💃 tapas, chaleur, très beau centre",
-        "flightPrice": 448.0,
-        "estimatedWeekend": 718,
+        "flightPrice": 569.0,
+        "estimatedWeekend": 839,
         "localCostEstimate": 270,
-        "usefulHours": 45.6,
+        "usefulHours": 38.2,
         "onSiteBudget": {
           "min": 225,
           "max": 315
         },
         "outbound": {
-          "from": "ORY",
+          "from": "CDG",
           "to": "SVQ",
-          "departure": "2026-10-23T16:45",
-          "arrival": "2026-10-23T19:10",
+          "departure": "2026-10-23T20:50",
+          "arrival": "2026-10-23T23:25",
           "stops": 0,
-          "durationMinutes": 145,
-          "carrier": "Transavia",
+          "durationMinutes": 155,
+          "carrier": "Air France",
           "segments": [
             {
-              "from": "ORY",
+              "from": "CDG",
               "to": "SVQ",
-              "departure": "2026-10-23T16:45",
-              "arrival": "2026-10-23T19:10",
-              "durationMinutes": 145,
-              "planeType": "Airbus A320neo"
+              "departure": "2026-10-23T20:50",
+              "arrival": "2026-10-23T23:25",
+              "durationMinutes": 155,
+              "planeType": "Embraer 190"
             }
           ]
         },
         "return": {
           "from": "SVQ",
-          "to": "ORY",
-          "departure": "2026-10-25T19:50",
-          "arrival": "2026-10-25T22:20",
+          "to": "CDG",
+          "departure": "2026-10-25T16:40",
+          "arrival": "2026-10-25T19:15",
           "stops": 0,
-          "durationMinutes": 150,
-          "carrier": "Transavia",
+          "durationMinutes": 155,
+          "carrier": "Air France",
           "segments": [
             {
               "from": "SVQ",
-              "to": "ORY",
-              "departure": "2026-10-25T19:50",
-              "arrival": "2026-10-25T22:20",
-              "durationMinutes": 150,
+              "to": "CDG",
+              "departure": "2026-10-25T16:40",
+              "arrival": "2026-10-25T19:15",
+              "durationMinutes": 155,
+              "planeType": "Embraer 190"
+            }
+          ]
+        },
+        "centerArrival": "2026-10-24T00:05",
+        "leaveCenter": "2026-10-25T14:15",
+        "valueScore": 878.2,
+        "currency": "EUR"
+      },
+      {
+        "id": "munich",
+        "name": "Munich",
+        "vibe": "🍺 brasseries + musées + centre bavarois",
+        "flightPrice": 379.0,
+        "estimatedWeekend": 739,
+        "localCostEstimate": 360,
+        "usefulHours": 53.6,
+        "onSiteBudget": {
+          "min": 300,
+          "max": 420
+        },
+        "outbound": {
+          "from": "CDG",
+          "to": "MUC",
+          "departure": "2026-10-23T07:05",
+          "arrival": "2026-10-23T08:40",
+          "stops": 0,
+          "durationMinutes": 95,
+          "carrier": "Air France",
+          "segments": [
+            {
+              "from": "CDG",
+              "to": "MUC",
+              "departure": "2026-10-23T07:05",
+              "arrival": "2026-10-23T08:40",
+              "durationMinutes": 95,
+              "planeType": "Airbus A320"
+            }
+          ]
+        },
+        "return": {
+          "from": "MUC",
+          "to": "CDG",
+          "departure": "2026-10-25T18:00",
+          "arrival": "2026-10-25T19:45",
+          "stops": 0,
+          "durationMinutes": 105,
+          "carrier": "Air France",
+          "segments": [
+            {
+              "from": "MUC",
+              "to": "CDG",
+              "departure": "2026-10-25T18:00",
+              "arrival": "2026-10-25T19:45",
+              "durationMinutes": 105,
+              "planeType": "Airbus A220-300 Passenger"
+            }
+          ]
+        },
+        "centerArrival": "2026-10-23T09:40",
+        "leaveCenter": "2026-10-25T15:15",
+        "valueScore": 739.0,
+        "currency": "EUR"
+      },
+      {
+        "id": "milan",
+        "name": "Milan",
+        "vibe": "🍸 design + aperitivo + grands quartiers",
+        "flightPrice": 165.0,
+        "estimatedWeekend": 525,
+        "localCostEstimate": 360,
+        "usefulHours": 40.9,
+        "onSiteBudget": {
+          "min": 300,
+          "max": 420
+        },
+        "outbound": {
+          "from": "BVA",
+          "to": "MXP",
+          "departure": "2026-10-23T22:15",
+          "arrival": "2026-10-23T23:50",
+          "stops": 0,
+          "durationMinutes": 95,
+          "carrier": "Ryanair",
+          "segments": [
+            {
+              "from": "BVA",
+              "to": "MXP",
+              "departure": "2026-10-23T22:15",
+              "arrival": "2026-10-23T23:50",
+              "durationMinutes": 95,
               "planeType": "Boeing 737"
             }
           ]
         },
-        "centerArrival": "2026-10-23T19:50",
-        "leaveCenter": "2026-10-25T17:25",
-        "valueScore": 727.6,
+        "return": {
+          "from": "MXP",
+          "to": "BVA",
+          "departure": "2026-10-25T20:50",
+          "arrival": "2026-10-25T22:25",
+          "stops": 0,
+          "durationMinutes": 95,
+          "carrier": "Ryanair",
+          "segments": [
+            {
+              "from": "MXP",
+              "to": "BVA",
+              "departure": "2026-10-25T20:50",
+              "arrival": "2026-10-25T22:25",
+              "durationMinutes": 95,
+              "planeType": "Boeing 737"
+            }
+          ]
+        },
+        "centerArrival": "2026-10-24T01:00",
+        "leaveCenter": "2026-10-25T17:55",
+        "valueScore": 553.4,
+        "currency": "EUR"
+      },
+      {
+        "id": "bilbao",
+        "name": "Bilbao",
+        "vibe": "🍢 pintxos + architecture + centre compact",
+        "flightPrice": 198.0,
+        "estimatedWeekend": 493,
+        "localCostEstimate": 295,
+        "usefulHours": 45.8,
+        "onSiteBudget": {
+          "min": 250,
+          "max": 340
+        },
+        "outbound": {
+          "from": "ORY",
+          "to": "BIO",
+          "departure": "2026-10-23T18:10",
+          "arrival": "2026-10-23T19:50",
+          "stops": 0,
+          "durationMinutes": 100,
+          "carrier": "Vueling",
+          "segments": [
+            {
+              "from": "ORY",
+              "to": "BIO",
+              "departure": "2026-10-23T18:10",
+              "arrival": "2026-10-23T19:50",
+              "durationMinutes": 100,
+              "planeType": "Airbus A320"
+            }
+          ]
+        },
+        "return": {
+          "from": "BIO",
+          "to": "ORY",
+          "departure": "2026-10-25T20:55",
+          "arrival": "2026-10-25T22:30",
+          "stops": 0,
+          "durationMinutes": 95,
+          "carrier": "Vueling",
+          "segments": [
+            {
+              "from": "BIO",
+              "to": "ORY",
+              "departure": "2026-10-25T20:55",
+              "arrival": "2026-10-25T22:30",
+              "durationMinutes": 95,
+              "planeType": "Airbus A320"
+            }
+          ]
+        },
+        "centerArrival": "2026-10-23T20:35",
+        "leaveCenter": "2026-10-25T18:25",
+        "valueScore": 501.8,
         "currency": "EUR"
       }
     ],
