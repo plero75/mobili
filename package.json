@@ -6,7 +6,7 @@
     "@neondatabase/serverless": "^1.0.1"
   },
   "scripts": {
-    "test": "node --test mobility-data.test.cjs",
+    "test": "node --test",
     "check:ui": "node scripts/verify-ui.mjs"
   }
 }
