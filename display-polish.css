@@ -1,0 +1,76 @@
+/* Couche de finition transitoire de l'afficheur historique.
+   Les vues contextualisées de recette.html conservent leur propre design. */
+:root {
+  font-variant-numeric: tabular-nums;
+}
+:focus-visible {
+  outline: 3px solid #f3b529;
+  outline-offset: 3px;
+}
+::selection {
+  background: #f3b529;
+  color: #071729;
+}
+/* Le CSS TV ne couvrait pas le bandeau d'actualités ni la météo en dessous de 1100 px. */
+@media (max-width: 1099px) {
+  .topbar { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+  .topbar .brand { grid-column: 1; grid-row: 1; }
+  .topbar .now { grid-column: 2; grid-row: 1; }
+  .topbar .header-weather {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f8fafc;
+    min-width: 0;
+  }
+  .header-weather .weather-emoji { font-size: 23px; }
+  .header-weather .weather-temp { font-size: 18px; }
+  .header-weather .muted { font-size: 12px; }
+  .news-strip {
+    display: grid;
+    grid-template-columns: 94px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 7px 12px;
+    background: #10243d;
+    color: #fff;
+  }
+  .news-label {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 6px 7px;
+    background: #c41535;
+    color: #fff;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .02em;
+  }
+  .news-carousel { min-width: 0; overflow: hidden; }
+  .news-card { display: none; background: transparent; border: 0; padding: 0; }
+  .news-card.active { display: block; }
+  .news-title {
+    font-size: 13px;
+    line-height: 1.35;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .news-desc { display: none; }
+  .panel-joinville, .joinville-rer, .joinville-bus { min-width: 0; }
+}
+@media (min-width: 1100px) and (orientation: landscape) {
+  /* Les données utiles doivent rester lisibles à distance sur écran TV. */
+  .news-strip .news-title { font-size: 12px !important; }
+  .traffic-banner { font-size: 14px !important; }
+  .location-heading p { font-size: 11px !important; }
+  .joinville-bus .direction { font-size: 10px !important; }
+  .status { font-size: 10px !important; }
+  .context-card .muted { color: #475467 !important; }
+  .panel-velib .velib-name { font-size: 10px !important; }
+  .panel-velib .velib-breakdown { font-size: 10px !important; }
+  .panel-courses .course-name { font-size: 10px !important; }
+}
