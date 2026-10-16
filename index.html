@@ -6,10 +6,7 @@
   <meta name="theme-color" content="#071526">
   <meta name="description" content="Prochains départs accessibles depuis l’hippodrome Paris-Vincennes : RER A, bus, Vélib’ et informations trafic.">
   <title>Mobilité – Hippodrome Paris-Vincennes</title>
-  <link rel="stylesheet" href="styles.css?v=20260904-4">
-  <link rel="stylesheet" href="tv.css?v=20260904-4">
-  <link rel="stylesheet" href="mobili-2026.css?v=20260904-4">
-  <link rel="stylesheet" href="display-polish.css?v=20261016-1">
+  <link rel="stylesheet" href="mobili-display.css?v=20261016-tv4">
 </head>
 <body>
   <header class="topbar tv-topbar">
@@ -17,7 +14,7 @@
       <div class="brand-mark" aria-hidden="true">VH</div>
       <div>
         <div class="title">Mobilité – Hippodrome Paris‑Vincennes</div>
-        <div class="subtitle">Les prochains départs réellement atteignables depuis l’hippodrome</div>
+        <div class="subtitle">Horaires atteignables à pied depuis l’hippodrome · mise à jour automatique</div>
       </div>
     </div>
     <div class="header-weather" aria-label="Météo">
@@ -31,10 +28,10 @@
     </div>
   </header>
 
-  <div class="news-strip" aria-label="Actualités France Info">
+  <aside class="news-strip" aria-label="Actualités France Info">
     <span class="news-label">FRANCE INFO</span>
     <div id="news-carousel" class="news-carousel">Chargement des actualités…</div>
-  </div>
+  </aside>
 
   <div id="traffic-banner" class="traffic-banner neutral" role="status" aria-live="polite">Vérification des perturbations PRIM…</div>
 
@@ -47,7 +44,7 @@
       <div class="joinville-grid">
         <div class="joinville-rer">
           <div class="subhead"><span class="line-pill rer-pill">A</span><strong>RER A</strong><span class="mini-source">TEMPS RÉEL</span></div>
-          <div id="rer-body" class="transport-board" aria-live="polite"></div>
+          <div id="rer-body" class="transport-board" aria-live="off">Chargement des prochains RER…</div>
         </div>
         <div class="joinville-bus">
           <div class="subhead"><strong>Bus à Joinville</strong><span class="mini-source">TEMPS RÉEL PRIM</span></div>
