@@ -7,7 +7,8 @@ const icons = {
 };
 
 const query = new URLSearchParams(location.search);
-const requestedMode = (query.get('mode') || 'auto').toLowerCase();
+// Sur un téléphone, proposer d'emblée la vue voyageurs adaptée aux petits écrans.
+const requestedMode = (query.get('mode') || (window.innerWidth < 900 ? 'mobilite' : 'auto')).toLowerCase();
 let mode = requestedMode;
 
 const brand = () => `<div class="brand">${icons.brand}<div class="brand-copy"><span>HIPPODROME</span><strong>PARIS-VINCENNES</strong></div></div>`;
@@ -236,7 +237,7 @@ const mobilityBoard = () => `
         <article><h2>Rejoindre Châtelet–Les Halles</h2><strong class="mob-route-chatelet">Via Joinville-le-Pont · RER A vers Paris</strong><p class="mob-route-chatelet-time">Horaire d’arrivée non disponible.</p></article>
       </section>
     </div>
-    <footer class="iv-footer"><span class="iv-source-summary">PRIM / IDFM · Vélib’ · Open-Meteo</span><nav aria-label="Navigation des écrans"><a href="?mode=arrivee">Accueil</a><a href="?mode=sortie">Sortie</a><a href="?mode=mobilite" aria-current="page">Mobilité</a><button type="button" id="iv-fullscreen">Plein écran</button></nav></footer>
+    <footer class="iv-footer"><span class="iv-source-summary">PRIM / IDFM · Vélib’ · Open-Meteo</span><nav aria-label="Navigation des écrans"><a href="?mode=arrivee">Accueil</a><a href="?mode=sortie">Sortie</a><a href="?mode=mobilite" aria-current="page">Mobilité</a><button type="button" id="iv-fullscreen" aria-pressed="false">Plein écran</button></nav></footer>
   </section>`;
 
 const noRaceEvent = () => `
