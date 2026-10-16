@@ -291,7 +291,8 @@ const noRaceIdle = () => `
   </section>`;
 
 const renderers = { mobilite: mobilityBoard, arrivee: arrival, reunion: meeting, transition, sortie: exit, incident_rer_a: incidentRer, incident_bus: incidentBus, no_race_event: noRaceEvent, no_race_idle: noRaceIdle };
-document.getElementById('app').innerHTML = (renderers[mode] || arrival)();
+// En mode auto, ne jamais afficher une course fictive pendant le chargement des données.
+document.getElementById('app').innerHTML = (requestedMode === 'auto' ? noRaceIdle : (renderers[mode] || noRaceIdle))();
 
 function fitRecipeScreen() {
   const app = document.getElementById('app');
@@ -300,16 +301,19 @@ function fitRecipeScreen() {
   document.documentElement.classList.toggle('iv-mobile-root', mobile);
   document.body.classList.toggle('iv-active', mode === 'mobilite');
   if (mobile) { app.style.transform = 'none'; return; }
-  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+  // Les écrans RATP font 1920 × 910 ; la vue Mobilité conserve son canevas 16:9.
+  const referenceHeight = mode === 'mobilite' ? 1080 : 910;
+  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / referenceHeight);
   app.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
 window.addEventListener('resize', fitRecipeScreen);
 fitRecipeScreen();
 document.addEventListener('click', event => {
-  if (event.target.id !== 'iv-fullscreen') return;
+  const button = event.target.closest?.('#iv-fullscreen');
+  if (!button) return;
   if (document.fullscreenElement) document.exitFullscreen?.();
-  else document.documentElement.requestFullscreen?.().catch(() => { event.target.textContent = 'Plein écran indisponible'; });
+  else document.documentElement.requestFullscreen?.().catch(() => { button.textContent = 'Plein écran indisponible'; });
 });
 
 const keyboardModes = {
@@ -326,10 +330,21 @@ const keyboardModes = {
 };
 
 window.addEventListener('keydown', (event) => {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.repeat ||
+      event.target.closest?.('input, textarea, select, [contenteditable="true"]')) return;
   const nextMode = keyboardModes[event.key];
   if (!nextMode) return;
   const url = new URL(window.location.href);
   if (nextMode === 'auto') url.searchParams.delete('mode');
   else url.searchParams.set('mode', nextMode);
   window.location.href = url.toString();
+});
+
+// Restitution explicite de l’état plein écran aux utilisateurs de la console.
+document.addEventListener('fullscreenchange', () => {
+  const button = document.getElementById('iv-fullscreen');
+  if (!button) return;
+  const active = Boolean(document.fullscreenElement);
+  button.textContent = active ? 'Quitter le plein écran' : 'Plein écran';
+  button.setAttribute('aria-pressed', String(active));
 });
