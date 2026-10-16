@@ -398,13 +398,13 @@ footer {padding:8px 18px 22px;color:var(--muted);text-align:center;font-size:12p
 /* Compact TV : privilégier les prochains horaires, sans réduire la typo à 7px. */
 @media (min-width:1200px) and (max-height:850px) and (orientation:landscape) {
   .location-dashboard {gap:8px;padding:8px 10px}
-  .joinville-grid {grid-template-rows:clamp(160px,23vh,191px);gap:7px;padding:8px}
+  .joinville-grid {grid-template-rows:clamp(160px,23vh,191px) minmax(0,1fr);gap:7px;padding:8px}
   .vhpratp-bus-grid {gap:4px}
   .vhpratp-line {padding:5px}
   .vhpratp-line .line-head {height:26px}
   .vhpratp-line .line-pill {height:25px;min-width:31px}
   .vhpratp-line .passage {padding:5px}
-  .vhpratp-line .reachable-label {display:none}
+  .vhpratp-line .reachable-label {font-size:10px;line-height:1.12;white-space:nowrap}
   .vhpratp-line .status {margin-top:2px}
   .location-stop-view {padding:6px 8px}
   .location-stop-view .passage {padding:4px}
