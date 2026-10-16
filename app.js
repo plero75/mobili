@@ -175,6 +175,36 @@ function busPassageHTML(v,stopName,lineCode){
 }
 function emptyHTML(label="Information indisponible"){return`<div class="empty-state">— ${esc(label)}</div>`;}
 function groupByDirection(visits){const map=new Map();visits.forEach(v=>{const k=v.destination||"Destination non communiquée";if(!map.has(k))map.set(k,[]);map.get(k).push(v);});for(const rows of map.values())rows.sort((a,b)=>new Date(a.expected||a.aimed)-new Date(b.expected||b.aimed));return map;}
+// RER A : regrouper par sens de circulation, pas par terminus.
+// Plusieurs terminus peuvent desservir le même quai vers Paris.
+function rerCorridor(visit) {
+  const destination = normaliseName(visit.destination);
+  const onward = (visit.onward || []).map(stop => normaliseName(stop.name)).join(" ");
+  if (/boissy|sucy|la varenne|saint maur|creteil|marne la vallee|noisy champs/.test(destination)) {
+    return "Vers Boissy / Est";
+  }
+  if (/saint germain|cergy|poissy|la defense|nanterre|rueil|le vesinet|paris/.test(destination)
+      || /nation|gare de lyon|chatelet/.test(onward)) {
+    return "Vers Paris";
+  }
+  return visit.destination || "Direction non communiquée";
+}
+function groupRerCorridors(visits) {
+  const groups = new Map();
+  for (const visit of visits) {
+    const key = rerCorridor(visit);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(visit);
+  }
+  for (const rows of groups.values()) {
+    rows.sort((a,b) => new Date(a.expected || a.aimed) - new Date(b.expected || b.aimed));
+  }
+  const priority = ["Vers Paris", "Vers Boissy / Est"];
+  return new Map([...groups.entries()].sort((a,b) =>
+    (priority.indexOf(a[0]) < 0 ? 99 : priority.indexOf(a[0])) -
+    (priority.indexOf(b[0]) < 0 ? 99 : priority.indexOf(b[0]))));
+}
+
 async function fetchStop(ref){return fetchJSON(primUrl(`/stop-monitoring?MonitoringRef=${encodeURIComponent(ref)}`),15000);}
 
 async function renderRer(){
@@ -188,8 +218,8 @@ async function renderRer(){
   cont.classList.remove("is-stale");
   const rer=all.filter(v=>(!v.published||/(^|\s)A($|\s)/i.test(v.published)||/C01742|Line::A/i.test(v.lineRef))&&isRelevantPassage(v));
   if(!rer.length){cont.innerHTML=`<div class="stop-block rer-stop"><div class="stop-title">📍 ${esc(RER_STOP.name)}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div>${serviceEndedHTML("Joinville-le-Pont","A",null)}</div></div>`;return false;}
-  const dirs=groupByDirection(rer);
-  const directionPanels=[...dirs.entries()].slice(0,2).map(([dest,rows])=>`<section class="rer-direction-panel"><div class="direction">→ ${esc(dest)}</div>${serviceMetaHTML("Joinville-le-Pont","A",dest)}<div class="train-list">${rows.slice(0,2).map(rerPassageHTML).join("")}</div></section>`).join("");
+  const dirs=groupRerCorridors(rer);
+  const directionPanels=[...dirs.entries()].slice(0,2).map(([label,rows])=>`<section class="rer-direction-panel"><div class="direction">${esc(label)}</div>${serviceMetaHTML("Joinville-le-Pont","A",rows[0].destination)}<div class="train-list">${rows.slice(0,2).map(rerPassageHTML).join("")}</div></section>`).join("");
   cont.innerHTML=`<div class="stop-block rer-stop"><div class="stop-title">📍 ${esc(RER_STOP.name)}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div><div class="rer-directions">${directionPanels}</div></div></div>`;
   cont.dataset.lastGood="true";
   return true;
