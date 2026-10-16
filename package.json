@@ -4,5 +4,9 @@
   "type": "module",
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1"
+  },
+  "scripts": {
+    "test": "node --test mobility-data.test.cjs",
+    "check:ui": "node scripts/verify-ui.mjs"
   }
 }
