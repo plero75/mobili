@@ -458,6 +458,7 @@
   function automaticMode() {
     if (state.incidents.A.some(isMajorNow)) return "incident_rer_a";
     if (state.incidents[77].some(isMajorNow) || state.incidents[101].some(isMajorNow)) return "incident_bus";
+    if (state.pending && !state.meeting) return "arrivee";
     const todayMeeting = state.meeting && sameDay(state.meeting.date, new Date());
     if (!todayMeeting) return todayEvent() ? "no_race_event" : "no_race_idle";
     const races = state.meeting.races;
