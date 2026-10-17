@@ -40,8 +40,10 @@
 
     if (lineVisits.length) {
       body = [...dirs.entries()].map(([dest, rows]) => `
-        <div class="direction">→ ${esc(dest)}</div>
-        <div class="passages">${rows.slice(0, 4).map(v => busPassageHTML(v, stop.name, stop.line)).join("")}</div>
+        <div class="bus-direction-row">
+          <div class="direction" title="${esc(dest)}">→ ${esc(dest)}</div>
+          <div class="passages">${rows.slice(0, 4).map(v => busPassageHTML(v, stop.name, stop.line)).join("")}</div>
+        </div>
       `).join("");
     } else {
       body = `<div class="empty-state">Aucun départ PRIM atteignable actuellement</div>`;

@@ -105,8 +105,13 @@
     });
   }
 
+  const programmeCache = new Map();
+  let coursesRefreshInFlight = false;
+
   async function fetchPmuProgramme(date) {
     const ds = pmuDateKey(date);
+    const cached = programmeCache.get(ds);
+    if (cached && Date.now() - cached.at < (cached.meetingFound ? 60 * 1000 : 30 * 60 * 1000)) return cached.data;
     const targets = [
       `https://online.turfinfo.api.pmu.fr/rest/client/1/programme/${ds}?specialisation=INTERNET&meteo=true`,
       `https://offline.turfinfo.api.pmu.fr/rest/client/7/programme/${ds}`,
@@ -114,25 +119,41 @@
     ];
     for (const target of targets) {
       const data = await getJSONCandidates([target, PROXY + encodeURIComponent(target)], 15000);
-      if (data && (data?.programme?.reunions || data?.reunions)) return data;
+      if (data && (data?.programme?.reunions || data?.reunions)) {
+        programmeCache.set(ds, { data, at: Date.now(), meetingFound: vincennesReunions(data).length > 0 });
+        return data;
+      }
     }
     return null;
   }
 
   async function refreshCoursesFixed() {
+    if (coursesRefreshInFlight) return;
+    coursesRefreshInFlight = true;
+    try {
     const cont = document.getElementById("courses-list");
     if (!cont) return;
     if (!lastGoodCoursesMarkup) cont.innerHTML = `<div class="empty-state">Recherche de la prochaine réunion à Vincennes…</div>`;
 
     const now = new Date();
     let selected = null;
-    for (let offset = 0; offset <= 10; offset++) {
-      const date = new Date(now);
-      date.setHours(12, 0, 0, 0);
-      date.setDate(date.getDate() + offset);
-      const data = await fetchPmuProgramme(date);
-      const reunions = vincennesReunions(data);
-      if (reunions.length) { selected = { date, reunions, offset }; break; }
+    for (let start = 0; start <= 10; start += 2) {
+      const dates = [start, start + 1].filter(offset => offset <= 10).map(offset => {
+        const date = new Date(now);
+        date.setHours(12, 0, 0, 0);
+        date.setDate(date.getDate() + offset);
+        return { date, offset };
+      });
+      const programmes = await Promise.all(dates.map(async item => ({
+        ...item, data: await fetchPmuProgramme(item.date)
+      })));
+      for (const item of programmes) {
+        const reunions = vincennesReunions(item.data);
+        if (!reunions.length) continue;
+        selected = { date: item.date, reunions, offset: item.offset };
+        break;
+      }
+      if (selected) break;
     }
 
     if (!selected) {
@@ -176,6 +197,7 @@
     cont.classList.remove("is-stale");
     cont.innerHTML = markup;
     setPanelStatus(".panel-courses", "Prochaine réunion", true, lastGoodCoursesUpdate);
+    } finally { coursesRefreshInFlight = false; }
   }
 
   window.refreshVelibFixed = refreshVelibFixed;

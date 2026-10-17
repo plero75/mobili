@@ -7,7 +7,8 @@ const icons = {
 };
 
 const query = new URLSearchParams(location.search);
-const requestedMode = (query.get('mode') || 'auto').toLowerCase();
+// Sur un téléphone, proposer d'emblée la vue voyageurs adaptée aux petits écrans.
+const requestedMode = (query.get('mode') || (window.innerWidth < 900 ? 'mobilite' : 'auto')).toLowerCase();
 let mode = requestedMode;
 
 const brand = () => `<div class="brand">${icons.brand}<div class="brand-copy"><span>HIPPODROME</span><strong>PARIS-VINCENNES</strong></div></div>`;
@@ -236,7 +237,7 @@ const mobilityBoard = () => `
         <article><h2>Rejoindre Châtelet–Les Halles</h2><strong class="mob-route-chatelet">Via Joinville-le-Pont · RER A vers Paris</strong><p class="mob-route-chatelet-time">Horaire d’arrivée non disponible.</p></article>
       </section>
     </div>
-    <footer class="iv-footer"><span class="iv-source-summary">PRIM / IDFM · Vélib’ · Open-Meteo</span><nav aria-label="Navigation des écrans"><a href="?mode=arrivee">Accueil</a><a href="?mode=sortie">Sortie</a><a href="?mode=mobilite" aria-current="page">Mobilité</a><button type="button" id="iv-fullscreen">Plein écran</button></nav></footer>
+    <footer class="iv-footer"><span class="iv-source-summary">PRIM / IDFM · Vélib’ · Open-Meteo</span><nav aria-label="Navigation des écrans"><a href="?mode=arrivee">Accueil</a><a href="?mode=sortie">Sortie</a><a href="?mode=mobilite" aria-current="page">Mobilité</a><button type="button" id="iv-fullscreen" aria-pressed="false">Plein écran</button></nav></footer>
   </section>`;
 
 const noRaceEvent = () => `
@@ -291,7 +292,8 @@ const noRaceIdle = () => `
   </section>`;
 
 const renderers = { mobilite: mobilityBoard, arrivee: arrival, reunion: meeting, transition, sortie: exit, incident_rer_a: incidentRer, incident_bus: incidentBus, no_race_event: noRaceEvent, no_race_idle: noRaceIdle };
-document.getElementById('app').innerHTML = (renderers[mode] || arrival)();
+// En mode auto, ne jamais afficher une course fictive pendant le chargement des données.
+document.getElementById('app').innerHTML = (requestedMode === 'auto' ? noRaceIdle : (renderers[mode] || noRaceIdle))();
 
 function fitRecipeScreen() {
   const app = document.getElementById('app');
@@ -300,16 +302,19 @@ function fitRecipeScreen() {
   document.documentElement.classList.toggle('iv-mobile-root', mobile);
   document.body.classList.toggle('iv-active', mode === 'mobilite');
   if (mobile) { app.style.transform = 'none'; return; }
-  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+  // Les écrans RATP font 1920 × 910 ; la vue Mobilité conserve son canevas 16:9.
+  const referenceHeight = mode === 'mobilite' ? 1080 : 910;
+  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / referenceHeight);
   app.style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
 
 window.addEventListener('resize', fitRecipeScreen);
 fitRecipeScreen();
 document.addEventListener('click', event => {
-  if (event.target.id !== 'iv-fullscreen') return;
+  const button = event.target.closest?.('#iv-fullscreen');
+  if (!button) return;
   if (document.fullscreenElement) document.exitFullscreen?.();
-  else document.documentElement.requestFullscreen?.().catch(() => { event.target.textContent = 'Plein écran indisponible'; });
+  else document.documentElement.requestFullscreen?.().catch(() => { button.textContent = 'Plein écran indisponible'; });
 });
 
 const keyboardModes = {
@@ -326,10 +331,21 @@ const keyboardModes = {
 };
 
 window.addEventListener('keydown', (event) => {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.repeat ||
+      event.target.closest?.('input, textarea, select, [contenteditable="true"]')) return;
   const nextMode = keyboardModes[event.key];
   if (!nextMode) return;
   const url = new URL(window.location.href);
   if (nextMode === 'auto') url.searchParams.delete('mode');
   else url.searchParams.set('mode', nextMode);
   window.location.href = url.toString();
+});
+
+// Restitution explicite de l’état plein écran aux utilisateurs de la console.
+document.addEventListener('fullscreenchange', () => {
+  const button = document.getElementById('iv-fullscreen');
+  if (!button) return;
+  const active = Boolean(document.fullscreenElement);
+  button.textContent = active ? 'Quitter le plein écran' : 'Plein écran';
+  button.setAttribute('aria-pressed', String(active));
 });

@@ -1,6 +1,14 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const data = require('./mobility-data.js');
+// Le site charge mobility-data.js en script classique, alors que le dépôt est
+// déclaré en ES modules. Tester le vrai mode navigateur dans un contexte VM.
+const { readFileSync } = require('node:fs');
+const { runInNewContext } = require('node:vm');
+const { join } = require('node:path');
+const browser = {};
+runInNewContext(readFileSync(join(__dirname, 'mobility-data.js'), 'utf8'), browser);
+const data = browser.MobiliData;
+assert.ok(data, 'MobiliData doit être exposé sur window');
 const now = Date.parse('2026-09-17T12:00:00Z');
 const passage = (minutes, extra = {}) => ({when: new Date(now + minutes * 60000).toISOString(), monitored:true, ...extra});
 test('IDFM countdown, theoretical and cancelled states', () => {

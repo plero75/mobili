@@ -220,22 +220,45 @@
       label: clean(meeting?.libelle || meeting?.nature || meeting?.audience) || "Réunion à Vincennes"
     };
   }
+  const programmeCache = new Map();
+  let verifiedTodayKey = "";
   async function loadMeeting() {
-    const dates = state.meeting ? [new Date(state.meeting.date)] : Array.from({ length: 8 }, (_, offset) => {
-      const date = new Date();
-      date.setHours(12, 0, 0, 0);
-      date.setDate(date.getDate() + offset);
-      return date;
-    });
-    for (const date of dates) {
+    const now = new Date();
+    const todayKey = pmuDateKey(now);
+    // Ne jamais rester bloqué sur la réunion d'hier après minuit.
+    const dates = state.meeting && sameDay(state.meeting.date, now)
+      ? [new Date(state.meeting.date)]
+      : Array.from({ length: 8 }, (_, offset) => {
+          const date = new Date(now);
+          date.setHours(12, 0, 0, 0);
+          date.setDate(date.getDate() + offset);
+          return date;
+        });
+    async function onDate(date) {
       const key = pmuDateKey(date);
+      const cached = programmeCache.get(key);
+      const ttl = cached?.meeting ? 60 * 1000 : 30 * 60 * 1000;
+      if (cached && Date.now() - cached.at < ttl) {
+        if (key === todayKey) verifiedTodayKey = key;
+        return cached.meeting;
+      }
       const targets = [
         `https://online.turfinfo.api.pmu.fr/rest/client/1/programme/${key}?specialisation=INTERNET&meteo=true`,
         `https://offline.turfinfo.api.pmu.fr/rest/client/7/programme/${key}`,
         `https://online.turfinfo.api.pmu.fr/rest/client/61/programme/${key}?specialisation=INTERNET&meteo=true`
       ];
       const data = await fetchCandidates(targets.map(target => PROXY + encodeURIComponent(target)));
+      // Une panne ne doit jamais être interprétée comme une journée sans courses.
+      if (!Array.isArray(data?.programme?.reunions) && !Array.isArray(data?.reunions)) return null;
+      if (key === todayKey) verifiedTodayKey = key;
       const meeting = parseMeeting(data, date);
+      programmeCache.set(key, { meeting, at: Date.now() });
+      return meeting;
+    }
+    // Interroger au plus deux dates à la fois, conserver la première réunion chronologique.
+    for (let i = 0; i < dates.length; i += 2) {
+      const matches = await Promise.all(dates.slice(i, i + 2).map(onDate));
+      const meeting = matches.find(Boolean);
       if (meeting) return meeting;
     }
     return null;
@@ -458,7 +481,9 @@
   function automaticMode() {
     if (state.incidents.A.some(isMajorNow)) return "incident_rer_a";
     if (state.incidents[77].some(isMajorNow) || state.incidents[101].some(isMajorNow)) return "incident_bus";
+    if (state.pending && !state.meeting) return "arrivee";
     const todayMeeting = state.meeting && sameDay(state.meeting.date, new Date());
+    if (!todayMeeting && verifiedTodayKey !== pmuDateKey(new Date())) return "arrivee";
     if (!todayMeeting) return todayEvent() ? "no_race_event" : "no_race_idle";
     const races = state.meeting.races;
     const first = races[0], last = races.at(-1);
