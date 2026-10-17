@@ -627,7 +627,7 @@
     const rerStatus = q(".rer-preview .status"); if (rerStatus) rerStatus.textContent = trafficLabel('A');
     const cards = qa(".transition-modes .mode-card");
     if (cards[0]) { q(".minutes", cards[0]).textContent = passageLabel(bus77Atteignable()[0]); q(".sub", cards[0]).textContent = state.bus77[0]?.destination || "Horaires indisponibles"; }
-    if (cards[1]) { q(".minutes", cards[1]).textContent = passageLabel(bus101JoinvilleAtteignable()[0]); q(".sub", cards[1]).textContent = state.bus101[0]?.destination || "Horaires indisponibles"; }
+    if (cards[1]) { q(".minutes", cards[1]).textContent = passageLabel(bus101JoinvilleAtteignable()[0]); q(".sub", cards[1]).textContent = `Au pôle RER de Joinville · ${bus101JoinvilleAtteignable()[0]?.destination || "direction non communiquée"}`; }
     if (cards[2]) { q(".minutes", cards[2]).textContent = state.velib.hippodrome ? `${state.velib.hippodrome.total} vélos` : "— vélos"; q(".sub", cards[2]).textContent = state.velib.hippodrome ? `${state.velib.hippodrome.docks} places disponibles` : "Donnée Vélib’ indisponible"; }
   }
 
@@ -785,7 +785,7 @@
     } else {
       const first = alternatives[0], second = alternatives[1], rer = IV.reachable(liveRows("rer").filter(IV.west), 14)[0], bus = code === 77 ? IV.reachable(liveRows("bus101"), 14)[0] : IV.reachable(liveRows("bus77"), 5)[0];
       if (first) { q(".alt-time", first).textContent = rer ? `${passageLabel(rer)}` : "—"; q(".alt-main", first).textContent = rer ? `Direction ${rer.destination}` : "Aucun passage RER reçu"; q(".alt-detail", first).innerHTML = rer ? `Départ à ${fmtTime(rer.when)} depuis Joinville-le-Pont<br>Prévoir 12 min à pied` : "Information momentanément indisponible"; }
-      if (second) { const badge = q(".line-badge.bus", second); if (badge) badge.textContent = code === 77 ? "101" : "77"; q(".alt-time", second).textContent = passageLabel(bus); q(".alt-detail", second).innerHTML = bus ? `Passage à ${fmtTime(bus.when)} · direction ${esc(bus.destination)}` : "Information momentanément indisponible"; }
+      if (second) { const badge = q(".line-badge.bus", second); if (badge) badge.textContent = code === 77 ? "101" : "77"; const direction = q(".transport-direction", second); if (direction) direction.textContent = code === 77 ? "Départs au pôle RER de Joinville" : "Départs à l’Hippodrome"; q(".alt-time", second).textContent = passageLabel(bus); q(".alt-detail", second).textContent = bus ? `Passage à ${code === 77 ? "Joinville-le-Pont" : "l’Hippodrome"} : ${fmtTime(bus.when)} · direction ${bus.destination}` : "Information momentanément indisponible"; }
     }
   }
 
