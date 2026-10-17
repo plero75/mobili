@@ -96,7 +96,7 @@
     const m = minutesUntil(v.time);
     const imminent = m != null && m <= 1 && v.status !== 'cancelled';
     return `<div class="passage ${first?'first-reachable':''} ${imminent?'imminent':''}">
-      ${first?'<div class="reachable-label">1ER ATTEIGNABLE</div>':''}
+      ${first?'<div class="reachable-label">1ER DÉPART</div>':''}
       <div class="departure-clock">${escLocal(hhmm(v.time))}</div>
       <div class="departure-wait">${v.status==='cancelled'?'Supprimé':(imminent?'Imminent':`dans ${Math.max(0,m)} min`)}</div>
       ${statusLabel(v)}
