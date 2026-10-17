@@ -259,7 +259,7 @@ footer {padding:8px 18px 22px;color:var(--muted);text-align:center;font-size:12p
   .location-dashboard {
     min-height:0;overflow:hidden;
     grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);
-    grid-template-rows:1.05fr 1.05fr .94fr .94fr;
+    grid-template-rows:1fr 1.36fr .80fr .80fr;
     gap:12px;padding:12px 15px;
   }
   .panel {min-height:0;display:flex;flex-direction:column;border-radius:9px}
@@ -274,7 +274,7 @@ footer {padding:8px 18px 22px;color:var(--muted);text-align:center;font-size:12p
   .panel-courses {grid-column:2;grid-row:4}
   .joinville-grid {
     min-height:0;height:100%;flex:1;
-    display:grid;grid-template-rows:clamp(168px,25vh,264px) minmax(0,1fr);
+    display:grid;grid-template-rows:minmax(250px,46%) minmax(0,1fr);
     gap:12px;padding:12px;overflow:hidden;
   }
   .joinville-rer,.joinville-bus {
@@ -398,7 +398,7 @@ footer {padding:8px 18px 22px;color:var(--muted);text-align:center;font-size:12p
 /* Compact TV : privilégier les prochains horaires, sans réduire la typo à 7px. */
 @media (min-width:1200px) and (max-height:850px) and (orientation:landscape) {
   .location-dashboard {gap:8px;padding:8px 10px}
-  .joinville-grid {grid-template-rows:clamp(160px,23vh,191px) minmax(0,1fr);gap:7px;padding:8px}
+  .joinville-grid {grid-template-rows:minmax(215px,45%) minmax(0,1fr);gap:7px;padding:8px}
   .vhpratp-bus-grid {gap:4px}
   .vhpratp-line {padding:5px}
   .vhpratp-line .line-head {height:26px}

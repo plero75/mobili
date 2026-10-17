@@ -79,7 +79,7 @@ const arrival = () => `
           <div class="rail-list">
             <div class="rail-row">${modeId('rer','A')}<div class="rail-main"><strong>Joinville-le-Pont</strong><span>Direction Paris et l’ouest · 12 min à pied</span></div><div class="rail-time">Trafic normal</div></div>
             <div class="rail-row">${modeId('bus','77')}<div class="rail-main"><strong>Hippodrome de Vincennes</strong><span>Direction Gare de Lyon</span></div><div class="rail-time">7 min</div></div>
-            <div class="rail-row">${modeId('bus','101')}<div class="rail-main"><strong>École du Breuil</strong><span>Direction Joinville-le-Pont RER</span></div><div class="rail-time">12 min</div></div>
+            <div class="rail-row">${modeId('bus','101')}<div class="rail-main"><strong>Joinville-le-Pont</strong><span>Bus 101 · desserte au pôle RER</span></div><div class="rail-time">12 min</div></div>
           </div>
         </article>
       </div>
@@ -116,7 +116,7 @@ const meeting = () => `
           <article class="panel"><h2 class="section-title white">Mobilité · situation normale</h2><div class="mini-transports">
             <div class="mini-transport">${modeId('rer','A')}<div class="mini-copy"><span class="mini-stop">Joinville-le-Pont</span><div class="sub">Vers Paris et l’ouest</div></div><div class="minutes">12 min à pied</div></div>
             <div class="mini-transport">${modeId('bus','77')}<div class="mini-copy"><span class="mini-stop">Hippodrome</span><div class="sub">Direction Gare de Lyon</div></div><div class="minutes">7 min</div></div>
-            <div class="mini-transport">${modeId('bus','101')}<div class="mini-copy"><span class="mini-stop">École du Breuil</span><div class="sub">Direction Joinville-le-Pont</div></div><div class="minutes">12 min</div></div>
+            <div class="mini-transport">${modeId('bus','101')}<div class="mini-copy"><span class="mini-stop">Joinville-le-Pont</span><div class="sub">Bus 101 · depuis le pôle RER</div></div><div class="minutes">12 min</div></div>
           </div></article>
         </div>
       </div>
@@ -141,7 +141,7 @@ const transition = () => `
           </div></article>
           <div class="transition-modes">
             <article class="mode-card">${modeId('bus','77')}<div class="minutes">7 min</div><div class="sub">Gare de Lyon · puis 19 min</div></article>
-            <article class="mode-card">${modeId('bus','101')}<div class="minutes">12 min</div><div class="sub">Joinville-le-Pont · puis 26 min</div></article>
+            <article class="mode-card">${modeId('bus','101')}<div class="minutes">12 min à pied</div><div class="sub">Pôle RER de Joinville · vérifier la ligne</div></article>
             <article class="mode-card">${icons.bike}<div class="minutes">14 vélos</div><div class="sub">Station Hippodrome · 4 min à pied</div></article>
           </div>
         </div>
@@ -166,7 +166,7 @@ const exit = () => `
         </article>
         <div class="exit-side">
           <article class="bus-main"><div class="bus-main-head"><div>${modeId('bus','77')}<div class="transport-direction">Direction Gare de Lyon</div></div>${walk('Arrêt Hippodrome · 4 min')}</div><div class="passages"><strong>8 min</strong><span>puis <b>20 min</b></span></div><div class="route">Porte Dorée · Daumesnil · Bercy · Gare de Lyon</div></article>
-          <article class="bus-main"><div class="bus-main-head"><div>${modeId('bus','101')}<div class="transport-direction">Direction Joinville-le-Pont</div></div>${walk('Arrêt École du Breuil · 7 min')}</div><div class="passages"><strong>13 min</strong><span>puis <b>27 min</b></span></div><div class="route">École du Breuil · Joinville-le-Pont RER</div></article>
+          <article class="bus-main"><div class="bus-main-head"><div>${modeId('bus','101')}<div class="transport-direction">Départs depuis Joinville-le-Pont</div></div>${walk('Pôle RER · 12 min à pied')}</div><div class="passages"><strong>13 min</strong><span>puis <b>27 min</b></span></div><div class="route">École du Breuil · Joinville-le-Pont RER</div></article>
           <article class="velib-main"><div class="velib-station"><h3>VÉLIB’ · HIPPODROME</h3>${walk('4 min à pied')}<div class="velib-numbers"><strong>14</strong><span>vélos · 22 places</span></div></div><div class="velib-station"><h3>VÉLIB’ · ÉCOLE DU BREUIL</h3>${walk('7 min à pied')}<div class="velib-numbers"><strong>19</strong><span>vélos · 11 places</span></div></div></article>
         </div>
       </div>
@@ -181,7 +181,7 @@ const incidentRer = () => `
       <div class="incident-banner"><div class="incident-symbol">${icons.alert}${modeId('rer','A')}</div><h1>RER A<span>Trafic interrompu</span></h1><div class="incident-time"><span>Reprise estimée</span><strong>19:30</strong></div></div>
       <div class="incident-layout">
         <article class="incident-impact"><h2>Ce qui est interrompu</h2><div class="impact-message">Aucun train entre Joinville-le-Pont et Nation.</div><div class="impact-zone">Incident affectant votre trajet vers Paris</div><div class="impact-detail">Le départ depuis Joinville-le-Pont n’est pas recommandé jusqu’à la reprise. Les bus 77 et 101 circulent normalement.</div><div class="incident-source">Information voyageurs actualisée à 18:47</div></article>
-        <article class="incident-alt"><h2>Alternative conseillée</h2><div class="alternative-card primary"><div class="alt-head"><div>${modeId('bus','77')}<div class="transport-direction">Direction Gare de Lyon</div></div><div class="alt-time">8 min</div></div><div class="alt-main">Rejoignez directement Paris</div><div class="alt-detail">Arrêt Hippodrome de Vincennes · 4 min à pied<br>Prochain passage : 18:55 · puis 19:07</div></div><div class="alternative-card"><div class="alt-head"><div>${modeId('bus','101')}<div class="transport-direction">Direction Joinville-le-Pont</div></div><div class="alt-time">13 min</div></div><div class="alt-detail">Solution locale uniquement · évitez ensuite le RER A vers Paris tant que le trafic reste interrompu.</div></div></article>
+        <article class="incident-alt"><h2>Alternative conseillée</h2><div class="alternative-card primary"><div class="alt-head"><div>${modeId('bus','77')}<div class="transport-direction">Direction Gare de Lyon</div></div><div class="alt-time">8 min</div></div><div class="alt-main">Rejoignez directement Paris</div><div class="alt-detail">Arrêt Hippodrome de Vincennes · 4 min à pied<br>Prochain passage : 18:55 · puis 19:07</div></div><div class="alternative-card"><div class="alt-head"><div>${modeId('bus','101')}<div class="transport-direction">Au départ de Joinville-le-Pont</div></div><div class="alt-time">Pôle RER</div></div><div class="alt-detail">Ligne 101 au pôle de Joinville uniquement : ce n’est pas un départ confirmé à l’École du Breuil. Évitez le RER A interrompu.</div></div></article>
       </div>
     </div>
     <span class="distance-test-label">MAQUETTE DE RECETTE · 1920 × 1080</span>
@@ -194,7 +194,7 @@ const incidentBus = () => `
       <div class="incident-banner"><div class="incident-symbol">${icons.alert}${modeId('bus','77')}</div><h1>BUS 77<span>Arrêt Hippodrome non desservi</span></h1><div class="incident-time"><span>Reprise estimée</span><strong>20:00</strong></div></div>
       <div class="incident-layout">
         <article class="incident-impact"><h2>Ce qui change</h2><div class="impact-message">La ligne 77 est déviée dans le secteur de l’hippodrome.</div><div class="impact-zone">Arrêt « Hippodrome de Vincennes » non desservi</div><div class="impact-detail">Ne restez pas à l’arrêt habituel. La ligne 101 et le RER A circulent normalement.</div><div class="incident-source">Information voyageurs actualisée à 18:47</div></article>
-        <article class="incident-alt"><h2>Vos solutions</h2><div class="alternative-card primary"><div class="alt-head"><div>${modeId('rer','A')}<div class="transport-direction">Depuis Joinville-le-Pont</div></div><div class="alt-time">12 min à pied</div></div><div class="alt-main">Vers Nation et Gare de Lyon</div><div class="alt-detail">Prochain départ atteignable : 19:04<br>Nation 19:12 · Gare de Lyon 19:16</div></div><div class="alternative-card"><div class="alt-head"><div>${modeId('bus','101')}<div class="transport-direction">Direction Joinville-le-Pont</div></div><div class="alt-time">11 min</div></div><div class="alt-detail">Arrêt École du Breuil · 7 min à pied<br>Passage suivant : 19:12</div></div></article>
+        <article class="incident-alt"><h2>Vos solutions</h2><div class="alternative-card primary"><div class="alt-head"><div>${modeId('rer','A')}<div class="transport-direction">Depuis Joinville-le-Pont</div></div><div class="alt-time">12 min à pied</div></div><div class="alt-main">Vers Nation et Gare de Lyon</div><div class="alt-detail">Prochain départ atteignable : 19:04<br>Nation 19:12 · Gare de Lyon 19:16</div></div><div class="alternative-card"><div class="alt-head"><div>${modeId('bus','101')}<div class="transport-direction">Au départ de Joinville-le-Pont</div></div><div class="alt-time">Pôle RER</div></div><div class="alt-detail">Ligne 101 : les horaires reçus concernent Joinville-le-Pont, pas l’arrêt École du Breuil.</div></div></article>
       </div>
     </div>
     <span class="distance-test-label">MAQUETTE DE RECETTE · 1920 × 1080</span>
@@ -342,6 +342,31 @@ window.addEventListener('keydown', (event) => {
 });
 
 // Restitution explicite de l’état plein écran aux utilisateurs de la console.
+
+/* Console de contrôle volontairement absente de l'affichage public.
+   Ouvrir recette.html?review=1 pour comparer tous les modes sans clavier. */
+if (query.get('review') === '1') {
+  const entries = [
+    ['auto', 'Auto'], ['arrivee', 'Arrivée'], ['reunion', 'Réunion'],
+    ['transition', 'Transition'], ['sortie', 'Sortie'],
+    ['incident_rer_a', 'Incident RER'], ['incident_bus', 'Incident bus'],
+    ['no_race_event', 'Événement'], ['no_race_idle', 'Sans courses'],
+    ['mobilite', 'Mobilité']
+  ];
+  const nav = document.createElement('nav');
+  nav.id = 'recipe-review-nav';
+  nav.setAttribute('aria-label', 'Contrôle des modes de recette');
+  nav.innerHTML = '<strong>Recette Mobili</strong>' + entries.map(([key, label]) => {
+    const url = new URL(window.location.href);
+    if (key === 'auto') url.searchParams.delete('mode');
+    else url.searchParams.set('mode', key);
+    return '<a href="' + url.pathname + url.search + '"'
+      + (requestedMode === key ? ' aria-current="page"' : '')
+      + '>' + label + '</a>';
+  }).join('');
+  document.body.appendChild(nav);
+}
+
 document.addEventListener('fullscreenchange', () => {
   const button = document.getElementById('iv-fullscreen');
   if (!button) return;
