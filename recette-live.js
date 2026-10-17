@@ -573,7 +573,7 @@
     if (railList) railList.innerHTML = [
       passengerRailRowHTML("rer", "A", "Joinville-le-Pont", rerMajor ? "Perturbation majeure en cours" : "Direction Paris et l’ouest", rerMajor ? "Voir alternatives" : passageLabel(rer), "12 min à pied"),
       passengerRailRowHTML("bus", "77", "Hippodrome de Vincennes", "Direction Gare de Lyon", b77 ? passageLabel(b77) : "Donnée indisponible"),
-      passengerRailRowHTML("bus", "101", "École du Breuil", "Direction Joinville-le-Pont RER", b101 ? passageLabel(b101) : "Donnée indisponible")
+      passengerRailRowHTML("bus", "101", "Joinville-le-Pont", "Bus 101 au pôle RER · 12 min à pied", b101 ? passageLabel(b101) : "Donnée indisponible")
     ].join("");
     const status = q(".transport-rail .status");
     if (status) { status.textContent = trafficLabel(); status.classList.remove('green'); }
@@ -662,7 +662,7 @@
     return `
       <div class="no-race-mobility-row">${modeId("rer", "A")}<span><strong>Joinville-le-Pont</strong><small>Vers Paris et l’ouest · 12 min à pied</small></span><em>${esc(passageLabel(state.rer[0]))}</em></div>
       <div class="no-race-mobility-row">${modeId("bus", "77")}<span><strong>Hippodrome de Vincennes</strong><small>Direction ${esc(state.bus77[0]?.destination || "Gare de Lyon")} · 4 min à pied</small></span><em>${esc(passageLabel(state.bus77[0]))}</em></div>
-      <div class="no-race-mobility-row">${modeId("bus", "101")}<span><strong>École du Breuil</strong><small>Direction ${esc(state.bus101[0]?.destination || "Joinville-le-Pont")} · 7 min à pied</small></span><em>${esc(passageLabel(state.bus101[0]))}</em></div>
+      <div class="no-race-mobility-row">${modeId("bus", "101")}<span><strong>Joinville-le-Pont</strong><small>Bus 101 · ${esc(state.bus101[0]?.destination || "Joinville-le-Pont")} · 12 min à pied</small></span><em>${esc(passageLabel(state.bus101[0]))}</em></div>
       <div class="no-race-mobility-row"><div class="mobility-bike">VÉLIB’</div><span><strong>Stations à proximité</strong><small>Hippodrome / École du Breuil</small></span><em>${state.velib.hippodrome ? `${state.velib.hippodrome.total} / ${state.velib.breuil?.total ?? "—"} vélos` : "—"}</em></div>`;
   }
   function meetingLabel() {
@@ -752,7 +752,7 @@
     if (access) access.innerHTML = `
       <div class="no-race-access-item">${modeId("rer", "A")}<span><strong>Joinville-le-Pont</strong><small>Vers Paris et l’ouest · 12 min à pied</small></span><em>${esc(passageLabel(state.rer[0]))}</em></div>
       <div class="no-race-access-item">${modeId("bus", "77")}<span><strong>Hippodrome de Vincennes</strong><small>Direction ${esc(state.bus77[0]?.destination || "Gare de Lyon")} · 4 min à pied</small></span><em>${esc(passageLabel(state.bus77[0]))}</em></div>
-      <div class="no-race-access-item">${modeId("bus", "101")}<span><strong>École du Breuil</strong><small>Direction ${esc(state.bus101[0]?.destination || "Joinville-le-Pont")} · 7 min à pied</small></span><em>${esc(passageLabel(state.bus101[0]))}</em></div>
+      <div class="no-race-access-item">${modeId("bus", "101")}<span><strong>Joinville-le-Pont</strong><small>Bus 101 · ${esc(state.bus101[0]?.destination || "Joinville-le-Pont")} · 12 min à pied</small></span><em>${esc(passageLabel(state.bus101[0]))}</em></div>
       <div class="no-race-access-item"><div class="mobility-bike">VÉLIB’</div><span><strong>Stations à proximité</strong><small>Hippodrome / École du Breuil</small></span><em>${state.velib.hippodrome ? `${state.velib.hippodrome.total} / ${state.velib.breuil?.total ?? "—"} vélos` : "En attente"}</em></div>`;
   }
 
@@ -760,18 +760,18 @@
     const info = sourceState(state.incidents[code], code);
     const banner = q(".incident-banner");
     if (banner) banner.classList.toggle("clear", !info.active);
-    const heading = q(".incident-banner h1"); if (heading) heading.innerHTML = `${code === "A" ? "RER A" : "BUS 77"}<span>${esc(info.title)}</span>`;
+    const heading = q(".incident-banner h1"); if (heading) heading.innerHTML = `${code === "A" ? "RER A" : "BUS " + code}<span>${esc(info.title)}</span>`;
     const timeLabel = q(".incident-time span"); if (timeLabel) timeLabel.textContent = info.active ? "Reprise estimée" : "État du flux";
     const time = q(".incident-time strong"); if (time) time.textContent = info.unknown ? 'Indisponible' : info.active ? info.recovery : 'À jour';
     const impactTitle = q(".incident-impact h2"); if (impactTitle) impactTitle.textContent = info.active ? "Information voyageurs" : "Situation actuelle";
     const message = q(".impact-message"); if (message) message.textContent = info.message;
-    const zone = q(".impact-zone"); if (zone) zone.textContent = info.active ? `Ligne ${code === "A" ? "RER A" : "77"} · message officiel actif` : "Aucun scénario fictif affiché";
+    const zone = q(".impact-zone"); if (zone) zone.textContent = info.active ? `Ligne ${code === "A" ? "RER A" : code} · message officiel actif` : "Aucun scénario fictif affiché";
     const detail = q(".impact-detail"); if (detail) detail.textContent = info.active ? "Consultez les alternatives calculées à partir des prochains passages réellement publiés." : "Cet écran s’activera automatiquement lors de la publication d’une perturbation majeure en cours.";
     const source = q(".incident-source"); if (source) source.textContent = `Information voyageurs actualisée à ${fmtTime(state.updatedAt || new Date())}`;
     const symbolLine = q(".incident-symbol .line-badge.bus"); if (symbolLine && code !== "A") symbolLine.textContent = code;
     const alternatives = qa(".alternative-card");
     if (code === "A") {
-      const rows = [state.bus77, state.bus101];
+      const rows = [IV.reachable(liveRows("bus77"), 5), IV.reachable(liveRows("bus101"), 14)];
       alternatives.forEach((card, index) => {
         const passage = rows[index]?.[0];
         const altTime = q(".alt-time", card); if (altTime) altTime.textContent = passageLabel(passage);
@@ -779,7 +779,7 @@
         const altDetail = q(".alt-detail", card); if (altDetail) altDetail.innerHTML = passage ? `Passage publié à ${fmtTime(passage.when)}<br>Horaire ${passage.monitored ? "temps réel" : "théorique"}` : "Information momentanément indisponible";
       });
     } else {
-      const first = alternatives[0], second = alternatives[1], rer = state.rer[0], bus = code === 77 ? state.bus101[0] : state.bus77[0];
+      const first = alternatives[0], second = alternatives[1], rer = IV.reachable(liveRows("rer").filter(IV.west), 14)[0], bus = code === 77 ? IV.reachable(liveRows("bus101"), 14)[0] : IV.reachable(liveRows("bus77"), 5)[0];
       if (first) { q(".alt-time", first).textContent = rer ? `${passageLabel(rer)}` : "—"; q(".alt-main", first).textContent = rer ? `Direction ${rer.destination}` : "Aucun passage RER reçu"; q(".alt-detail", first).innerHTML = rer ? `Départ à ${fmtTime(rer.when)} depuis Joinville-le-Pont<br>Prévoir 12 min à pied` : "Information momentanément indisponible"; }
       if (second) { const badge = q(".line-badge.bus", second); if (badge) badge.textContent = code === 77 ? "101" : "77"; q(".alt-time", second).textContent = passageLabel(bus); q(".alt-detail", second).innerHTML = bus ? `Passage à ${fmtTime(bus.when)} · direction ${esc(bus.destination)}` : "Information momentanément indisponible"; }
     }
