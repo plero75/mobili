@@ -332,7 +332,7 @@ body {
   background: var(--ratp-ink) !important;
   color: #fff !important;
   border-left: 0;
-  box-shadow: inset 8px 0 0 var(--ratp-cyan) !important;
+  box-shadow: inset 1px 0 0 var(--ratp-cyan) !important;
 }
 .arrival-program .schedule-row.active time,
 .arrival-program .schedule-row.active .race,
@@ -418,7 +418,7 @@ body {
   background: #073364;
   color: #fff;
   border-right: 0 !important;
-  box-shadow: inset 8px 0 0 #f2c126;
+  box-shadow: inset 1px 0 0 #f2c126;
 }
 .rail-label .section-title,
 .rail-label .section-title.white {
@@ -456,12 +456,16 @@ body {
   display: none;
 }
 .header .page-title strong {
-  display: none;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 23px;
+  line-height: 1;
+  letter-spacing: .01em;
 }
 .header .page-title span {
   color: #2c2c2c;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: .12em;
+  letter-spacing: .08em;
   text-transform: uppercase;
 }

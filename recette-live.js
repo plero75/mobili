@@ -50,6 +50,8 @@
     updatedAt: null,
     pending: true
   };
+  let fastRefreshPromise = null;
+  let slowRefreshPromise = null;
 
   const q = (selector, root = document) => root.querySelector(selector);
   const qa = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -767,10 +769,10 @@
     const heading = q(".incident-banner h1"); if (heading) heading.innerHTML = `${code === "A" ? "RER A" : "BUS " + code}<span>${esc(info.title)}</span>`;
     const timeLabel = q(".incident-time span"); if (timeLabel) timeLabel.textContent = info.active ? "Reprise estimée" : "État du flux";
     const time = q(".incident-time strong"); if (time) time.textContent = info.unknown ? 'Indisponible' : info.active ? info.recovery : 'À jour';
-    const impactTitle = q(".incident-impact h2"); if (impactTitle) impactTitle.textContent = info.active ? "Information voyageurs" : "Situation actuelle";
+    const impactTitle = q(".incident-impact h2"); if (impactTitle) impactTitle.textContent = info.unknown ? "Source indisponible" : info.active ? "Impact sur votre trajet" : "État du service";
     const message = q(".impact-message"); if (message) message.textContent = info.message;
-    const zone = q(".impact-zone"); if (zone) zone.textContent = info.active ? `Ligne ${code === "A" ? "RER A" : code} · message officiel actif` : "Aucun scénario fictif affiché";
-    const detail = q(".impact-detail"); if (detail) detail.textContent = info.active ? "Consultez les alternatives calculées à partir des prochains passages réellement publiés." : "Cet écran s’activera automatiquement lors de la publication d’une perturbation majeure en cours.";
+    const zone = q(".impact-zone"); if (zone) zone.textContent = info.unknown ? `Ligne ${code === "A" ? "RER A" : code} · statut non confirmé` : info.active ? `Ligne ${code === "A" ? "RER A" : code} · message officiel actif` : "Aucun incident majeur publié";
+    const detail = q(".impact-detail"); if (detail) detail.textContent = info.unknown ? "La situation sera vérifiée automatiquement. Ne considérez pas l’absence de message comme un retour à la normale." : info.active ? "Consultez les alternatives calculées à partir des prochains passages réellement publiés." : "Cet écran s’activera automatiquement lors de la publication d’une perturbation majeure en cours.";
     const source = q(".incident-source"); if (source) source.textContent = `Information voyageurs actualisée à ${fmtTime(state.updatedAt || new Date())}`;
     const symbolLine = q(".incident-symbol .line-badge.bus"); if (symbolLine && code !== "A") symbolLine.textContent = code;
     const alternatives = qa(".alternative-card");
@@ -880,29 +882,39 @@
   }
 
   async function refreshFast() {
-    const results = await Promise.allSettled([
-      loadPassages(SOURCES.rer),
-      loadPassages(SOURCES.bus77),
-      loadPassages(SOURCES.bus77Return),
-      loadPassages(SOURCES.bus101),
-      loadPassages(SOURCES.bus101Return),
-      loadMessages("A"), loadMessages("77"), loadMessages("101")
-    ]);
-    const keys = ['rer', 'bus77', 'bus77Return', 'bus101', 'bus101Return', 'trafficA', 'traffic77', 'traffic101'];
-    results.forEach((result, index) => {
-      const key = keys[index], ok = result.status === 'fulfilled';
-      health[key] = { ok, at: ok ? Date.now() : null };
-      if (index < 5) state[key] = ok ? result.value : [];
-      else state.incidents[key.replace('traffic', '')] = ok ? result.value : [];
-    });
-    state.updatedAt = new Date(); state.pending = false; render();
+    if (fastRefreshPromise) return fastRefreshPromise;
+    fastRefreshPromise = (async () => {
+      const results = await Promise.allSettled([
+        loadPassages(SOURCES.rer),
+        loadPassages(SOURCES.bus77),
+        loadPassages(SOURCES.bus77Return),
+        loadPassages(SOURCES.bus101),
+        loadPassages(SOURCES.bus101Return),
+        loadMessages("A"), loadMessages("77"), loadMessages("101")
+      ]);
+      const keys = ['rer', 'bus77', 'bus77Return', 'bus101', 'bus101Return', 'trafficA', 'traffic77', 'traffic101'];
+      results.forEach((result, index) => {
+        const key = keys[index], ok = result.status === 'fulfilled';
+        health[key] = { ok, at: ok ? Date.now() : null };
+        if (index < 5) state[key] = ok ? result.value : [];
+        else state.incidents[key.replace('traffic', '')] = ok ? result.value : [];
+      });
+      state.updatedAt = new Date(); state.pending = false; render();
+    })();
+    try { return await fastRefreshPromise; }
+    finally { fastRefreshPromise = null; }
   }
   async function refreshSlow() {
-    const results = await Promise.allSettled([loadWeather(), loadMeeting(), loadVelib()]);
-    state.weather = results[0].status === "fulfilled" ? results[0].value : null;
-    if (results[1].status === "fulfilled") state.meeting = results[1].value;
-    if (results[2].status === "fulfilled") state.velib = results[2].value;
-    state.updatedAt = new Date(); state.pending = false; render();
+    if (slowRefreshPromise) return slowRefreshPromise;
+    slowRefreshPromise = (async () => {
+      const results = await Promise.allSettled([loadWeather(), loadMeeting(), loadVelib()]);
+      state.weather = results[0].status === "fulfilled" ? results[0].value : null;
+      if (results[1].status === "fulfilled") state.meeting = results[1].value;
+      if (results[2].status === "fulfilled") state.velib = results[2].value;
+      state.updatedAt = new Date(); state.pending = false; render();
+    })();
+    try { return await slowRefreshPromise; }
+    finally { slowRefreshPromise = null; }
   }
   async function refreshEvents() {
     try { state.events = await loadEvents(); } catch (error) { console.warn("Agenda officiel", error); }
@@ -916,12 +928,41 @@
     render();
   }
 
+  function updateAnimatedCounter(node, value, asHtml = false) {
+    if (!node || node.dataset.counterValue === value) return;
+    node.dataset.counterValue = value;
+    if (asHtml) node.innerHTML = value;
+    else node.textContent = value;
+    node.classList.remove("counter-tick");
+    void node.offsetWidth;
+    node.classList.add("counter-tick");
+  }
+
+  function refreshDisplayClock() {
+    const previousMode = mode;
+    syncAutomaticMode();
+    renderHeader();
+    if (mode !== previousMode) return;
+    if (mode === "arrivee") {
+      const race = nextRace() || state.meeting?.races[0];
+      const count = q(".arrival-countdown .big-count");
+      updateAnimatedCounter(count, race ? compactWait(race.date) : `—<span class="time-unit">MIN</span>`, true);
+    } else if (mode === "reunion") {
+      const race = nextRace();
+      const count = q(".next-race .big-count");
+      updateAnimatedCounter(count, race ? countdown(race.date) : "—");
+    } else if (mode === "transition") {
+      const count = q(".transition-title .last-count strong");
+      updateAnimatedCounter(count, lastRace() ? countdown(lastRace().date) : "—");
+    }
+  }
+
   render();
   refreshFast();
   refreshSlow();
   refreshEvents();
   refreshEditorial();
-  setInterval(() => { renderHeader(); if (["reunion", "transition", "arrivee", "mobilite"].includes(mode)) render(); }, 1000);
+  setInterval(refreshDisplayClock, 1000);
   setInterval(() => {
     state.newsIndex = state.news.length ? (state.newsIndex + 1) % state.news.length : 0;
     state.horoscopePage = (state.horoscopePage + 1) % 3;

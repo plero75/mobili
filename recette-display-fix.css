@@ -80,3 +80,21 @@
 
 /* keep the cyan signature rail clear of content */
 .screen::after { height: 16px !important; }
+
+.arrival-countdown,
+.rail-label,
+.no-race-event-main,
+.no-race-news-main,
+.no-race-horoscope,
+.alternative-card.primary,
+.rer-departure.best {
+  box-shadow: var(--shadow) !important;
+}
+
+.arrival-countdown { border-left: 1px solid #f2b625 !important; }
+.rail-label { box-shadow: inset 1px 0 0 #f2b625 !important; }
+.no-race-event-main { border-top: 1px solid #f2b625 !important; }
+.no-race-news-main { border-top: 1px solid #00aeba !important; }
+.no-race-horoscope { border-top: 1px solid #a985d8 !important; }
+.alternative-card.primary { border-left: 1px solid var(--pv-gold) !important; }
+.rer-departure.best { border-left: 1px solid var(--green) !important; }
