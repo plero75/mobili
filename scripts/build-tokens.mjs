@@ -34,10 +34,11 @@ for (const theme of otherThemes) {
 
 out.push(':root {');
 for (const [key, stack] of Object.entries(tokens.type.families)) out.push(`  --font-${key}: ${stack};`);
-for (const family of ['spacing', 'radius', 'canvas']) {
+const skip = new Set(['name', 'version', 'meta', 'color', 'type', 'shadow']);
+for (const family of Object.keys(tokens).filter((k) => !skip.has(k) && Array.isArray(tokens[k]?.tokens))) {
   for (const tok of tokens[family]?.tokens ?? []) out.push(line(tok.name, tok.value));
 }
 out.push('}', '');
 
 writeFileSync(join(root, 'mobili-tokens.css'), out.join('\n'));
-console.log(`mobili-tokens.css : ${themed.length} couleurs et ombres, thèmes ${[first, ...otherThemes].join(', ')}`);
+console.log(`mobili-tokens.css : ${themed.length} couleurs, thèmes ${[first, ...otherThemes].join(', ')}`);

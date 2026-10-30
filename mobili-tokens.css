@@ -36,9 +36,6 @@
   --alert-soft: #4a191c;
   --incident-ground: #090e16;
   --brand-sky: #83bdf1;
-  --shadow-panel: 0 8px 28px rgba(0, 0, 0, 0.18);
-  --shadow-route: 0 18px 42px rgba(0, 0, 0, 0.2);
-  --shadow-immersive: 0 22px 55px rgba(0, 7, 19, 0.31);
 }
 
 [data-theme="light"] {
@@ -60,9 +57,6 @@
   --alert: #b90000;
   --alert-text: #b90000;
   --brand-sky: #050f73;
-  --shadow-panel: none;
-  --shadow-route: none;
-  --shadow-immersive: none;
   color-scheme: light;
 }
 
@@ -72,15 +66,12 @@
   --space-xs: 8px;
   --space-sm: 12px;
   --space-md: 16px;
-  --space-lg: 22px;
-  --space-xl: 28px;
-  --space-2xl: 38px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 40px;
   --space-3xl: 48px;
   --radius-none: 0;
-  --radius-ratp: 2px;
   --radius-panel: 3px;
-  --radius-badge: 4px;
-  --radius-cue: 24px;
   --radius-round: 50%;
   --screen-width: 1920px;
   --screen-height: 910px;
@@ -90,4 +81,12 @@
   --band-height: 18px;
   --rail-columns: 132px 1fr 210px;
   --header-columns: 330px 1fr 220px;
+  --text-xs: 16px;
+  --text-sm: 20px;
+  --text-md: 24px;
+  --text-lg: 32px;
+  --text-xl: 44px;
+  --text-2xl: 64px;
+  --text-3xl: 96px;
+  --text-4xl: 128px;
 }
