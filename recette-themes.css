@@ -232,3 +232,46 @@
 [data-theme="dark"] .next-race .big-count .time-unit { color: var(--ink-muted) !important; }
 /* Mêmes angles pour tous les panneaux de la nuit */
 [data-theme="dark"] .panel { border-radius: var(--radius-panel) !important; }
+
+/* ---------- Échelle de lecture à distance : plancher à 16 px (text-xs) ---------- */
+.header .page-title span,
+.header .meta-label,
+.brand-copy span,
+.screen small,
+.mode-badge,
+.mobility-bike,
+.mini-copy .sub,
+.stops-title,
+.visitor-cue span,
+.visitor-cue small,
+.road-source,
+.rail-main span,
+.event-note,
+.bus-main .route,
+.velib-station h3,
+.velib-numbers span,
+.walk span,
+.status,
+.last-count,
+.brief-item b,
+.incident-source,
+.no-race-status,
+.no-race-news-meta span,
+.no-race-news-meta time,
+.news-strip-item,
+.horoscope-heading span,
+.horoscope-item p { font-size: var(--text-xs) !important; }
+/* Libellés en capitales : espacement réduit pour compenser la taille */
+.header .meta-label,
+.header .page-title span { letter-spacing: .02em !important; }
+/* Cases météo / heure / réunion : largeur au contenu, sans troncature */
+.header .meta { width: auto !important; min-width: 0 !important; }
+.header .meta > div { white-space: nowrap; }
+/* Alternatives d'incident : les deux cartes tiennent dans le panneau */
+[data-theme="light"] .incident-alt { gap: var(--space-sm) !important; }
+[data-theme="light"] .alternative-card { padding: var(--space-md) var(--space-lg) !important; }
+[data-theme="light"] .alternative-card .alt-main { margin-top: 6px; font-size: var(--text-md) !important; }
+/* Réunion : prochaine course resserrée verticalement */
+[data-theme="dark"] .next-race .big-time { margin-top: var(--space-sm) !important; }
+[data-theme="dark"] .next-race .count-label { margin-top: var(--space-sm) !important; }
+.header { grid-template-columns: 410px minmax(0, 1fr) max-content max-content max-content !important; }

@@ -60,9 +60,11 @@
   color-scheme: light;
 }
 
+@font-face { font-family: "Source Sans 3"; src: url("fonts/source-sans-3-latin-wght-normal.woff2") format("woff2"); font-weight: 200 900; font-style: normal; font-display: swap; }
+
 :root {
-  --font-sans: Inter, "DejaVu Sans", Arial, sans-serif;
-  --font-signage: Arial, Helvetica, "DejaVu Sans", sans-serif;
+  --font-sans: "Source Sans 3", "DejaVu Sans", Arial, sans-serif;
+  --font-signage: "Source Sans 3", Arial, "DejaVu Sans", sans-serif;
   --space-xs: 8px;
   --space-sm: 12px;
   --space-md: 16px;

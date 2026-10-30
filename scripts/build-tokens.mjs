@@ -32,6 +32,11 @@ for (const theme of otherThemes) {
   out.push('  color-scheme: light;', '}', '');
 }
 
+for (const font of tokens.type.fonts ?? []) {
+  out.push(`@font-face { font-family: "${font.family}"; src: url("${font.file}") format("woff2"); font-weight: ${font.weight}; font-style: ${font.style ?? 'normal'}; font-display: swap; }`);
+}
+if (tokens.type.fonts?.length) out.push('');
+
 out.push(':root {');
 for (const [key, stack] of Object.entries(tokens.type.families)) out.push(`  --font-${key}: ${stack};`);
 const skip = new Set(['name', 'version', 'meta', 'color', 'type', 'shadow']);
