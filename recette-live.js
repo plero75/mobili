@@ -504,6 +504,7 @@
     if (next === mode) return;
     mode = next;
     document.getElementById("app").innerHTML = (renderers[mode] || noRaceIdle)();
+    applyModeTheme(renderers[mode] ? mode : "no_race_idle");
     fitRecipeScreen();
   }
 

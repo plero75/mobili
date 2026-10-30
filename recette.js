@@ -292,8 +292,17 @@ const noRaceIdle = () => `
   </section>`;
 
 const renderers = { mobilite: mobilityBoard, arrivee: arrival, reunion: meeting, transition, sortie: exit, incident_rer_a: incidentRer, incident_bus: incidentBus, no_race_event: noRaceEvent, no_race_idle: noRaceIdle };
+// Thème du design system selon l'information affichée :
+// « nuit » (Hippodrome) pour les courses, « quai RATP » pour le transport et le trafic.
+const HIPPODROME_MODES = new Set(['arrivee', 'reunion', 'no_race_event', 'no_race_idle']);
+function applyModeTheme(current) {
+  const root = document.documentElement;
+  root.dataset.mode = current;
+  root.dataset.theme = HIPPODROME_MODES.has(current) ? 'dark' : 'light';
+}
 // En mode auto, ne jamais afficher une course fictive pendant le chargement des données.
 document.getElementById('app').innerHTML = (requestedMode === 'auto' ? noRaceIdle : (renderers[mode] || noRaceIdle))();
+applyModeTheme(requestedMode === 'auto' || !renderers[mode] ? 'no_race_idle' : mode);
 
 function fitRecipeScreen() {
   const app = document.getElementById('app');

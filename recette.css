@@ -1,22 +1,15 @@
 :root {
-  --pv-navy: #041326;
-  --pv-navy-2: #081a31;
-  --pv-panel: #0b2038;
-  --pv-panel-soft: #102741;
-  --pv-gold: #f2b625;
-  --pv-gold-soft: #d89e17;
-  --white: #f7f9fc;
-  --muted: #aebdcd;
-  --line: #34506b;
-  --idfm: #25303b;
-  --idfm-white: #f0f0f0;
-  --green: #75c043;
-  --cyan: #22c6b7;
-  --rer-a: #e3051b;
-  --bus-blue: #1674a5;
-  --alert: #d6413a;
-  --alert-soft: #4a191c;
-  --warning: #f39a2e;
+  --pv-navy: var(--ground);
+  --pv-navy-2: var(--ground-2);
+  --pv-panel: var(--panel);
+  --pv-panel-soft: var(--panel-soft);
+  --pv-gold: var(--gold);
+  --pv-gold-soft: var(--gold-soft);
+  --white: var(--ink);
+  --muted: var(--ink-muted);
+  --green: var(--ok);
+  --cyan: var(--band);
+  --bus-blue: var(--bus);
   --shadow: 0 8px 28px rgba(0, 0, 0, .18);
   font-family: Inter, "DejaVu Sans", Arial, sans-serif;
   color: var(--white);
@@ -712,10 +705,8 @@ svg { display: block; }
 
 /* Modernisation 2026 — surfaces plus organiques et information voyageurs renforcée */
 :root {
-  --pv-panel: #0b2440;
-  --pv-panel-soft: #123154;
-  --line: rgba(126, 157, 190, .26);
-  --idfm: #273440;
+  --pv-panel: var(--panel);
+  --pv-panel-soft: var(--panel-soft);
   --shadow: 0 22px 55px rgba(0, 7, 19, .31);
   --radius: 30px;
   --radius-hero: 30px 92px 30px 30px;
@@ -1028,16 +1019,13 @@ svg { display: block; }
 
 /* Version claire — média distant information voyageurs */
 :root {
-  --pv-navy: #eef3f8;
-  --pv-navy-2: #f6f8fb;
-  --pv-panel: #ffffff;
-  --pv-panel-soft: #f5f8fb;
-  --white: #152236;
-  --muted: #5f6f82;
-  --line: #d8e1ec;
-  --idfm: #ffffff;
-  --idfm-white: #ffffff;
-  --green: #3a8d22;
+  --pv-navy: var(--ground);
+  --pv-navy-2: var(--ground-2);
+  --pv-panel: var(--panel);
+  --pv-panel-soft: var(--panel-soft);
+  --white: var(--ink);
+  --muted: var(--ink-muted);
+  --green: var(--ok);
   --shadow: 0 18px 46px rgba(31, 49, 71, .13);
 }
 
@@ -1166,12 +1154,11 @@ body { background: #dce4ee; }
 
 /* Version claire vivante — moins institutionnelle, plus Paris-Vincennes */
 :root {
-  --pv-panel: #fffaf0;
-  --pv-panel-soft: #fff4d7;
-  --line: rgba(37, 63, 91, .14);
-  --muted: #53687f;
-  --green: #43a824;
-  --cyan: #00aeba;
+  --pv-panel: var(--panel);
+  --pv-panel-soft: var(--panel-soft);
+  --muted: var(--ink-muted);
+  --green: var(--ok);
+  --cyan: var(--band);
   --shadow: 0 20px 52px rgba(31, 49, 71, .16);
 }
 

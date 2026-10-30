@@ -91,10 +91,10 @@
   box-shadow: var(--shadow) !important;
 }
 
-.arrival-countdown { border-left: 1px solid #f2b625 !important; }
-.rail-label { box-shadow: inset 1px 0 0 #f2b625 !important; }
-.no-race-event-main { border-top: 1px solid #f2b625 !important; }
+.arrival-countdown { border-left: 1px solid var(--gold) !important; }
+.rail-label { box-shadow: inset 1px 0 0 var(--gold) !important; }
+.no-race-event-main { border-top: 1px solid var(--gold) !important; }
 .no-race-news-main { border-top: 1px solid #00aeba !important; }
 .no-race-horoscope { border-top: 1px solid #a985d8 !important; }
-.alternative-card.primary { border-left: 1px solid var(--pv-gold) !important; }
-.rer-departure.best { border-left: 1px solid var(--green) !important; }
+.alternative-card.primary { border-left: 1px solid var(--gold) !important; }
+.rer-departure.best { border-left: 1px solid var(--ok) !important; }

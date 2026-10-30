@@ -5,9 +5,9 @@
  * partagent ici les corrections de débordement et de hiérarchie.
  */
 :root {
-  --recipe-ink: #071e44;
-  --recipe-muted: #465466;
-  --recipe-border: #d1dbe4;
+  --recipe-ink: var(--ink);
+  --recipe-muted: var(--ink-muted);
+  --recipe-border: var(--line);
   --recipe-focus: #075da8;
 }
 :focus-visible { outline: 4px solid var(--recipe-focus); outline-offset: 3px; }

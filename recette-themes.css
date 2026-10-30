@@ -1,0 +1,34 @@
+/* Recette — finitions par thème du design system Mobili.
+   Le thème suit l'information affichée (voir applyModeTheme dans recette.js) :
+   « dark » = Hippodrome (nuit) pour les courses, « light » = Quai RATP pour le transport.
+   Chargé en dernier. Toutes les couleurs viennent de mobili-tokens.css. */
+
+/* Surfaces restées claires dans les anciennes couches de recette.css */
+.road-card,
+.weather-details span,
+.no-race-access-item {
+  background: var(--panel-soft);
+  color: var(--ink);
+}
+.road-card p,
+.road-card .road-source,
+.weather-details span { color: var(--ink-muted); }
+
+/* Météo : valeur forte en couleur d'accent, sur sous-surface */
+.weather-main {
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+}
+.weather-main strong { color: var(--accent); }
+.weather-main span { color: var(--ink-muted); }
+
+/* Vélib' : badge de mode sans ligne (ModeBadge --walk) */
+.mobility-bike {
+  background: transparent;
+  border: 2px solid var(--gold);
+  color: var(--gold);
+}
+[data-theme="light"] .mobility-bike {
+  border-color: var(--ink);
+  color: var(--ink);
+}

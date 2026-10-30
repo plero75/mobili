@@ -230,3 +230,12 @@ Le design system publié est la référence. Sa copie `design/tokens.json` gén�
 - `porte-c.css` n'utilise que ces tokens.
 - `recette-ratp.css` tire sa palette `--ratp-*` des tokens ; `recette.css` garde ses quatre blocs `:root` historiques, à consolider.
 - `mobili-components.css` fournit les classes `mb-*` (LineBadge, ModeBadge, RouteCard, TransportRail…) pour les nouveaux écrans.
+
+## Thème selon l'information affichée
+
+L'écran recette change de thème du design system selon le mode (`applyModeTheme` dans `recette.js`, qui pose `data-theme` sur `<html>`) :
+
+- **Hippodrome (nuit)**, `dark` : `arrivee`, `reunion`, `no_race_event`, `no_race_idle`.
+- **Quai RATP**, `light` : `transition`, `sortie`, `incident_rer_a`, `incident_bus`, `mobilite`.
+
+Les feuilles `recette-ratp.css`, `recette-display-fix.css` et `recette-modes-polish.css` n'utilisent que des tokens (`panel`, `ink`, `accent`, `time`, `line`…). En thème quai, ces tokens valent les couleurs RATP d'origine. `recette-themes.css` corrige les surfaces des anciennes couches de `recette.css` qui restaient claires.
