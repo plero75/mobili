@@ -275,3 +275,12 @@
 [data-theme="dark"] .next-race .big-time { margin-top: var(--space-sm) !important; }
 [data-theme="dark"] .next-race .count-label { margin-top: var(--space-sm) !important; }
 .header { grid-template-columns: 410px minmax(0, 1fr) max-content max-content max-content !important; }
+
+/* ---------- Évolution, étape 3 : aplats, sans dégradés ---------- */
+/* Filet sous l'en-tête : neutre et plein au lieu d'un jaune qui s'estompe */
+.header::after { background: var(--line) !important; background-image: none !important; }
+/* Lignes du rail : plus de teinte rouge ou bleue en fondu, le badge suffit */
+.rail-row { background-image: none !important; }
+/* Filet de sécurité : fonds d'écran et panneaux en aplat de surface */
+.screen, #app, .workspace { background-image: none !important; }
+.panel, .rer-departure, .alternative-card, .bus-main, .velib-main { background-image: none !important; }
