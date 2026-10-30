@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#041326">
+  <title>Mobili — Porte C · Choisir votre sortie</title>
+  <link rel="stylesheet" href="mobili-tokens.css?v=1">
+  <link rel="stylesheet" href="porte-c.css?v=4">
+</head>
+<body>
+  <main class="choice-screen" aria-live="polite">
+    <header class="choice-header">
+      <div class="choice-brand"><span class="brand-mark" aria-hidden="true">VH</span><div><span>HIPPODROME</span><strong>PARIS-VINCENNES</strong></div></div>
+      <div class="choice-context"><span class="eyebrow">PORTE C · DÉPARTS ATTEIGNABLES</span><h1>Choisir votre sortie</h1><p>Comparez les chemins selon la marche, la marge et le prochain passage publié.</p></div>
+      <div class="choice-clock"><strong id="clock">--:--</strong><span id="updated">Chargement des flux</span></div>
+    </header>
+
+    <section class="choice-status" aria-label="Situation actuelle">
+      <span class="status-dot" id="status-dot"></span><strong id="traffic-status">Vérification du trafic</strong><span id="status-detail">Les prochains passages sont comparés automatiquement.</span>
+    </section>
+
+    <section class="route-grid" aria-label="Trois chemins depuis la porte C">
+      <article class="route-card" data-route="rer">
+        <div class="route-card-head"><div class="route-id"><span class="mode-badge">RER</span><span class="line-badge rer">A</span></div><span class="route-rank">OPTION 01</span></div>
+        <div class="route-copy"><span class="route-kicker">Prochain départ RER A</span><h2>Joinville-le-Pont</h2><p>Le chemin le plus direct vers le RER A.</p></div>
+        <div class="route-time"><strong id="rer-time">--</strong><span>prochain passage</span></div>
+        <dl class="route-facts"><div><dt>Marche</dt><dd>12 min</dd></div><div><dt>Marge conseillée</dt><dd>+2 min</dd></div><div><dt>Donnée</dt><dd id="rer-data">En attente</dd></div></dl>
+        <div class="route-destination" id="rer-destination">Destination en attente</div>
+      </article>
+
+      <article class="route-card" data-route="bus">
+        <div class="route-card-head"><div class="route-id"><span class="mode-badge">BUS</span><span class="line-badge bus">77</span></div><span class="route-rank">OPTION 02</span></div>
+        <div class="route-copy"><span class="route-kicker">Vers Gare de Lyon</span><h2>Hippodrome</h2><p>Un départ direct depuis l’arrêt proche du site.</p></div>
+          <div class="route-time"><strong id="bus-time">--</strong><strong class="route-next-time" id="bus-time-next">--</strong><span>deux prochains passages</span></div>
+        <dl class="route-facts"><div><dt>Marche</dt><dd>4 min</dd></div><div><dt>Marge conseillée</dt><dd>+2 min</dd></div><div><dt>Donnée</dt><dd id="bus-data">En attente</dd></div></dl>
+        <div class="route-destination" id="bus-destination">Destination en attente</div>
+      </article>
+
+        <article class="route-card" data-route="bus101">
+          <div class="route-card-head"><div class="route-id"><span class="mode-badge">BUS</span><span class="line-badge bus bus101">101</span></div><span class="route-rank">OPTION 03</span></div>
+          <div class="route-copy"><span class="route-kicker">Vers Joinville-le-Pont RER</span><h2>École du Breuil</h2><p>Une seconde ligne pour rejoindre le secteur RER.</p></div>
+          <div class="route-time"><strong id="bus101-time">--</strong><strong class="route-next-time" id="bus101-time-next">--</strong><span>deux prochains passages</span></div>
+          <dl class="route-facts"><div><dt>Marche</dt><dd>7 min</dd></div><div><dt>Marge conseillée</dt><dd>+2 min</dd></div><div><dt>Donnée</dt><dd id="bus101-data">En attente</dd></div></dl>
+          <div class="route-destination" id="bus101-destination">Destination en attente</div>
+        </article>
+
+      <article class="route-card" data-route="walk">
+        <div class="route-card-head"><div class="route-id"><span class="mode-badge walk-mode">À PIED</span></div><span class="route-rank">OPTION 04</span></div>
+        <div class="route-copy"><span class="route-kicker">Sans attente ni correspondance</span><h2>Joinville à pied</h2><p>Le choix prévisible quand les flux sont incomplets.</p></div>
+        <div class="route-time"><strong>≈ 12</strong><span>minutes de marche</span></div>
+        <dl class="route-facts"><div><dt>Départ</dt><dd>Maintenant</dd></div><div><dt>Fiabilité</dt><dd>Constante</dd></div><div><dt>Donnée</dt><dd>Estimation</dd></div></dl>
+        <div class="route-destination">Porte C → Joinville-le-Pont</div>
+      </article>
+
+      <article class="route-card" data-route="velib">
+        <div class="route-card-head"><div class="route-id"><span class="mode-badge walk-mode">VÉLIB’</span></div><span class="route-rank">OPTION 05</span></div>
+        <div class="route-copy"><span class="route-kicker">Deux stations à proximité</span><h2>Vélo partagé</h2><p>Une option rapide si un vélo est disponible.</p></div>
+        <div class="route-time"><strong id="velib-count">--</strong><span>vélos disponibles</span></div>
+        <dl class="route-facts"><div><dt>Marche</dt><dd>4 min</dd></div><div><dt>Trajet</dt><dd>≈ 6 min</dd></div><div><dt>Donnée</dt><dd id="velib-data">En attente</dd></div></dl>
+        <div class="route-destination" id="velib-destination">Hippodrome · École du Breuil</div>
+      </article>
+    </section>
+
+    <footer class="choice-footer"><span>Les temps de marche sont estimés depuis la porte C et doivent être validés sur site.</span><span><b>PRIM / IDFM</b> · Mise à jour automatique 30 s</span></footer>
+  </main>
+  <script src="porte-c.js?v=1"></script>
+</body>
+</html>

@@ -28,7 +28,7 @@ test("les neuf scènes événementielles et l’auto sont sélectionnables", () 
 
 test("la finition des modes 19:9 est bien chargée en dernier", () => {
   const links = [...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(match => match[1].split("?")[0]);
-  assert.deepEqual(links, ["recette.css", "recette-ratp.css", "recette-display-fix.css", "recette-modes-polish.css"]);
+  assert.deepEqual(links, ["mobili-tokens.css", "recette.css", "recette-ratp.css", "recette-display-fix.css", "recette-modes-polish.css"]);
 });
 
 test("les deux scènes sans courses s’adaptent à la hauteur utile du 19:9", () => {

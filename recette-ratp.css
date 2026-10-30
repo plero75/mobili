@@ -1,15 +1,8 @@
 /* RATP-inspired 19:9 display skin for recette.html.
    Goal: behave like a real wide passenger-information board, not a 16:9 dashboard. */
 
-:root {
-  --ratp-blue: #050f73;
-  --ratp-cyan: #77cfe5;
-  --ratp-ink: #170d10;
-  --ratp-paper: #ffffff;
-  --ratp-yellow: #d7cf32;
-  --ratp-green: #159447;
-  --ratp-grey: #d7d7d7;
-}
+/* Palette RATP (--ratp-blue, --ratp-cyan, --ratp-ink, --ratp-paper, --ratp-yellow,
+   --ratp-green, --ratp-grey) : fournie par mobili-tokens.css, chargé avant ce fichier. */
 
 html,
 body {
