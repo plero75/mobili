@@ -186,3 +186,49 @@
 [data-mode="transition"] .mode-card .sub { color: var(--ink-muted) !important; }
 [data-mode="sortie"] .stops { align-self: stretch; width: auto !important; height: auto !important; min-height: 0 !important; margin-left: 0 !important; }
 [data-mode="transition"] .departure-row { grid-template-columns: auto minmax(0, 1fr) auto !important; }
+
+/* ---------- Hippodrome (nuit) : vues courses ---------- */
+/* Programme : le jaune ne marque que le numéro de course ; la course en cours a un fond et un liseré */
+[data-theme="dark"] .schedule-row { background: transparent !important; border-color: var(--line) !important; }
+[data-theme="dark"] .schedule-row time,
+[data-theme="dark"] .schedule-row span:not(.race):not(.discipline) { color: var(--ink) !important; }
+[data-theme="dark"] .schedule-row .race { color: var(--accent) !important; }
+[data-theme="dark"] .schedule-row .discipline { color: var(--ink-muted) !important; }
+[data-theme="dark"] .schedule-row.active,
+[data-theme="dark"] .arrival-program .schedule-row.active {
+  background: var(--row-active) !important;
+  box-shadow: inset 4px 0 0 var(--row-active-edge) !important;
+}
+[data-theme="dark"] .arrival-program .schedule-row.active time,
+[data-theme="dark"] .arrival-program .schedule-row.active span:not(.race):not(.discipline) { color: var(--ink) !important; }
+[data-theme="dark"] .arrival-program .schedule-row.active .race { color: var(--accent) !important; }
+[data-theme="dark"] .arrival-program .schedule-row.active .discipline { color: var(--ink-muted) !important; }
+
+/* Rail des départs : bloc titre sur sous-surface, statut en clair */
+[data-theme="dark"] .rail-label { background: var(--panel-soft) !important; box-shadow: inset 4px 0 0 var(--gold) !important; }
+[data-theme="dark"] .rail-label .section-title,
+[data-theme="dark"] .rail-label .section-title.white { color: var(--ink) !important; }
+[data-theme="dark"] .rail-label .status { padding: 0 !important; background: transparent !important; color: var(--ink-muted) !important; }
+
+/* Temps sans donnée : texte en retrait qui passe à la ligne, jamais tronqué */
+.rail-time.is-empty,
+.mini-transport .minutes.is-empty {
+  padding: 0 !important;
+  background: transparent !important;
+  color: var(--ink-muted) !important;
+  font-size: 17px !important;
+  font-weight: 800;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+/* Carte routière : fond et libellés du thème */
+[data-theme="dark"] .road-map { background: var(--ground) !important; border-radius: var(--radius-badge); }
+[data-theme="dark"] .road-map text { fill: var(--ink); }
+[data-theme="dark"] .road-map .muted-road { stroke: var(--line); }
+
+/* Réunion : une seule valeur jaune dominante (l'heure) ; le compte à rebours la complète en blanc */
+[data-theme="dark"] .next-race .big-count { color: var(--ink) !important; }
+[data-theme="dark"] .next-race .big-count .time-unit { color: var(--ink-muted) !important; }
+/* Mêmes angles pour tous les panneaux de la nuit */
+[data-theme="dark"] .panel { border-radius: var(--radius-panel) !important; }

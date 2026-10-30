@@ -542,10 +542,10 @@
     if (span) span.textContent = sub;
   }
 
-  function passengerRailRowHTML(kind, line, stop, direction, time, footnote = "") {
+  function passengerRailRowHTML(kind, line, stop, direction, time, footnote = "", empty = false) {
     return `<div class="rail-row">${modeId(kind, line)}
       <div class="rail-main"><strong>${esc(stop)}</strong><span>${esc(direction)}${footnote ? ` · ${esc(footnote)}` : ""}</span></div>
-      <div class="rail-time">${esc(time)}</div>
+      <div class="rail-time${empty ? " is-empty" : ""}">${esc(time)}</div>
     </div>`;
   }
 
@@ -578,9 +578,9 @@
     const rer = rerParisAtteignable()[0], b77 = bus77Atteignable()[0], b101 = bus101JoinvilleAtteignable()[0];
     const rerMajor = state.incidents.A.some(isMajorNow);
     if (railList) railList.innerHTML = [
-      passengerRailRowHTML("rer", "A", "Joinville-le-Pont", rerMajor ? "Perturbation majeure en cours" : "Direction Paris et l’ouest", rerMajor ? "Voir alternatives" : passageLabel(rer), "12 min à pied"),
-      passengerRailRowHTML("bus", "77", "Hippodrome de Vincennes", "Direction Gare de Lyon", b77 ? passageLabel(b77) : "Donnée indisponible"),
-      passengerRailRowHTML("bus", "101", "Joinville-le-Pont", "Bus 101 au pôle RER · 12 min à pied", b101 ? passageLabel(b101) : "Donnée indisponible")
+      passengerRailRowHTML("rer", "A", "Joinville-le-Pont", rerMajor ? "Perturbation majeure en cours" : "Direction Paris et l’ouest", rerMajor ? "Voir alternatives" : passageLabel(rer), "12 min à pied", !rer && !rerMajor),
+      passengerRailRowHTML("bus", "77", "Hippodrome de Vincennes", "Direction Gare de Lyon", b77 ? passageLabel(b77) : "Donnée indisponible", "", !b77),
+      passengerRailRowHTML("bus", "101", "Joinville-le-Pont", "Bus 101 au pôle RER · 12 min à pied", b101 ? passageLabel(b101) : "Donnée indisponible", "", !b101)
     ].join("");
     const status = q(".transport-rail .status");
     if (status) { status.textContent = trafficLabel(); status.classList.remove('green'); }
@@ -603,9 +603,9 @@
     const eventPanel = qa(".meeting-bottom > .panel")[1];
     if (eventPanel) eventPanel.innerHTML = `<h2 class="section-title">Fin de réunion</h2><div class="event" style="margin-top:28px"><div class="event-date">${lastRace() ? fmtTime(lastRace().date) : "—"}</div><div><div class="event-name">Dernière course</div><div class="event-note">${esc(lastRace()?.title || "Programme indisponible")}</div></div></div>`;
     const minis = qa(".mini-transport");
-    if (minis[0]) { q(".minutes", minis[0]).textContent = passageLabel(rerParisAtteignable()[0]); q(".sub", minis[0]).textContent = rerParisAtteignable()[0] ? `Direction ${rerParisAtteignable()[0].destination}` : "Vers Paris et l’ouest"; }
-    if (minis[1]) { q(".minutes", minis[1]).textContent = passageLabel(bus77Atteignable()[0]); q(".sub", minis[1]).textContent = `Direction ${bus77Atteignable()[0]?.destination || "Gare de Lyon"}`; }
-    if (minis[2]) { q(".minutes", minis[2]).textContent = passageLabel(bus101JoinvilleAtteignable()[0]); q(".sub", minis[2]).textContent = `Depuis Joinville · ${bus101JoinvilleAtteignable()[0]?.destination || "destination non communiquée"}`; }
+    if (minis[0]) { q(".minutes", minis[0]).textContent = passageLabel(rerParisAtteignable()[0]); q(".minutes", minis[0]).classList.toggle("is-empty", !rerParisAtteignable()[0]); q(".sub", minis[0]).textContent = rerParisAtteignable()[0] ? `Direction ${rerParisAtteignable()[0].destination}` : "Vers Paris et l’ouest"; }
+    if (minis[1]) { q(".minutes", minis[1]).textContent = passageLabel(bus77Atteignable()[0]); q(".minutes", minis[1]).classList.toggle("is-empty", !bus77Atteignable()[0]); q(".sub", minis[1]).textContent = `Direction ${bus77Atteignable()[0]?.destination || "Gare de Lyon"}`; }
+    if (minis[2]) { q(".minutes", minis[2]).textContent = passageLabel(bus101JoinvilleAtteignable()[0]); q(".minutes", minis[2]).classList.toggle("is-empty", !bus101JoinvilleAtteignable()[0]); q(".sub", minis[2]).textContent = `Depuis Joinville · ${bus101JoinvilleAtteignable()[0]?.destination || "destination non communiquée"}`; }
   }
 
   function renderTransportRows(rootSelector) {
