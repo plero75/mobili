@@ -32,3 +32,157 @@
   border-color: var(--ink);
   color: var(--ink);
 }
+
+/* ScreenHeader : titre, météo, heure et réunion lisibles dans les deux thèmes
+   (une ancienne règle les écrivait en blanc sur l'en-tête blanc du quai). */
+.header .page-title strong,
+.header .meta-value { color: var(--ink) !important; }
+.header .page-title span,
+.header .meta-label { color: var(--ink-muted) !important; }
+
+/* ---------- Quai RATP : vue sortie ---------- */
+[data-mode="sortie"] .exit-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+[data-mode="sortie"] .exit-head p { margin: 0; color: var(--line); font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+[data-mode="sortie"] .exit-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--space-md) !important; min-height: 0; }
+[data-mode="sortie"] .exit-side { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto; gap: var(--space-md); min-height: 0; }
+
+/* Carte RER : RouteCard avec deux lectures de temps */
+[data-mode="sortie"] .rer-main { display: flex; flex-direction: column; gap: 22px; padding: 24px 28px !important; min-height: 0; overflow: hidden; }
+[data-mode="sortie"] .rer-main-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+[data-mode="sortie"] .rer-main-head .transport-id { gap: 12px; }
+[data-mode="sortie"] .rer-main .transport-name { font-size: 35px; line-height: 1.05; font-weight: 900; color: var(--ink) !important; }
+[data-mode="sortie"] .rer-main .transport-direction { margin-top: 4px; font-size: 18px; color: var(--ink-muted) !important; }
+[data-mode="sortie"] .rer-main-head > div:last-child { display: grid; justify-items: end; gap: 10px; }
+[data-mode="sortie"] .rer-main .status { margin: 0 !important; padding: 0 !important; background: transparent !important; color: var(--ok) !important; font-size: 17px; font-weight: 800; }
+
+[data-mode="sortie"] .rer-departures { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+[data-mode="sortie"] .rer-departure { padding: 20px 22px !important; background: var(--panel-soft) !important; background-image: none !important; border: 1px solid var(--line) !important; border-radius: var(--radius-ratp) !important; box-shadow: none !important; }
+[data-mode="sortie"] .rer-departure.best { border: 2px solid var(--accent) !important; }
+[data-mode="sortie"] .rer-departure > div:first-child { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+[data-mode="sortie"] .rer-departure .hour { padding: 4px 12px 6px; background: var(--time-bg); color: var(--time) !important; border-radius: var(--radius-ratp); font-size: 64px; line-height: .95; font-weight: 900; }
+[data-mode="sortie"] .rer-departure .delay { color: var(--ink) !important; font-size: 20px; font-weight: 800; }
+[data-mode="sortie"] .rer-departure h3 { margin: 16px 0 4px; color: var(--ink) !important; font-size: 22px; line-height: 1.15; }
+[data-mode="sortie"] .rer-departure p { margin: 0; color: var(--ink-muted) !important; font-size: 15px; }
+[data-mode="sortie"] .rer-departure.best p { color: var(--ok) !important; font-weight: 800; }
+
+/* Desserte : ligne RER A avec arrêts, ou une simple phrase quand la donnée manque */
+[data-mode="sortie"] .stops { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); }
+[data-mode="sortie"] .stops-title { color: var(--ink-muted); font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+[data-mode="sortie"] .stop-line { position: relative; display: flex; height: auto !important; min-height: 0 !important; margin-top: 16px; }
+[data-mode="sortie"] .stop-line::before { left: 8px !important; right: 8px !important; top: 7px !important; height: 4px !important; background: var(--rer-a) !important; }
+[data-mode="sortie"] .stop-line:has(.live-empty)::before { display: none !important; }
+[data-mode="sortie"] .stop { flex: 1; position: relative; padding-top: 26px; background: none !important; }
+[data-mode="sortie"] .stop strong { display: block; color: var(--ink); font-size: 17px; }
+[data-mode="sortie"] .stop span { color: var(--ink-muted); font-size: 15px; }
+[data-mode="sortie"] .stop-line .live-empty { width: auto !important; height: auto !important; padding: 0 !important; background: none !important; border: 0 !important; color: var(--ink-muted) !important; font-size: 17px; text-align: left !important; }
+
+/* Cartes bus : temps dominant, second passage en retrait */
+[data-mode="sortie"] .bus-main { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: hidden; padding: 18px 22px !important; background: var(--panel) !important; border: 0 !important; border-radius: var(--radius-panel) !important; box-shadow: none !important; }
+[data-mode="sortie"] .bus-main-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+[data-mode="sortie"] .bus-main-head > div:first-child { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; min-width: 0; }
+[data-mode="sortie"] .bus-main .transport-direction { color: var(--ink) !important; font-size: 18px; font-weight: 800; }
+[data-mode="sortie"] .bus-main .walk { flex: none; color: var(--ink-muted) !important; font-size: 15px; white-space: nowrap; }
+[data-mode="sortie"] .passages { display: flex !important; align-items: baseline; gap: 14px; margin-top: auto; text-align: left !important; }
+[data-mode="sortie"] .passages strong { padding: 2px 12px 4px; background: var(--time-bg); color: var(--time) !important; border-radius: var(--radius-ratp); font-size: 46px; line-height: 1; font-weight: 900; }
+[data-mode="sortie"] .passages span { color: var(--ink-muted) !important; font-size: 18px; }
+[data-mode="sortie"] .passages b { color: var(--ink); }
+[data-mode="sortie"] .passages.is-empty strong { padding: 0; background: transparent; color: var(--ink-muted) !important; font-size: 22px; }
+[data-mode="sortie"] .passages.is-empty span { display: none; }
+[data-mode="sortie"] .bus-main .route { color: var(--ink-muted) !important; font-size: 14px; }
+
+/* Vélib' : deux stations côte à côte */
+[data-mode="sortie"] .velib-main { display: grid !important; grid-template-columns: 1fr 1fr; gap: 20px; padding: 16px 22px !important; background: var(--panel) !important; border-radius: var(--radius-panel) !important; box-shadow: none !important; }
+[data-mode="sortie"] .velib-station h3 { margin: 0 0 4px; color: var(--accent); font-size: 14px; letter-spacing: .05em; }
+[data-mode="sortie"] .velib-numbers { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; }
+[data-mode="sortie"] .velib-numbers strong { color: var(--ink); font-size: 34px; line-height: 1; font-weight: 900; }
+[data-mode="sortie"] .velib-numbers span { color: var(--ink-muted); font-size: 15px; }
+
+/* ---------- Quai RATP : vues incident (IncidentBanner) ---------- */
+[data-theme="light"] .incident-banner { border-radius: var(--radius-panel) !important; }
+[data-theme="light"] .incident-banner h1 { color: var(--ink) !important; }
+[data-theme="light"] .incident-time strong { color: var(--ink) !important; }
+[data-theme="light"] .incident-impact,
+[data-theme="light"] .incident-alt {
+  background: var(--panel) !important;
+  background-image: none !important;
+  color: var(--ink) !important;
+  border-radius: var(--radius-panel) !important;
+  box-shadow: none !important;
+}
+[data-theme="light"] .incident-impact { border-left: 8px solid var(--line) !important; }
+[data-theme="light"] .incident-banner:not(.clear) ~ * .incident-impact { border-left-color: var(--alert) !important; }
+[data-theme="light"] .incident-impact h2,
+[data-theme="light"] .incident-impact .impact-message { color: var(--ink) !important; }
+[data-theme="light"] .incident-impact .impact-zone { color: var(--ink) !important; font-weight: 800; }
+[data-theme="light"] .incident-banner:not(.clear) ~ * .impact-zone { color: var(--alert-text) !important; }
+[data-theme="light"] .incident-impact .impact-detail,
+[data-theme="light"] .incident-source { color: var(--ink-muted) !important; }
+[data-theme="light"] .incident-alt h2 { color: var(--accent) !important; }
+[data-theme="light"] .alternative-card {
+  background: var(--panel-soft) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--radius-ratp) !important;
+  box-shadow: none !important;
+}
+[data-theme="light"] .alternative-card.primary { border-left: 6px solid var(--accent) !important; }
+[data-theme="light"] .alternative-card .alt-main { color: var(--ink) !important; }
+[data-theme="light"] .alternative-card .alt-detail,
+[data-theme="light"] .alternative-card .transport-direction { color: var(--ink-muted) !important; }
+[data-theme="light"] .alternative-card .alt-time {
+  padding: 4px 10px;
+  background: var(--time-bg);
+  color: var(--time) !important;
+  border-radius: var(--radius-ratp);
+  font-size: 24px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* Sans donnée : texte en retrait, jamais dans la pastille réservée aux temps */
+[data-theme="light"] .alternative-card .alt-time.is-empty { padding: 0; background: transparent; color: var(--ink-muted) !important; font-size: 18px; font-weight: 800; }
+
+/* Sortie : les deux prochains RER occupent la hauteur de la carte */
+[data-mode="sortie"] .rer-departure { padding: 26px 26px 24px !important; }
+[data-mode="sortie"] .rer-departure .hour { font-size: 92px; padding: 6px 16px 8px; }
+[data-mode="sortie"] .rer-departure .delay { font-size: 24px; }
+[data-mode="sortie"] .rer-departure h3 { margin-top: 22px; font-size: 26px; }
+[data-mode="sortie"] .rer-departure p { font-size: 17px; }
+
+/* Sortie : sans desserte détaillée, les deux départs prennent toute la hauteur */
+[data-mode="sortie"] .rer-departures { flex: 1; min-height: 0; }
+[data-mode="sortie"] .rer-departure { display: flex; flex-direction: column; justify-content: center; }
+[data-mode="sortie"] .stops { margin-top: 0; }
+[data-mode="sortie"] .stops:has(.live-empty) { padding-top: 14px; }
+[data-mode="sortie"] .stops:has(.live-empty) .stop-line { margin-top: 6px; }
+
+/* ---------- Quai RATP : vue transition ---------- */
+/* Titre posé sur le fond, comme la vue sortie ; compte à rebours en pastille de temps */
+[data-mode="transition"] .transition-title {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 0 4px !important; background: transparent !important; background-image: none !important;
+  border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+}
+[data-mode="transition"] .transition-title h1 { margin: 0; color: var(--ink-on-ground) !important; }
+[data-mode="transition"] .last-count { display: flex; align-items: baseline; gap: 12px; color: var(--line) !important; font-size: 15px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+[data-mode="transition"] .last-count strong { padding: 2px 10px 4px; background: var(--time-bg); color: var(--time) !important; border: 1px solid var(--line); border-radius: var(--radius-ratp); font-size: 34px; line-height: 1; letter-spacing: 0; }
+
+/* Panneaux plats, angles du quai */
+[data-mode="transition"] .panel,
+[data-mode="transition"] .transition-modes { border-radius: var(--radius-panel) !important; box-shadow: none !important; background-image: none !important; }
+
+/* Programme restant : texte bleu sur sous-surface */
+[data-mode="transition"] .remaining-card strong { color: var(--ink) !important; }
+[data-mode="transition"] .remaining-card span { color: var(--ink-muted) !important; }
+
+/* Aperçu RER : statut en clair, temps séparé de la destination */
+[data-mode="transition"] .rer-preview .status { padding: 0 !important; background: transparent !important; color: var(--ok) !important; font-size: 16px; font-weight: 800; }
+[data-mode="transition"] .departure-row { column-gap: 22px !important; }
+[data-mode="transition"] .departure-time { padding: 4px 12px 6px !important; }
+
+/* Bus et Vélib' : temps en pastille, absence de donnée en texte retrait */
+[data-mode="transition"] .mode-card .minutes { display: inline-block; width: fit-content; font-size: 40px !important; line-height: 1.05; }
+[data-mode="transition"] .mode-card .minutes.is-empty { padding: 0 !important; background: transparent !important; color: var(--ink-muted) !important; font-size: 20px !important; font-weight: 800; }
+[data-mode="transition"] .mode-card .sub { color: var(--ink-muted) !important; }
+[data-mode="sortie"] .stops { align-self: stretch; width: auto !important; height: auto !important; min-height: 0 !important; margin-left: 0 !important; }
+[data-mode="transition"] .departure-row { grid-template-columns: auto minmax(0, 1fr) auto !important; }
