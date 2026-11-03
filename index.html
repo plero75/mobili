@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0a2535">
   <meta name="description" content="Les prochains départs atteignables depuis l’hippodrome Paris-Vincennes : RER A, bus, Vélib’ et informations trafic.">
   <title>Votre retour · Hippodrome Paris-Vincennes</title>
-  <link rel="stylesheet" href="mobili-display.css?v=20261103-departures4">
+  <link rel="stylesheet" href="mobili-display.css?v=20261103-departures5">
 </head>
 <body>
   <a class="skip-link" href="#departures">Aller aux départs</a>
@@ -24,11 +24,18 @@
     <span class="source-status" data-source-status="traffic">Chargement…</span>
   </aside>
   <main id="departures" class="dashboard location-dashboard">
+    <div class="main-transports">
     <section class="panel panel-rer" aria-labelledby="rer-title" data-access-minutes="14" data-source-region>
       <div class="panel-heading"><div><h2 id="rer-title"><span class="rer-sign">RER <b>A</b></span> Joinville-le-Pont</h2><span class="source-status" data-source-status="rer">Chargement…</span></div><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>12 min à pied</span></div>
       <div id="rer-body" class="transport-board" aria-live="off"><p class="loading-state">Recherche des prochains départs…</p></div>
       <p class="access-caption">Départs atteignables à pied, avec 2 min de marge.</p>
     </section>
+    <section class="panel panel-joinville-bus" aria-labelledby="joinville-bus-title" data-access-minutes="14" data-source-region>
+      <div class="panel-heading"><div><h2 id="joinville-bus-title">Les bus à Joinville</h2><span class="source-status" data-source-status="joinville">Chargement…</span></div><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>12 min à pied</span></div>
+      <div id="joinville-bus-view">Recherche des prochains bus…</div>
+    </section>
+    </div>
+    <div class="support-transports">
     <div class="nearby-stops">
       <section class="panel panel-hippodrome" aria-labelledby="hippodrome-title" data-access-minutes="5" data-source-region>
         <div class="panel-heading"><h2 id="hippodrome-title">Hippodrome de Vincennes</h2><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>4 min</span></div>
@@ -41,10 +48,6 @@
         <div class="panel-source sources-multiple"><span>201 · <span class="source-status" data-source-status="breuil201">Chargement…</span></span><span>77 · <span class="source-status" data-source-status="breuil77">Chargement…</span></span></div>
       </section>
     </div>
-    <section class="panel panel-joinville-bus" aria-labelledby="joinville-bus-title" data-access-minutes="14" data-source-region>
-      <div class="panel-heading"><div><h2 id="joinville-bus-title">Les bus à Joinville</h2><span class="source-status" data-source-status="joinville">Chargement…</span></div><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>12 min à pied</span></div>
-      <div id="joinville-bus-view">Recherche des prochains bus…</div>
-    </section>
     <div class="local-services">
       <section class="panel panel-velib" aria-labelledby="velib-title" data-source-region>
         <div class="panel-heading"><h2 id="velib-title"><svg class="heading-icon" aria-hidden="true"><use href="#bike"/></svg>Vélib’</h2><span class="source-status" data-source-status="velib">Chargement…</span></div>
@@ -54,6 +57,7 @@
         <div class="panel-heading"><h2 id="courses-title">Courses à Vincennes</h2><span class="source-status" data-source-status="courses">Chargement…</span></div>
         <div id="courses-list" class="courses-board"><p class="loading-state">Recherche du programme…</p></div>
       </section>
+    </div>
     </div>
   </main>
   <aside class="news-strip" aria-label="Actualités France Info"><span class="news-label">franceinfo</span><div id="news-carousel" class="news-carousel">Chargement des actualités…</div><span class="source-status" data-source-status="news">Chargement…</span></aside>

@@ -61,3 +61,14 @@
   .panel-rer{grid-area:1/1}.nearby-stops{grid-area:1/2}.panel-joinville-bus{grid-area:2/1}.local-services{grid-area:2/2}
   .rer-stop,.rer-stop>.line-block,.rer-directions{height:auto}
 }
+
+.main-transports,.support-transports{display:contents}
+.panel-rer{order:1}.nearby-stops{order:2}.panel-joinville-bus{order:3}.local-services{order:4}
+@media(min-width:1100px) and (min-height:850px){
+ .dashboard{grid-template-rows:minmax(0,1fr)}
+ .main-transports,.support-transports{display:grid;min-height:0;min-width:0;gap:inherit;grid-template-columns:minmax(0,1fr)}
+ .main-transports{grid-template-rows:minmax(260px,.43fr) minmax(320px,.57fr)}
+ .support-transports{grid-template-rows:min-content minmax(0,1fr)}
+ .main-transports>.panel-rer,.main-transports>.panel-joinville-bus,.support-transports>.nearby-stops,.support-transports>.local-services{grid-area:auto;order:0}
+ .local-services{grid-template-rows:auto minmax(min-content,1fr)}
++}
