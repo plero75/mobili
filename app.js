@@ -220,7 +220,8 @@ async function renderRer(){
   const rer=all.filter(v=>(!v.published||/(^|\s)A($|\s)/i.test(v.published)||/C01742|Line::A/i.test(v.lineRef))&&isRelevantPassage(v));
   if(!rer.length){cont.innerHTML=`<div class="stop-block rer-stop"><div class="stop-title">${esc(RER_STOP.name)}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div>${serviceEndedHTML("Joinville-le-Pont","A",null)}</div></div>`;return true;}
   const dirs=groupRerCorridors(rer);
-  const directionPanels=[...dirs.entries()].slice(0,2).map(([label,rows])=>`<section class="rer-direction-panel"><div class="direction">${esc(label)}</div>${serviceMetaHTML("Joinville-le-Pont","A",rows[0].destination)}<div class="train-list">${rows.slice(0,2).map(rerPassageHTML).join("")}</div></section>`).join("");
+  for (const label of ['Vers Paris', 'Vers Boissy / Est']) if (!dirs.has(label)) dirs.set(label, []);
+  const directionPanels=[...dirs.entries()].map(([label,rows])=>`<section class="rer-direction-panel"><div class="direction">${esc(label)}</div>${rows.length?serviceMetaHTML("Joinville-le-Pont","A",rows[0].destination):''}<div class="train-list">${rows.length?rows.slice(0,2).map(rerPassageHTML).join(""):emptyHTML('Aucun départ atteignable annoncé')}</div></section>`).join("");
   cont.innerHTML=`<div class="stop-block rer-stop"><div class="stop-title">📍 ${esc(RER_STOP.name)}</div><div class="line-block"><div class="line-head"><span class="line-pill" style="background:#e41e26">A</span><span class="line-name">RER A</span></div><div class="rer-directions">${directionPanels}</div></div></div>`;
   cont.dataset.lastGood="true";
   return true;

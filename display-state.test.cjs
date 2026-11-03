@@ -70,3 +70,15 @@ test('un horaire bus non suivi ne porte jamais la mention temps réel', () => {
   assert.match(bus.statusLabel({ aimed: '2026-11-03T17:30:00Z', expected: null, status: 'ontime' }), /THÉORIQUE/);
   assert.doesNotMatch(bus.statusLabel({ aimed: '2026-11-03T17:30:00Z', expected: null, status: 'ontime' }), /TEMPS RÉEL/);
 });
+
+test('le panneau RER conserve les deux sens quand un seul annonce des départs', async () => {
+  const target = { dataset: {}, classList: { add() {}, remove() {} }, innerHTML: '' };
+  const ctx = { document: { addEventListener() {}, getElementById: () => target }, window: {} };
+  const fixture = { Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ MonitoredStopVisit: [{ MonitoredVehicleJourney: { PublishedLineName: ['A'], DestinationName: ['Poissy'], MonitoredCall: { ExpectedDepartureTime: new Date(Date.now() + 30 * 60000).toISOString() } } }] }] } } };
+  ctx.fixture = fixture;
+  runInNewContext(readFileSync(join(__dirname, 'app.js'), 'utf8') + '\nfetchStop=async()=>fixture; this.renderRerForTest=renderRer;', ctx);
+  await ctx.renderRerForTest();
+  assert.match(target.innerHTML, /Vers Paris/);
+  assert.match(target.innerHTML, /Vers Boissy \/ Est/);
+  assert.match(target.innerHTML, /Aucun départ atteignable annoncé/);
+});
