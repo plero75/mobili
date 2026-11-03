@@ -29,8 +29,20 @@
     const service = data?.Siri?.ServiceDelivery;
     const deliveries = service?.StopMonitoringDelivery;
     return service?.Status !== false && !service?.ErrorCondition && Array.isArray(deliveries)
-      && deliveries.some(item => item && item.Status !== false && !item.ErrorCondition
-        && (item.Status === true || Array.isArray(item.MonitoredStopVisit)));
+      && deliveries.some(item => validDelivery(item, 'MonitoredStopVisit'));
+  }
+
+  function validDelivery(item, collection) {
+    return Boolean(item && item.Status !== false && !item.ErrorCondition
+      && (item[collection] === undefined || Array.isArray(item[collection]))
+      && (item.Status === true || Array.isArray(item[collection])));
+  }
+
+  function isMessageResponse(data) {
+    const service = data?.Siri?.ServiceDelivery;
+    return service?.Status !== false && !service?.ErrorCondition
+      && Array.isArray(service?.GeneralMessageDelivery)
+      && service.GeneralMessageDelivery.some(item => validDelivery(item, 'InfoMessage'));
   }
 
   function paint() {
@@ -40,6 +52,7 @@
       const view = sourceState(state);
       if (el.textContent !== view.label) el.textContent = view.label;
       el.dataset.state = view.kind;
+      if (state?.updatedAt) el.dataset.updatedAt = new Date(state.updatedAt).toISOString();
       el.title = `Actualisation toutes les ${Math.round((state?.cadence || cadences[key] || 60000) / 1000)} s`;
       const region = el.closest('[data-source-region]');
       if (region) region.dataset.freshness = view.kind;
@@ -86,13 +99,29 @@
     if (typeof document !== 'undefined') tick();
   }
 
-  window.MobiliDisplay = { updateSource, sourceState, isDepartureReachable, isStopResponse, markSource };
+  function resume() {
+    tick();
+    if (document.hidden) return;
+    const refreshers = {
+      rer: 'refreshPassages', joinville: 'refreshVHPRATPBus', breuil201: 'refreshVHPRATPBus',
+      hippodrome: 'refreshLocationLayout', breuil77: 'refreshLocationLayout',
+      velib: 'refreshVelibFixed', courses: 'refreshCoursesFixed', traffic: 'refreshTrafficFixed',
+      news: 'refreshNews', weather: 'refreshWeather'
+    };
+    const pending = new Set();
+    for (const [key, name] of Object.entries(refreshers)) {
+      if (sourceState(sources.get(key)).kind !== 'live' && typeof window[name] === 'function') pending.add(name);
+    }
+    pending.forEach(name => { Promise.resolve(window[name]()).catch(() => {}); });
+  }
+
+  window.MobiliDisplay = { updateSource, sourceState, isDepartureReachable, isStopResponse, isMessageResponse, validDelivery, markSource };
   if (typeof document === 'undefined') return;
   document.addEventListener('DOMContentLoaded', () => {
     tick();
     setInterval(tick, 15000);
-    document.addEventListener('visibilitychange', tick);
-    window.addEventListener('online', tick);
+    document.addEventListener('visibilitychange', resume);
+    window.addEventListener('online', resume);
     window.addEventListener('offline', tick);
   });
 })();

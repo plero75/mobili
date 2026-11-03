@@ -10,7 +10,7 @@
   let lastGoodCoursesMarkup = "";
   let lastGoodCoursesUpdate = null;
 
-  const shortTime = date => date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  const shortTime = date => date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" });
 
   function setPanelStatus(selector, normalText, ok, lastUpdate) {
     const key = selector === '.panel-courses' ? 'courses' : 'velib';
@@ -43,6 +43,7 @@
   }
 
   async function refreshVelibFixed() {
+    if (document.hidden) return;
     const stations = await fetchVelibParis();
     const cache = {};
     let updated = 0;
@@ -84,7 +85,7 @@
   }
 
   const pmuDateKey = date => `${String(date.getDate()).padStart(2, "0")}${String(date.getMonth() + 1).padStart(2, "0")}${date.getFullYear()}`;
-  const pmuDateLabel = date => date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  const pmuDateLabel = date => date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" });
 
   function parsePmuDate(value) {
     if (value == null) return null;
@@ -128,6 +129,7 @@
   }
 
   async function refreshCoursesFixed() {
+    if (document.hidden) return;
     if (coursesRefreshInFlight) return;
     coursesRefreshInFlight = true;
     try {
@@ -169,7 +171,7 @@
         const dt = parsePmuDate(c?.heureDepart || c?.heureDepartCourse || c?.dateDepart);
         if (!dt) return;
         if (selected.offset === 0 && dt.getTime() < Date.now() - 5 * 60 * 1000) return;
-        rows.push({ date: dt, time: dt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }), name: text(c?.libelle || c?.libelleCourt || c?.nom || `Course ${index + 1}`), number: c?.numOrdre || c?.numero || index + 1 });
+        rows.push({ date: dt, time: dt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" }), name: text(c?.libelle || c?.libelleCourt || c?.nom || `Course ${index + 1}`), number: c?.numOrdre || c?.numero || index + 1 });
       });
     });
     rows.sort((a, b) => a.date - b.date);

@@ -50,6 +50,15 @@ test('une réponse SIRI invalide ne devient jamais une liste vide réussie', () 
   assert.equal(display.isStopResponse({ Siri: { ServiceDelivery: { StopMonitoringDelivery: [{}] } } }), false);
   assert.equal(display.isStopResponse({ Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ Status: false, MonitoredStopVisit: [] }] } } }), false);
   assert.equal(display.isStopResponse({ Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ Status: true, MonitoredStopVisit: [] }] } } }), true);
+  assert.equal(display.isStopResponse({ Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ Status: true, MonitoredStopVisit: { bad: true } }] } } }), false);
+});
+
+test('une réponse trafic invalide ne signifie pas que le trafic est normal', () => {
+  assert.equal(typeof display.isMessageResponse, 'function');
+  assert.equal(display.isMessageResponse({}), false);
+  assert.equal(display.isMessageResponse({ Siri: { ServiceDelivery: { GeneralMessageDelivery: [{ Status: false }] } } }), false);
+  assert.equal(display.isMessageResponse({ Siri: { ServiceDelivery: { GeneralMessageDelivery: [{ Status: true, InfoMessage: {} }] } } }), false);
+  assert.equal(display.isMessageResponse({ Siri: { ServiceDelivery: { GeneralMessageDelivery: [{ Status: true, InfoMessage: [] }] } } }), true);
 });
 
 function busContext(fetch) {
@@ -63,6 +72,16 @@ test('les bus conservent leur cache sur un JSON invalide ou une erreur SIRI', as
   const bus = busContext(async () => ({ ok: true, json: async () => ({ message: 'invalid monitoring ref' }) }));
   const result = await bus.fetchLine({ refs: ['test'], line: 'test', code: '77' });
   assert.equal(result.ok, false);
+});
+
+test('les bus lisent toutes les livraisons SIRI valides et refusent les collections invalides', async () => {
+  const row = { MonitoredVehicleJourney: { LineRef: 'test', DestinationName: ['Paris'], MonitoredCall: { ExpectedDepartureTime: new Date(Date.now()+3600000).toISOString() } } };
+  const good = busContext(async () => ({ ok: true, json: async () => ({ Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ Status: false }, { Status: true, MonitoredStopVisit: [row] }] } } }) }));
+  const result = await good.fetchLine({refs:['test'],line:'test',code:'77'});
+  assert.equal(result.ok, true);
+  assert.equal(result.rows.length, 1);
+  const bad = busContext(async () => ({ ok: true, json: async () => ({ Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ Status: true, MonitoredStopVisit: {} }] } } }) }));
+  assert.equal((await bad.fetchLine({refs:['test'],line:'test',code:'77'})).ok, false);
 });
 
 test('un horaire bus non suivi ne porte jamais la mention temps réel', () => {

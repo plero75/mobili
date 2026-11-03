@@ -35,6 +35,9 @@
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 /* Les données prennent leur hauteur naturelle, sans lignes implicites ajoutées par les badges. */
+.header-weather{display:grid;grid-template-columns:auto auto;gap:0 9px}.header-weather>.source-status{grid-column:1/-1;color:#c5d8e2;font-size:10px;margin-top:3px}.header-weather>.source-status[data-state="stale"],.header-weather>.source-status[data-state="unavailable"]{color:var(--yellow)}
+.line-source{grid-column:2;display:none;font-size:10px}.line-source[data-state="stale"],.line-source[data-state="unavailable"]{display:block}
+.vhpratp-line[data-freshness="stale"] .status.ok{display:none}.is-stale .vhpratp-line[data-freshness="live"] .departure-clock{color:var(--navy)}
 .location-stop-view .line-head,.vhpratp-line>.line-head{grid-row:1}
 .route-unavailable,.news-item{display:none}.news-item.active{display:block}
 .train-list{min-height:0}.train-card{min-height:0}.train-card .train-time .exact{font-size:clamp(30px,2.3vw,44px)}

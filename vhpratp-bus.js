@@ -23,7 +23,7 @@
   const hhmm = v => {
     if(!v) return '—';
     const d = new Date(v);
-    return Number.isNaN(d.getTime()) ? '—' : d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    return Number.isNaN(d.getTime()) ? '—' : d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'});
   };
   const minutesUntil = v => {
     if(!v) return null;
@@ -49,8 +49,9 @@
         if(!res.ok) continue;
         const data = await res.json();
         if (!window.MobiliDisplay?.isStopResponse(data)) continue;
-        successes += 1;
-        const rows = data?.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0]?.MonitoredStopVisit || [];
+        const rows = data.Siri.ServiceDelivery.StopMonitoringDelivery
+          .filter(item => window.MobiliDisplay.validDelivery(item, 'MonitoredStopVisit'))
+          .flatMap(item => item.MonitoredStopVisit || []);
         for(const row of rows){
           const mvj = row?.MonitoredVehicleJourney || {};
           const call = mvj?.MonitoredCall || {};
@@ -67,6 +68,7 @@
             vehicleAtStop: Boolean(call?.VehicleAtStop)
           });
         }
+        successes += 1;
       }catch(e){ console.error('VHPRATP bus', line.code, e); }
     }
     const seen = new Set();
@@ -122,9 +124,11 @@
       </div>`).join('');
     }
     const directionClass=groups.size>1?' has-multiple-directions':'';
-    return `<div class="line-block vhpratp-line${directionClass}" data-line="${escLocal(line.code)}">
+    const sourceKey = key === 'busJoinville' ? `joinville-${line.code}` : 'breuil201';
+    return `<div class="line-block vhpratp-line${directionClass}" data-line="${escLocal(line.code)}" data-source-region>
       <div class="line-head"><span class="line-pill" style="background:${line.color}">${escLocal(line.code)}</span><span class="line-name">Ligne ${escLocal(line.code)}</span><span class="mini-source">PRIM</span></div>
       ${body}
+      <span class="source-status line-source" data-source-status="${sourceKey}">Chargement…</span>
     </div>`;
   }
 
@@ -134,12 +138,13 @@
     const entries=await Promise.all(JOINVILLE_LINES.map(async line=>[line,await fetchLine(line)]));
     el.classList.toggle('is-stale',entries.some(([,result])=>!result.ok));
     const cards=entries.map(([line,result])=>{
+      window.MobiliDisplay?.markSource(`joinville-${line.code}`, result.ok);
       if(result.ok){
         const html=lineHTML(line,result.rows,'busJoinville',14);
         lastGoodLines.set(`joinville-${line.code}`,html);
         return html;
       }
-      return lastGoodLines.get(`joinville-${line.code}`) || `<div class="line-block vhpratp-line data-unavailable" data-line="${escLocal(line.code)}"><div class="line-head"><span class="line-pill" style="background:${line.color}">${escLocal(line.code)}</span><span class="line-name">Ligne ${escLocal(line.code)}</span></div><div class="bus-data-unavailable">Données momentanément indisponibles</div></div>`;
+      return lastGoodLines.get(`joinville-${line.code}`) || `<div class="line-block vhpratp-line data-unavailable" data-line="${escLocal(line.code)}" data-source-region><div class="line-head"><span class="line-pill" style="background:${line.color}">${escLocal(line.code)}</span><span class="line-name">Ligne ${escLocal(line.code)}</span></div><div class="bus-data-unavailable">Données momentanément indisponibles</div><span class="source-status line-source" data-source-status="joinville-${escLocal(line.code)}">Données indisponibles</span></div>`;
     });
     el.innerHTML=`<div class="access-filter-note">Accès ~12 min + marge 2 min • seuls les départs réellement atteignables sont affichés</div><div class="vhpratp-bus-grid">${cards.join('')}</div>`;
     const count = entries.filter(([, result]) => result.ok).length;
@@ -159,7 +164,7 @@
     window.MobiliDisplay?.markSource('breuil201', result.ok);
   }
 
-  async function refreshVHPRATPBus(){
+  async function refreshVHPRATPBus(){if(document.hidden)return;
     if(refreshInFlight) return;
     refreshInFlight = true;
     try { await Promise.allSettled([renderJoinville(),renderBreuil201()]); }

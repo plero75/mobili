@@ -113,6 +113,7 @@
   }
 
   async function refreshLocationLayout() {
+    if (document.hidden) return;
     await Promise.allSettled([renderBreuil77(), renderHippodrome()]);
   }
 
@@ -120,5 +121,6 @@
     setTimeout(refreshLocationLayout, 900);
     setInterval(refreshLocationLayout, 60 * 1000);
   });
+  window.refreshLocationLayout = refreshLocationLayout;
 })();
 
