@@ -45,10 +45,11 @@
     for(const ref of line.refs){
       const target = `https://prim.iledefrance-mobilites.fr/marketplace/stop-monitoring?MonitoringRef=${encodeURIComponent(ref)}&LineRef=${encodeURIComponent(line.line)}`;
       try{
-        const res = await fetch(PROXY_URL + encodeURIComponent(target));
+        const res = await fetch(PROXY_URL + encodeURIComponent(target), { signal: AbortSignal.timeout(15000) });
         if(!res.ok) continue;
-        successes += 1;
         const data = await res.json();
+        if (!window.MobiliDisplay?.isStopResponse(data)) continue;
+        successes += 1;
         const rows = data?.Siri?.ServiceDelivery?.StopMonitoringDelivery?.[0]?.MonitoredStopVisit || [];
         for(const row of rows){
           const mvj = row?.MonitoredVehicleJourney || {};
@@ -61,6 +62,7 @@
             time,
             aimed: call?.AimedDepartureTime || call?.AimedArrivalTime || null,
             expected: call?.ExpectedDepartureTime || call?.ExpectedArrivalTime || null,
+            monitored: mvj?.Monitored !== false,
             status: String(call?.DepartureStatus || call?.ArrivalStatus || 'onTime').toLowerCase(),
             vehicleAtStop: Boolean(call?.VehicleAtStop)
           });
@@ -79,14 +81,14 @@
   function reachable(rows, key, fallback){
     const threshold = thresholdFor(key, fallback);
     return rows.filter(v => {
-      const m = minutesUntil(v.time);
-      if(m == null) return false;
-      return m >= threshold;
+      return window.MobiliDisplay.isDepartureReachable(v.time, threshold);
     }).sort((a,b)=>new Date(a.time)-new Date(b.time));
   }
 
   function statusLabel(v){
     if(v.status === 'cancelled') return '<span class="status cancelled">SUPPRIMÉ</span>';
+    if(v.status === 'missed') return '<span class="status cancelled">ARRÊT NON DESSERVI</span>';
+    if(!v.expected || v.monitored === false) return '<span class="status na">HORAIRE THÉORIQUE</span>';
     if(v.status === 'delayed') return '<span class="status delayed">RETARD</span>';
     if(v.vehicleAtStop) return '<span class="status ok">À QUAI</span>';
     return '<span class="status ok">TEMPS RÉEL</span>';
@@ -95,7 +97,7 @@
   function passageHTML(v, first){
     const m = minutesUntil(v.time);
     const imminent = m != null && m <= 1 && v.status !== 'cancelled';
-    return `<div class="passage ${first?'first-reachable':''} ${imminent?'imminent':''}">
+    return `<div class="passage ${first?'first-reachable':''} ${imminent?'imminent':''}" data-departure-at="${escLocal(v.time)}" data-cancelled="${v.status==='cancelled'}">
       ${first?'<div class="reachable-label">1ER DÉPART</div>':''}
       <div class="departure-clock">${escLocal(hhmm(v.time))}</div>
       <div class="departure-wait">${v.status==='cancelled'?'Supprimé':(imminent?'Imminent':`dans ${Math.max(0,m)} min`)}</div>
@@ -112,7 +114,7 @@
     }
     let body='';
     if(!filtered.length){
-      body='<div class="bus-no-reachable">Aucun départ atteignable</div>';
+      body='<div class="bus-no-reachable">Aucun départ atteignable annoncé</div>';
     }else{
       body=[...groups.entries()].slice(0,2).map(([dest,items])=>`<div class="bus-direction-row">
         <div class="direction">→ ${escLocal(dest)}</div>
@@ -140,6 +142,8 @@
       return lastGoodLines.get(`joinville-${line.code}`) || `<div class="line-block vhpratp-line data-unavailable" data-line="${escLocal(line.code)}"><div class="line-head"><span class="line-pill" style="background:${line.color}">${escLocal(line.code)}</span><span class="line-name">Ligne ${escLocal(line.code)}</span></div><div class="bus-data-unavailable">Données momentanément indisponibles</div></div>`;
     });
     el.innerHTML=`<div class="access-filter-note">Accès ~12 min + marge 2 min • seuls les départs réellement atteignables sont affichés</div><div class="vhpratp-bus-grid">${cards.join('')}</div>`;
+    const count = entries.filter(([, result]) => result.ok).length;
+    window.MobiliDisplay?.markSource('joinville', count > 0, { partial: count < JOINVILLE_LINES.length, coverage: `${count}/${JOINVILLE_LINES.length} lignes` });
   }
 
   async function renderBreuil201(){
@@ -152,6 +156,7 @@
     if(result.ok){line201=lineHTML(BREUIL_201,result.rows,'breuil',9);lastGoodLines.set('breuil-201',line201);}
     else line201=lastGoodLines.get('breuil-201') || `<div class="line-block vhpratp-line data-unavailable" data-line="201"><div class="line-head"><span class="line-pill" style="background:${BREUIL_201.color}">201</span><span class="line-name">Ligne 201</span></div><div class="bus-data-unavailable">Données momentanément indisponibles</div></div>`;
     el.innerHTML=`<div class="access-filter-note">Accès ~7 min + marge 2 min • seuls les départs réellement atteignables sont affichés</div>${line201}${existing77}`;
+    window.MobiliDisplay?.markSource('breuil201', result.ok);
   }
 
   async function refreshVHPRATPBus(){
@@ -167,3 +172,4 @@
     setInterval(refreshVHPRATPBus,60*1000);
   });
 })();
+

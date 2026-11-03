@@ -54,6 +54,7 @@
   function renderBanner(){
     const banner=document.getElementById("traffic-banner");if(!banner)return;
     const active=[...state.entries()].filter(([,msgs])=>msgs.length);
+    const coverage = lastRefreshCoverage < Object.keys(LINES).length ? ` · couverture partielle ${lastRefreshCoverage}/${Object.keys(LINES).length} lignes` : '';
     if(!active.length){
       if(!lastSuccessfulRefresh){banner.className="traffic-banner neutral";banner.textContent="Information trafic momentanément indisponible";return;}
       if(lastRefreshCoverage<Object.keys(LINES).length){banner.className="traffic-banner neutral";banner.textContent=`Information trafic partielle • ${lastRefreshCoverage}/${Object.keys(LINES).length} lignes actualisées`;return;}
@@ -62,7 +63,7 @@
     if(lastRefreshCoverage===0){banner.className="traffic-banner warn";banner.textContent=`Dernière information connue • ${active.slice(0,2).map(([code,msgs])=>compactSummary(code,msgs[0])).join("   •   ")}`;return;}
     const critical=active.some(([,msgs])=>alertClass(msgs.join(" "))==="critical");
     banner.className=`traffic-banner ${critical?"alert":"warn"}`;
-    banner.textContent=`⚠ ${active.slice(0,3).map(([code,msgs])=>compactSummary(code,msgs[0])).join("   •   ")}`;
+    banner.textContent=`⚠ ${active.slice(0,3).map(([code,msgs])=>compactSummary(code,msgs[0])).join("   •   ")}${coverage}`;
   }
   async function refreshTrafficFixed(){
     if(refreshInFlight)return;
@@ -76,6 +77,7 @@
       lastRefreshCoverage=successes;
       if(successes)lastSuccessfulRefresh=new Date();
       renderBanner();applyInlineAlerts();
+      window.MobiliDisplay?.markSource('traffic', successes > 0, { partial: successes < Object.keys(LINES).length, coverage: `${successes}/${Object.keys(LINES).length} lignes` });
     }finally{refreshInFlight=false;}
   }
   window.refreshTrafficFixed=refreshTrafficFixed;
@@ -84,3 +86,4 @@
     const root=document.querySelector(".location-dashboard");if(root){let timer=null;new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(applyInlineAlerts,100);}).observe(root,{childList:true,subtree:true});}
   });
 })();
+

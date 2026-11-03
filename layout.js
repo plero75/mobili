@@ -62,7 +62,7 @@
 
   async function loadPrimStop(stop) {
     const data = await fetchStop(stop.ref);
-    if (!data) return null;
+    if (!data || !window.MobiliDisplay?.isStopResponse(data)) return null;
     const visits = parseVisits(data);
     return primBusLineHTML(stop, visits);
   }
@@ -81,10 +81,11 @@
     const target = $id("hippodrome-stop-view");
     if (!target) return;
     const html = await loadPrimStop(EXTRA_PRIM_STOPS.HIPPODROME);
-    if (!html) { keepOrShowError(target, "hippodrome", "Temps réel momentanément indisponible"); return; }
+    if (!html) { keepOrShowError(target, "hippodrome", "Temps réel momentanément indisponible"); window.MobiliDisplay?.markSource('hippodrome', false); return; }
     lastGood.set("hippodrome", html);
     target.classList.remove("is-stale");
     target.innerHTML = html;
+    window.MobiliDisplay?.markSource('hippodrome', true);
   }
 
   async function renderBreuil77() {
@@ -102,11 +103,13 @@
       const cached = lastGood.get("breuil77");
       if (cached) { slot.innerHTML = cached; slot.classList.add("is-stale"); }
       else slot.innerHTML = `<div class="line-block"><div class="error-state">Ligne 77 : temps réel momentanément indisponible</div></div>`;
+      window.MobiliDisplay?.markSource('breuil77', false);
       return;
     }
     lastGood.set("breuil77", html);
     slot.classList.remove("is-stale");
     slot.innerHTML = html;
+    window.MobiliDisplay?.markSource('breuil77', true);
   }
 
   async function refreshLocationLayout() {
@@ -118,3 +121,4 @@
     setInterval(refreshLocationLayout, 60 * 1000);
   });
 })();
+
