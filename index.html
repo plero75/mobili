@@ -3,101 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#071526">
-  <meta name="description" content="Prochains départs accessibles depuis l’hippodrome Paris-Vincennes : RER A, bus, Vélib’ et informations trafic.">
-  <title>Mobilité – Hippodrome Paris-Vincennes</title>
-  <link rel="stylesheet" href="mobili-display.css?v=20261017-review2">
+  <meta name="theme-color" content="#0a2535">
+  <meta name="description" content="Les prochains départs atteignables depuis l’hippodrome Paris-Vincennes : RER A, bus, Vélib’ et informations trafic.">
+  <title>Votre retour · Hippodrome Paris-Vincennes</title>
+  <link rel="stylesheet" href="mobili-display.css?v=20261103-departures5">
 </head>
 <body>
-  <header class="topbar tv-topbar">
-    <div class="brand">
-      <div class="brand-mark" aria-hidden="true">VH</div>
-      <div>
-        <div class="title">Mobilité – Hippodrome Paris‑Vincennes</div>
-        <div class="subtitle">Horaires atteignables à pied depuis l’hippodrome · mise à jour automatique</div>
-      </div>
-    </div>
-    <div class="header-weather" aria-label="Météo">
-      <span id="weather-emoji" class="weather-emoji">—</span>
-      <span id="weather-temp" class="weather-temp">--°</span>
-      <span id="weather-desc" class="muted">Indisponible</span>
-    </div>
-    <div class="now">
-      <div id="clock">--:--</div>
-      <div id="lastUpdate" class="muted">Maj --:--</div>
-    </div>
+  <a class="skip-link" href="#departures">Aller aux départs</a>
+  <svg class="icon-definitions" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="walk" viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="m7 12 3-4 4 1 3 4h3M10 9l-1 7-4 5m5-8 5 4 1 5"/></symbol>
+    <symbol id="bike" viewBox="0 0 24 24"><circle cx="5" cy="16" r="4"/><circle cx="19" cy="16" r="4"/><path d="m5 16 5-9 5 9H5m5-9H7m5 0h4l3 9m-5-13h3"/></symbol>
+  </defs></svg>
+  <header class="topbar">
+    <div class="brand"><h1>Les prochains départs</h1><p>Hippodrome Paris-Vincennes</p></div>
+    <div class="header-weather" aria-label="Météo sur place"><span id="weather-emoji" hidden></span><strong id="weather-temp">—°</strong><span id="weather-desc">Météo en attente</span><span class="source-status" data-source-status="weather">Chargement…</span></div>
+    <div class="now"><time id="clock">—:—</time><span>Heure de Paris</span></div>
   </header>
-
-  <aside class="news-strip" aria-label="Actualités France Info">
-    <span class="news-label">FRANCE INFO</span>
-    <div id="news-carousel" class="news-carousel">Chargement des actualités…</div>
+  <aside class="traffic-strip" aria-label="État du trafic" data-source-region>
+    <div id="traffic-banner" class="traffic-banner neutral" role="status" aria-live="polite">Vérification de l’information trafic…</div>
+    <span class="source-status" data-source-status="traffic">Chargement…</span>
   </aside>
-
-  <div id="traffic-banner" class="traffic-banner neutral" role="status" aria-live="polite">Vérification des perturbations PRIM…</div>
-
-  <main class="dashboard location-dashboard">
-    <section class="panel panel-joinville location-card">
-      <div class="panel-heading location-heading">
-        <div><h1>Joinville-le-Pont</h1><p>RER A et bus • temps réel PRIM • accès ~12 min</p></div>
-        <span class="source-badge">PRIM</span>
-      </div>
-      <div class="joinville-grid">
-        <div class="joinville-rer">
-          <div class="subhead"><span class="line-pill rer-pill">A</span><strong>RER A</strong><span class="mini-source">TEMPS RÉEL</span></div>
-          <div id="rer-body" class="transport-board" aria-live="off">Chargement des prochains RER…</div>
-        </div>
-        <div class="joinville-bus">
-          <div class="subhead"><strong>Bus à Joinville</strong><span class="mini-source">TEMPS RÉEL PRIM</span></div>
-          <div id="joinville-bus-view">Chargement PRIM…</div>
-        </div>
-        <div class="joinville-route" aria-hidden="true">
-          <div id="best-route"></div>
-        </div>
-      </div>
+  <main id="departures" class="dashboard location-dashboard">
+    <div class="main-transports">
+    <section class="panel panel-rer" aria-labelledby="rer-title" data-access-minutes="14" data-source-region>
+      <div class="panel-heading"><div><h2 id="rer-title"><span class="rer-sign">RER <b>A</b></span> Joinville-le-Pont</h2><span class="source-status" data-source-status="rer">Chargement…</span></div><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>12 min à pied</span></div>
+      <div id="rer-body" class="transport-board" aria-live="off"><p class="loading-state">Recherche des prochains départs…</p></div>
+      <p class="access-caption">Départs atteignables à pied, avec 2 min de marge.</p>
     </section>
-
-    <section class="panel panel-hippodrome location-card">
-      <div class="panel-heading location-heading">
-        <div><h2>Hippodrome de Vincennes</h2><p>Bus 77 • accès ~4 min • deux sens</p></div>
-        <span class="source-badge">PRIM</span>
-      </div>
-      <div id="hippodrome-stop-view" class="location-stop-view">Chargement PRIM…</div>
+    <section class="panel panel-joinville-bus" aria-labelledby="joinville-bus-title" data-access-minutes="14" data-source-region>
+      <div class="panel-heading"><div><h2 id="joinville-bus-title">Les bus à Joinville</h2><span class="source-status" data-source-status="joinville">Chargement…</span></div><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>12 min à pied</span></div>
+      <div id="joinville-bus-view">Recherche des prochains bus…</div>
     </section>
-
-    <section class="panel panel-breuil location-card">
-      <div class="panel-heading location-heading">
-        <div><h2>École du Breuil</h2><p>Bus 77 / 201 • accès ~7 min • deux sens</p></div>
-        <span class="source-badge">PRIM</span>
-      </div>
-      <div id="breuil-bus-view" class="location-stop-view">Chargement PRIM…</div>
-    </section>
-
-    <section class="panel panel-velib">
-      <div class="panel-heading"><div><h2>Vélib’</h2><p>Disponibilités en temps réel</p></div></div>
-      <div class="velib-row">
-        <div id="velib-vincennes" class="context-card">Chargement…</div>
-        <div id="velib-breuil" class="context-card">Chargement…</div>
-      </div>
-    </section>
-
-    <section class="panel panel-courses">
-      <div class="panel-heading"><div><h2>Courses à Vincennes</h2><p>Prochaine réunion</p></div></div>
-      <div id="courses-list" class="courses-board"></div>
-    </section>
+    </div>
+    <div class="support-transports">
+    <div class="nearby-stops">
+      <section class="panel panel-hippodrome" aria-labelledby="hippodrome-title" data-access-minutes="5" data-source-region>
+        <div class="panel-heading"><h2 id="hippodrome-title">Hippodrome de Vincennes</h2><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>4 min</span></div>
+        <div id="hippodrome-stop-view" class="location-stop-view">Recherche des bus 77…</div>
+        <span class="source-status panel-source" data-source-status="hippodrome">Chargement…</span>
+      </section>
+      <section class="panel panel-breuil" aria-labelledby="breuil-title" data-access-minutes="9">
+        <div class="panel-heading"><h2 id="breuil-title">École du Breuil</h2><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>7 min</span></div>
+        <div id="breuil-bus-view" class="location-stop-view">Recherche des bus 201 et 77…</div>
+        <div class="panel-source sources-multiple"><span>201 · <span class="source-status" data-source-status="breuil201">Chargement…</span></span><span>77 · <span class="source-status" data-source-status="breuil77">Chargement…</span></span></div>
+      </section>
+    </div>
+    <div class="local-services">
+      <section class="panel panel-velib" aria-labelledby="velib-title" data-source-region>
+        <div class="panel-heading"><h2 id="velib-title"><svg class="heading-icon" aria-hidden="true"><use href="#bike"/></svg>Vélib’</h2><span class="source-status" data-source-status="velib">Chargement…</span></div>
+        <div class="velib-row"><div id="velib-vincennes" class="context-card">Recherche des vélos à l’hippodrome…</div><div id="velib-breuil" class="context-card">Recherche des vélos au Breuil…</div></div>
+      </section>
+      <section class="panel panel-courses" aria-labelledby="courses-title" data-source-region>
+        <div class="panel-heading"><h2 id="courses-title">Courses à Vincennes</h2><span class="source-status" data-source-status="courses">Chargement…</span></div>
+        <div id="courses-list" class="courses-board"><p class="loading-state">Recherche du programme…</p></div>
+      </section>
+    </div>
+    </div>
   </main>
-
-  <div id="bus-blocks" class="data-stage" aria-hidden="true"></div>
-  <div id="ticker-slot" class="data-stage" aria-hidden="true"></div>
-  <div id="road-list" class="data-stage" aria-hidden="true"></div>
-
-  <footer>Informations indicatives • Transports : Île-de-France Mobilités / PRIM • Vélib’ : OpenData Paris • Courses : PMU</footer>
-  <script src="app.js?v=20261016-tv6"></script>
+  <aside class="news-strip" aria-label="Actualités France Info"><span class="news-label">franceinfo</span><div id="news-carousel" class="news-carousel">Chargement des actualités…</div><span class="source-status" data-source-status="news">Chargement…</span></aside>
+  <footer><span id="connection-status">Actualisation automatique</span><span>Horaires indicatifs · Île-de-France Mobilités / PRIM · Vélib’ / Ville de Paris · PMU</span></footer>
+  <div id="bus-blocks" class="data-stage" aria-hidden="true"></div><div id="ticker-slot" class="data-stage" aria-hidden="true"></div><div id="road-list" class="data-stage" aria-hidden="true"></div><div id="best-route" class="data-stage" aria-hidden="true"></div>
+  <script src="display-state.js?v=20261103-1"></script>
+  <script src="app.js?v=20261103-1"></script>
   <script src="access-filter.js?v=20260904-4"></script>
-  <script src="data-hotfix.js?v=20261016-1"></script>
-  <script src="traffic-hotfix.js?v=20260904-4"></script>
+  <script src="data-hotfix.js?v=20261103-1"></script>
+  <script src="traffic-hotfix.js?v=20261103-1"></script>
   <script src="service-day.js?v=20260904-4"></script>
   <script src="labels.js?v=20260904-4"></script>
-  <script src="layout.js?v=20261016-tv6"></script>
-  <script src="vhpratp-bus.js?v=20261017-review2"></script>
+  <script src="layout.js?v=20261103-1"></script>
+  <script src="vhpratp-bus.js?v=20261103-1"></script>
 </body>
 </html>

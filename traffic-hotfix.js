@@ -21,7 +21,7 @@
     return start.getTime()>now.getTime()+6*60*60*1000;
   }
   function parseMessages(data){const out=[];for(const delivery of (data?.Siri?.ServiceDelivery?.GeneralMessageDelivery||[])){for(const msg of (delivery?.InfoMessage||[])){const t=messageText(msg);if(t&&!startsInFuture(t)&&!out.includes(t))out.push(t);}}return out;}
-  async function fetchLineMessages(code,idfmCode){let received=false;for(const ref of [`STIF:Line::${idfmCode}:`,`STIF:Line::${idfmCode}`]){const data=await fetchJSON(primUrl(`/general-message?LineRef=${encodeURIComponent(ref)}`),12000);if(!data)continue;received=true;const msgs=parseMessages(data);if(msgs.length)return{ok:true,messages:msgs};}return{ok:received,messages:[]};}
+  async function fetchLineMessages(code,idfmCode){for(const ref of [`STIF:Line::${idfmCode}:`,`STIF:Line::${idfmCode}`]){const data=await fetchJSON(primUrl(`/general-message?LineRef=${encodeURIComponent(ref)}`),12000);if(!window.MobiliDisplay?.isMessageResponse(data))continue;return{ok:true,messages:parseMessages(data)};}return{ok:false,messages:[]};}
   function alertClass(text){return /(interrompu|interruption|non desserv|supprim|incident|accident|arrêté|fermée|fermé)/i.test(text)?"critical":"info";}
   function lineLabel(code){return code==="A"?"RER A":`Ligne ${code}`;}
   function desiredAlertHTML(code,messages){return `<strong>INFO TRAFIC ${esc(lineLabel(code).toUpperCase())}</strong><span>${esc(messages[0])}</span>`;}
@@ -54,6 +54,7 @@
   function renderBanner(){
     const banner=document.getElementById("traffic-banner");if(!banner)return;
     const active=[...state.entries()].filter(([,msgs])=>msgs.length);
+    const coverage = lastRefreshCoverage < Object.keys(LINES).length ? ` · couverture partielle ${lastRefreshCoverage}/${Object.keys(LINES).length} lignes` : '';
     if(!active.length){
       if(!lastSuccessfulRefresh){banner.className="traffic-banner neutral";banner.textContent="Information trafic momentanément indisponible";return;}
       if(lastRefreshCoverage<Object.keys(LINES).length){banner.className="traffic-banner neutral";banner.textContent=`Information trafic partielle • ${lastRefreshCoverage}/${Object.keys(LINES).length} lignes actualisées`;return;}
@@ -62,9 +63,9 @@
     if(lastRefreshCoverage===0){banner.className="traffic-banner warn";banner.textContent=`Dernière information connue • ${active.slice(0,2).map(([code,msgs])=>compactSummary(code,msgs[0])).join("   •   ")}`;return;}
     const critical=active.some(([,msgs])=>alertClass(msgs.join(" "))==="critical");
     banner.className=`traffic-banner ${critical?"alert":"warn"}`;
-    banner.textContent=`⚠ ${active.slice(0,3).map(([code,msgs])=>compactSummary(code,msgs[0])).join("   •   ")}`;
+    banner.textContent=`⚠ ${active.slice(0,3).map(([code,msgs])=>compactSummary(code,msgs[0])).join("   •   ")}${coverage}`;
   }
-  async function refreshTrafficFixed(){
+  async function refreshTrafficFixed(){if(document.hidden)return;
     if(refreshInFlight)return;
     refreshInFlight=true;
     let successes=0;
@@ -76,6 +77,7 @@
       lastRefreshCoverage=successes;
       if(successes)lastSuccessfulRefresh=new Date();
       renderBanner();applyInlineAlerts();
+      window.MobiliDisplay?.markSource('traffic', successes > 0, { partial: successes < Object.keys(LINES).length, coverage: `${successes}/${Object.keys(LINES).length} lignes` });
     }finally{refreshInFlight=false;}
   }
   window.refreshTrafficFixed=refreshTrafficFixed;
@@ -84,3 +86,4 @@
     const root=document.querySelector(".location-dashboard");if(root){let timer=null;new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(applyInlineAlerts,100);}).observe(root,{childList:true,subtree:true});}
   });
 })();
+

@@ -56,6 +56,8 @@ test("les horaires 101 de Joinville ne sont pas attribués au Breuil", () => {
 
 test("l’afficheur principal contient la hiérarchie révisée et ses versions", () => {
   assert.match(index, /mobili-display\.css\?v=/);
-  assert.match(tv, /grid-template-rows:1fr 1\.36fr/);
+  assert.equal([...index.matchAll(/<link rel="stylesheet"/g)].length, 1);
+  assert.match(index, /src="display-state\.js\?v=/);
   assert.match(root("vhpratp-bus.js"), /1ER DÉPART/);
 });
+
