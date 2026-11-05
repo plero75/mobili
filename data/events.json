@@ -1,15 +1,17 @@
 {
-  "updatedAt": "2026-09-27T19:44:48.619Z",
+  "updatedAt": "2026-11-05T00:53:17.570Z",
   "source": "https://www.letrot.com/hippodromes/vincennes/7500",
   "events": [
     {
-      "title": "Grand Prix du Portugal",
-      "start": "2026-09-27T00:00:00.000Z",
-      "end": "2026-09-27T00:00:00.000Z",
-      "summary": "Courses, traditions, spectacles, musique, animations gratuites et gastronomie !",
+      "title": "Kermesse Festival x Prix de Bretagne Amérique Races #Q1",
+      "start": "2026-11-22T00:00:00.000Z",
+      "end": "2026-11-22T00:00:00.000Z",
+      "summary": "Vivez un dimanche unique entre frissons de la compétition, spectacle autour de la piste, animations et gastronomie !",
       "url": "https://www.letrot.com/hippodromes/vincennes/7500",
-      "image": "hippodrome-vincennes-format-hd-sans-texte-1920x1080-6a86cf15d1ee5262193431.jpg"
+      "image": "les-hivernales-2026-digital-1920x1080-illustr-6aeb44cc85dda067424020.jpg"
     }
   ],
-  "errors": []
+  "errors": [
+    "TypeError: fetch failed"
+  ]
 }
