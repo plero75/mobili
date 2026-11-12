@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-12T07:04:17.452Z",
+  "updatedAt": "2026-11-12T16:46:05.830Z",
   "source": "https://www.letrot.com/hippodromes/vincennes/7500",
   "events": [
     {
@@ -17,6 +17,14 @@
       "summary": "Vivez en grand les Championnats du Monde de Sulky !",
       "url": "https://www.letrot.com/hippodromes/vincennes/7500",
       "image": "1920x1080-6aec53b181110745273568.jpg"
+    },
+    {
+      "title": "Finale du Grand National du Trot",
+      "start": "2026-12-06T00:00:00.000Z",
+      "end": "2026-12-06T00:00:00.000Z",
+      "summary": "La Fête des Régions à Paris",
+      "url": "https://www.letrot.com/hippodromes/vincennes/7500",
+      "image": "1920x1080-6af58aaf17667188758015.jpg"
     }
   ],
   "errors": []
