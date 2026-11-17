@@ -10,13 +10,11 @@
   let lastGoodCoursesMarkup = "";
   let lastGoodCoursesUpdate = null;
 
-  const shortTime = date => date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  const shortTime = date => date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" });
 
   function setPanelStatus(selector, normalText, ok, lastUpdate) {
-    const label = document.querySelector(`${selector} .panel-heading p`);
-    if (!label) return;
-    label.textContent = ok ? normalText : (lastUpdate ? `${normalText} • dernière donnée ${shortTime(lastUpdate)}` : `${normalText} • données indisponibles`);
-    label.classList.toggle("stale-label", !ok);
+    const key = selector === '.panel-courses' ? 'courses' : 'velib';
+    window.MobiliDisplay?.markSource(key, ok);
   }
 
   async function getJSONCandidates(urls, timeout = 12000) {
@@ -45,6 +43,7 @@
   }
 
   async function refreshVelibFixed() {
+    if (document.hidden) return;
     const stations = await fetchVelibParis();
     const cache = {};
     let updated = 0;
@@ -58,6 +57,7 @@
         const cached = lastGoodVelibMarkup.get(key);
         if (cached) { el.innerHTML = cached; el.classList.add("is-stale"); }
         else el.innerHTML = `<div class="velib-name">${esc(target.label)}</div><div class="velib-value unavailable">Données momentanément indisponibles</div><div class="muted">Nouvelle tentative automatique</div>`;
+        window.MobiliDisplay?.markSource(`velib-${key.toLowerCase()}`, false);
         continue;
       }
       const mechanical = Number(st?.mechanical || 0);
@@ -70,21 +70,22 @@
         <div class="velib-name">${esc(text(st?.name || target.label))}</div>
         <div class="velib-value">${renting ? `<strong>${total}</strong> vélos disponibles` : "Service suspendu"}</div>
         <div class="velib-breakdown"><span>Classiques <strong>${mechanical}</strong></span><span>Électriques <strong>${electric}</strong></span><span>Places <strong>${docks}</strong></span></div>
-        <div class="muted">Station ${esc(target.publicCode)}</div>`;
+        <div class="muted source-status" data-source-status="velib-${key.toLowerCase()}">Chargement…</div>`;
       lastGoodVelibMarkup.set(key, markup);
       el.classList.remove("is-stale");
       el.innerHTML = markup;
+      window.MobiliDisplay?.markSource(`velib-${key.toLowerCase()}`, true);
       updated += 1;
     }
     if (updated) {
       cachedVelib = { ...(cachedVelib || {}), ...cache };
       lastGoodVelibUpdate = updateTime;
     }
-    setPanelStatus(".panel-velib", "Disponibilités en temps réel", updated === Object.keys(VELIB_TARGETS).length, lastGoodVelibUpdate);
+    window.MobiliDisplay?.markSource('velib', updated > 0, { partial: updated < Object.keys(VELIB_TARGETS).length, coverage: `${updated}/2 stations` });
   }
 
   const pmuDateKey = date => `${String(date.getDate()).padStart(2, "0")}${String(date.getMonth() + 1).padStart(2, "0")}${date.getFullYear()}`;
-  const pmuDateLabel = date => date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+  const pmuDateLabel = date => date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" });
 
   function parsePmuDate(value) {
     if (value == null) return null;
@@ -128,6 +129,7 @@
   }
 
   async function refreshCoursesFixed() {
+    if (document.hidden) return;
     if (coursesRefreshInFlight) return;
     coursesRefreshInFlight = true;
     try {
@@ -169,7 +171,7 @@
         const dt = parsePmuDate(c?.heureDepart || c?.heureDepartCourse || c?.dateDepart);
         if (!dt) return;
         if (selected.offset === 0 && dt.getTime() < Date.now() - 5 * 60 * 1000) return;
-        rows.push({ date: dt, time: dt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }), name: text(c?.libelle || c?.libelleCourt || c?.nom || `Course ${index + 1}`), number: c?.numOrdre || c?.numero || index + 1 });
+        rows.push({ date: dt, time: dt.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" }), name: text(c?.libelle || c?.libelleCourt || c?.nom || `Course ${index + 1}`), number: c?.numOrdre || c?.numero || index + 1 });
       });
     });
     rows.sort((a, b) => a.date - b.date);
@@ -209,3 +211,4 @@
     setInterval(refreshCoursesFixed, 5 * 60 * 1000);
   });
 })();
+
