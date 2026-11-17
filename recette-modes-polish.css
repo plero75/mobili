@@ -8,10 +8,10 @@
   --recipe-ink: var(--ink);
   --recipe-muted: var(--ink-muted);
   --recipe-border: var(--line);
-  --recipe-focus: #075da8;
+  --recipe-focus: #64B5E5;
 }
 :focus-visible { outline: 4px solid var(--recipe-focus); outline-offset: 3px; }
-::selection { background:#bbebfa; color:#071e44; }
+::selection { background:#64B5E5; color:#000000; }
 #app,.screen { font-variant-numeric: tabular-nums; }
 .screen h1,.screen h2,.screen h3 { text-wrap:balance; }
 .workspace { min-height:0; }
@@ -159,7 +159,7 @@
 .rail-row .rail-main strong,.rail-row .rail-main span {text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
 /* Mobilité : le tableau transporte de longues destinations et annotations. */
 .idfm-board .iv-body,.idfm-board .iv-departures,.idfm-board .iv-sidebar {min-width:0;min-height:0}
-.idfm-board .iv-direction strong,.idfm-board .iv-direction small {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.idfm-board .iv-direction strong,.idfm-board .iv-direction small {overflow-wrap:break-word;white-space:normal}
 .idfm-board .iv-rer-times span {min-width:0}
 .idfm-board .iv-bus-row {min-width:0}
 .idfm-board .iv-traffic-item p {overflow-wrap:break-word}

@@ -1,0 +1,8 @@
+/* Objets graphiques officiels, indépendants de la composition de chaque écran. */
+.idfm-symbol { display:inline-block; width:44px; height:44px; object-fit:contain; flex:none; vertical-align:middle; }
+.idfm-symbol.traffic-symbol { width:34px; height:34px; }
+.mode-badge:has(.idfm-symbol),.iv-mode:has(.idfm-symbol) { display:inline-flex; padding:0; border:0; background:transparent; border-radius:0; }
+.mode-badge .idfm-symbol { width:100%; height:100%; }
+.line-badge.bus { color:var(--ink); background:var(--panel); border:2px solid var(--ink); }
+.line-badge.rer,.rer-pill,.iv-line-a { background:#FFFFFF url('assets/idfm/rer-a.svg') center/contain no-repeat; color:transparent; border:0; border-radius:0; }
+.iv-header .idfm-symbol,.topbar .idfm-symbol { width:44px; height:44px; }

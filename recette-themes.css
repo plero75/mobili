@@ -36,9 +36,9 @@
 /* ScreenHeader : titre, météo, heure et réunion lisibles dans les deux thèmes
    (une ancienne règle les écrivait en blanc sur l'en-tête blanc du quai). */
 .header .page-title strong,
-.header .meta-value { color: var(--ink) !important; }
+.header .meta-value { color: var(--ink-on-ground) !important; }
 .header .page-title span,
-.header .meta-label { color: var(--ink-muted) !important; }
+.header .meta-label { color: var(--ink-on-ground) !important; }
 
 /* ---------- Quai RATP : vue sortie ---------- */
 [data-mode="sortie"] .exit-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
@@ -57,9 +57,9 @@
 
 [data-mode="sortie"] .rer-departures { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
 [data-mode="sortie"] .rer-departure { padding: 20px 22px !important; background: var(--panel-soft) !important; background-image: none !important; border: 1px solid var(--line) !important; border-radius: var(--radius-panel) !important; box-shadow: none !important; }
-[data-mode="sortie"] .rer-departure.best { border: 2px solid var(--accent) !important; }
+[data-mode="sortie"] .rer-departure.best { border:1px solid var(--ink) !important; }
 [data-mode="sortie"] .rer-departure > div:first-child { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
-[data-mode="sortie"] .rer-departure .hour { padding: 4px 12px 6px; background: var(--time-bg); color: var(--time) !important; border-radius: var(--radius-panel); font-size: 64px; line-height: .95; font-weight: 900; }
+[data-mode="sortie"] .rer-departure .hour { padding: 4px 12px 6px; background: var(--time-bg); color: var(--time) !important; border-radius: var(--radius-panel); font-size: 64px; line-height: 1; font-weight: 700; }
 [data-mode="sortie"] .rer-departure .delay { color: var(--ink) !important; font-size: 20px; font-weight: 800; }
 [data-mode="sortie"] .rer-departure h3 { margin: 16px 0 4px; color: var(--ink) !important; font-size: 22px; line-height: 1.15; }
 [data-mode="sortie"] .rer-departure p { margin: 0; color: var(--ink-muted) !important; font-size: 15px; }
@@ -223,7 +223,7 @@
 }
 
 /* Carte routière : fond et libellés du thème */
-[data-theme="dark"] .road-map { background: var(--ground) !important; border-radius: var(--radius-panel); }
+[data-theme="dark"] .road-map { background: var(--panel) !important; border-radius: var(--radius-panel); }
 [data-theme="dark"] .road-map text { fill: var(--ink); }
 [data-theme="dark"] .road-map .muted-road { stroke: var(--line); }
 
@@ -284,3 +284,17 @@
 /* Filet de sécurité : fonds d'écran et panneaux en aplat de surface */
 .screen, #app, .workspace { background-image: none !important; }
 .panel, .rer-departure, .alternative-card, .bus-main, .velib-main { background-image: none !important; }
+
+/* Signalétique commune des deux familles de modes : le fond noir porte les titres,
+   les panneaux blancs portent les valeurs. Les secondes valeurs restent en Regular. */
+.header .meta-icon { color:var(--ink-on-ground); }
+.header .meta { border-color:var(--idfm-gray); }
+.header::after { display:none; }
+.exit-head p { color:var(--ink-on-ground) !important; }
+.rer-departure:not(.best) .hour,.bus-main .passages span b { font-weight:400; }
+.mode-badge:has(.idfm-symbol) { border:0; background:transparent; }
+.line-badge.bus { background:var(--panel); color:var(--ink); border-color:var(--ink); }
+.incident-banner { color:var(--ink-on-ground); }
+.incident-banner .mode-badge,.incident-banner .line-badge.bus { background:#FFFFFF; color:#000000; }
+.screen .incident-source { color:var(--ink-muted); }
+.screen .big-time,.screen .big-count { font-weight:700; letter-spacing:0; }

@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0a2535">
+  <meta name="theme-color" content="#000000">
   <meta name="description" content="Les prochains départs atteignables depuis l’hippodrome Paris-Vincennes : RER A, bus, Vélib’ et informations trafic.">
   <title>Votre retour · Hippodrome Paris-Vincennes</title>
-  <link rel="stylesheet" href="mobili-display.css?v=20261103-departures5">
+  <link rel="stylesheet" href="mobili-display.css?v=20261117-idfm2">
 </head>
 <body>
   <a class="skip-link" href="#departures">Aller aux départs</a>
@@ -26,7 +26,7 @@
   <main id="departures" class="dashboard location-dashboard">
     <div class="main-transports">
     <section class="panel panel-rer" aria-labelledby="rer-title" data-access-minutes="14" data-source-region>
-      <div class="panel-heading"><div><h2 id="rer-title"><span class="rer-sign">RER <b>A</b></span> Joinville-le-Pont</h2><span class="source-status" data-source-status="rer">Chargement…</span></div><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>12 min à pied</span></div>
+      <div class="panel-heading"><div><h2 id="rer-title"><span class="rer-sign"><img class="idfm-symbol" src="assets/idfm/rer.svg" alt="RER"><b>A</b></span> Joinville-le-Pont</h2><span class="source-status" data-source-status="rer">Chargement…</span></div><span class="walk-badge"><svg aria-hidden="true"><use href="#walk"/></svg>12 min à pied</span></div>
       <div id="rer-body" class="transport-board" aria-live="off"><p class="loading-state">Recherche des prochains départs…</p></div>
       <p class="access-caption">Départs atteignables à pied, avec 2 min de marge.</p>
     </section>
@@ -72,5 +72,6 @@
   <script src="labels.js?v=20260904-4"></script>
   <script src="layout.js?v=20261103-1"></script>
   <script src="vhpratp-bus.js?v=20261103-1"></script>
+  <script src="display-pages.js?v=20261117-idfm2"></script>
 </body>
 </html>

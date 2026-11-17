@@ -867,8 +867,8 @@
     const arrival = IV.onward(next, /chatelet/);
     const alert = IV.fresh(health.trafficA) && state.incidents.A.some(isMajorNow);
     set('.mob-route-chatelet', alert ? 'RER A : vérifier la perturbation avant de partir' : next ? `Via Joinville · RER A à ${fmtTime(next.when)}` : 'Via Joinville · prochain RER non confirmé');
-    set('.mob-route-chatelet-time', !alert && next && arrival && new Date(arrival.time) > new Date(next.when) ? `Arrivée publiée à ${fmtTime(arrival.time)}${next.monitored ? '' : ' (théorique)'} · marge de correspondance incluse` : 'Durée totale non confirmée : consulter le calculateur IDFM.');
-    set('.iv-source-summary', '¹ Marche estimée, à valider sur site · Mise à jour automatique 30 s · IDFM / PRIM');
+    set('.mob-route-chatelet-time', !alert && next && arrival && new Date(arrival.time) > new Date(next.when) ? `Arrivée publiée à ${fmtTime(arrival.time)}${next.monitored ? '' : ' (théorique)'} · marge de correspondance incluse` : 'Durée totale non confirmée : consulter le calculateur Île-de-France Mobilités.');
+    set('.iv-source-summary', '¹ Marche estimée, à valider sur site · Mise à jour automatique 30 s · Île-de-France Mobilités / PRIM');
   }
 
   function render() {

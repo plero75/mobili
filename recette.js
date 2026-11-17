@@ -22,8 +22,8 @@ const header = ({time='15:32', weather='21°C', weatherLabel='Ensoleillé', date
   </header>`;
 
 const modeId = (kind, line) => kind === 'rer'
-  ? `<div class="transport-id"><span class="mode-badge">RER</span><span class="line-badge round rer">${line}</span></div>`
-  : `<div class="transport-id"><span class="mode-badge">BUS</span><span class="line-badge bus">${line}</span></div>`;
+  ? `<div class="transport-id"><span class="mode-badge"><img class="idfm-symbol" src="assets/idfm/rer.svg" alt="RER"></span><span class="line-badge round rer">${line}</span></div>`
+  : `<div class="transport-id"><span class="mode-badge"><img class="idfm-symbol" src="assets/idfm/bus.svg" alt="Bus"></span><span class="line-badge bus">${line}</span></div>`;
 
 const walk = (text) => `<div class="walk">${icons.walk}<span>${text}</span></div>`;
 
@@ -211,19 +211,19 @@ const mobilityBoard = () => `
     </header>
     <div class="iv-body">
       <section class="iv-departures" aria-label="Prochains passages des bus">
-        <h2><span class="iv-mode">BUS</span> Bus à proximité <span class="iv-update">Chargement des flux</span></h2>
+        <h2><span class="iv-mode"><img class="idfm-symbol" src="assets/idfm/bus.svg" alt="Bus"></span> Bus à proximité <span class="iv-update">Chargement des flux</span></h2>
         <div class="iv-columns"><span>Ligne · destination · arrêt</span><span>1er passage</span><span>2e passage</span></div>
         <div id="iv-bus-rows"></div>
         <p class="iv-legend">* Horaire théorique · Attentes calculées à l’arrêt, hors temps de marche.</p>
         <section class="iv-rer" aria-label="Prochains RER à Joinville-le-Pont">
-          <h2><span class="iv-mode">RER</span><span class="iv-line iv-line-a">A</span> Joinville-le-Pont</h2>
+          <h2><span class="iv-mode"><img class="idfm-symbol" src="assets/idfm/rer.svg" alt="RER"></span><span class="iv-line iv-line-a">A</span> Joinville-le-Pont</h2>
           <p class="iv-access">Depuis porte C : environ 12 min à pied + 2 min de marge. Estimation à valider sur site.</p>
           <div id="iv-rer-rows"></div>
         </section>
       </section>
       <aside class="iv-sidebar">
         <section class="iv-traffic" aria-label="Information trafic">
-          <h2>Information trafic</h2>
+          <h2><img class="idfm-symbol traffic-symbol" src="assets/idfm/info-trafic.svg" alt=""> Information trafic</h2>
           <div id="iv-traffic-messages" aria-live="polite">Vérification des informations…</div>
           <a href="https://www.iledefrance-mobilites.fr/" target="_blank" rel="noopener">Plus d’informations : Île-de-France Mobilités</a>
         </section>
@@ -237,7 +237,7 @@ const mobilityBoard = () => `
         <article><h2>Rejoindre Châtelet–Les Halles</h2><strong class="mob-route-chatelet">Via Joinville-le-Pont · RER A vers Paris</strong><p class="mob-route-chatelet-time">Horaire d’arrivée non disponible.</p></article>
       </section>
     </div>
-    <footer class="iv-footer"><span class="iv-source-summary">PRIM / IDFM · Vélib’ · Open-Meteo</span><nav aria-label="Navigation des écrans"><a href="?mode=arrivee">Accueil</a><a href="?mode=sortie">Sortie</a><a href="?mode=mobilite" aria-current="page">Mobilité</a><button type="button" id="iv-fullscreen" aria-pressed="false">Plein écran</button></nav></footer>
+    <footer class="iv-footer"><span class="iv-source-summary">Île-de-France Mobilités / PRIM · Vélib’ · Open-Meteo</span><nav aria-label="Navigation des écrans"><a href="?mode=arrivee">Accueil</a><a href="?mode=sortie">Sortie</a><a href="?mode=mobilite" aria-current="page">Mobilité</a><button type="button" id="iv-fullscreen" aria-pressed="false">Plein écran</button></nav></footer>
   </section>`;
 
 const noRaceEvent = () => `
