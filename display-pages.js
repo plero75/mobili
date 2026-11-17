@@ -12,7 +12,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     const view = document.getElementById('joinville-bus-view');
     if (!view) return;
-    const tv = window.matchMedia('(min-width:1200px) and (min-height:680px) and (orientation:landscape)');
+    const tv = window.matchMedia('(min-width:1100px) and (min-height:680px) and (orientation:landscape)');
     const startedAt = performance.now();
     function renderPage() {
       const grid = view.querySelector('.vhpratp-bus-grid');

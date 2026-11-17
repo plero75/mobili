@@ -66,3 +66,5 @@
 
 - Tâches 1 et 2 réalisées. Revue statique : corrections des SVG A, contrastes et carte routière ; les pages TV de quatre lignes remplacent la grille trop dense. Tests de pagination écrits et vus en échec avant implémentation.
 - Tâche 3 : contrôle visuel bloqué par Computer Use (URL Windows non identifiable), aucun contournement ; livraison prévue en PR brouillon, sans promotion en production.
+
+- Main a évolué pendant le travail : intégration du commit 646ce68 (PR #5). Structure index et contrôleur de fraîcheur conservés ; 28 tests réussis et vérification de 28 ressources / 13 scripts après résolution.

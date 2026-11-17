@@ -2,10 +2,14 @@
 
 Date : 17 novembre 2026. Branche : `codex/idfm-afficheurs`.
 
+## Synchronisation de la base
+
+La PR #5 a été fusionnée dans main pendant ce travail. La refonte a été réconciliée avec le commit `646ce68` : nouvelle structure HTML, scripts de suivi des sources et tests métier préservés. Le thème a été appliqué à cette nouvelle version du tableau permanent.
+
 ## Résultat établi
 
-- 18 tests Node réussis : 15 tests existants de données et de scènes, 3 tests nouveaux sur la couverture des lignes par pagination.
-- `npm run check:ui` : 2 pages, 27 ressources locales et 12 scripts vérifiés. Le vérificateur parcourt les imports CSS, les images statiques et les fichiers de polices.
+- 28 tests Node réussis : 25 tests existants de données et de scènes, 3 tests nouveaux sur la couverture des lignes par pagination.
+- `npm run check:ui` : 2 pages, 28 ressources locales et 13 scripts vérifiés. Le vérificateur parcourt les imports CSS, les images statiques et les fichiers de polices.
 - Contrôle négatif : retirer temporairement la police Bold fait échouer le vérificateur avec le nom de la ressource manquante ; fichier restauré ensuite et contrôle positif réussi.
 - Tokens régénérés depuis `design/tokens.json`. Trois polices IDF Voyageur WOFF locales ; quatre SVG officiels conservés et attribués dans `assets/idfm/README.md`.
 - Revue statique indépendante : défauts de cascade des indices A, contraste des badges et carte routière corrigés. La grille TV alterne par pages de quatre lignes pour préserver deux directions et deux passages ; la pagination pure a été testée avant l'implémentation puis revue.
