@@ -1,4 +1,4 @@
-/* RATP-inspired 19:9 display skin for recette.html.
+/* IDFM reception display adaptation, 19:9 event scenes for recette.html.
    Goal: behave like a real wide passenger-information board, not a 16:9 dashboard. */
 
 /* Palette RATP (--ratp-blue, --ratp-cyan, --ratp-ink, --ratp-paper, --ratp-yellow,
@@ -32,8 +32,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 18px;
-  background: var(--band);
+  height: 0;
+  background: var(--ground);
   z-index: 50;
   pointer-events: none;
 }
@@ -42,8 +42,8 @@ body {
 .header {
   height: 102px;
   padding: 0 32px;
-  background: var(--panel);
-  color: var(--ink);
+  background: var(--ground);
+  color: var(--ink-on-ground);
   border-bottom: 8px solid var(--ground);
   box-shadow: none;
   grid-template-columns: minmax(360px, 1fr) auto auto auto;
@@ -54,16 +54,16 @@ body {
 .brand-mark {
   width: 62px;
   height: 62px;
-  color: var(--accent);
-  border: 4px solid var(--accent);
+  color: var(--ink-on-ground);
+  border: 1px solid var(--ink-on-ground);
   border-radius: 50%;
   padding: 9px;
 }
-.brand-copy span { color: var(--ink); font-size: 15px; font-weight: 700; }
-.brand-copy strong { color: var(--ink); font-size: 26px; font-weight: 900; letter-spacing: .01em; }
-.page-title { color: var(--ink); }
+.brand-copy span { color: var(--ink-on-ground); font-size: 15px; font-weight: 700; }
+.brand-copy strong { color: var(--ink-on-ground); font-size: 26px; font-weight: 900; letter-spacing: .01em; }
+.page-title { color: var(--ink-on-ground); }
 .page-title strong { font-size: 23px; font-weight: 900; }
-.page-title span { color: var(--ink-muted); font-size: 14px; }
+.page-title span { color: var(--ink-on-ground); font-size: 14px; }
 
 .meta {
   height: 62px;
@@ -151,12 +151,12 @@ body {
 .schedule-row.active {
   color: var(--ink);
   background: var(--row-active);
-  border-left: 8px solid var(--band);
+  border-left: 1px solid var(--ink);
   padding-left: 8px;
 }
 
 .mode-badge { color: var(--ink); border-color: var(--ink); background: var(--panel); }
-.line-badge { border: 2px solid rgba(0, 0, 0, .12); }
+.line-badge { border:2px solid var(--ink); }
 .transport-name,
 .transport-direction,
 .rail-main strong,

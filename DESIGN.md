@@ -1,187 +1,46 @@
-# Mobili — Design de l'afficheur TV
+# Mobili : identité des afficheurs
 
-## Statut
+Mise à jour : 17 novembre 2026. Direction approuvée pour les deux entrées, implémentée sur la branche dédiée ; contrôle visuel local encore à effectuer avant promotion en production.
 
-Ce document décrit désormais la direction implémentée sur l'afficheur historique `index.html` en octobre 2026. Les écrans contextuels de `recette.html` restent une surface distincte ; leur bascule en production nécessite une recette métier et visuelle dédiée.
+## Usage
 
-## Surface principale
+Information voyageurs depuis Paris-Vincennes : comprendre le point d'accès, la direction et les deux prochains départs, en tenant compte des temps de marche. La logique d'accès, les flux et les états de fraîcheur sont conservés.
 
-- Application web d’affichage public.
-- Cible paysage grand écran / TV.
-- Interface sans interaction visiteur.
-- HTML principal : `index.html`.
-- CSS chargé : **une seule feuille**, `mobili-display.css` ; les anciennes feuilles sont conservées dans le dépôt uniquement comme historique de référence, sans être chargées dans l'afficheur.
-- Sur TV 16:9 : lecture immédiate des départs atteignables et séparation nette entre transport principal et autres services.
-- Sur écran étroit : défilement et colonnes adaptées, sans reproduction rétrécie de la grille TV.
+## Références et palette
 
-## Structure actuelle
+Les trois archives fournies par le demandeur guident cette adaptation : prescriptions signalétiques V3.1, afficheurs digitaux Bus V2.0 et Tramway V1.0, information voyageurs circonstancielle Bus V1.0. Voir la conception détaillée dans `docs/superpowers/specs/2026-11-17-idfm-design.md`.
 
-L’interface est organisée par lieux et blocs fonctionnels :
+- Encadrement et bandeau supérieur : noir #000000 ; titres et horloge blancs #FFFFFF.
+- Contenu des départs : blanc #FFFFFF, texte noir #000000.
+- En-têtes de panneaux et contexte : anthracite #25303B.
+- Information trafic : gris IdFM #D9D9D6, dans un cadre anthracite.
+- Information et focus : bleu IdFM #64B5E5.
+- Les couleurs de lignes issues des données historiques restent distinctes. En l'absence de couleur vérifiée, les composants de recette utilisent un indice Bus neutre noir sur blanc. Le SVG officiel identifie le RER A.
 
-1. En-tête marque / météo / heure.
-2. Bandeau d’actualité France Info.
-3. Bandeau global d’état trafic.
-4. Grand bloc Joinville-le-Pont : RER A puis bus.
-5. Bloc Hippodrome de Vincennes.
-6. Bloc École du Breuil.
-7. Bloc Vélib’.
-8. Bloc Courses à Vincennes.
+La palette est définie par `design/tokens.json`, puis générée par `node scripts/build-tokens.mjs`. Les identifiants historiques de tokens sont conservés pour compatibilité ; les variantes événementielle et mobilité partagent désormais la même palette.
 
-Cette structure est essentiellement fixe et spatiale. Elle ne correspond pas encore au moteur de modes contextuels ARRIVÉE / RÉUNION / TRANSITION / SORTIE / INCIDENT demandé par le cahier des charges.
+## Typographie et objets graphiques
 
-## Hiérarchie visuelle actuelle
+IDF Voyageur Regular (400), Medium (500) et Bold (700), auto-hébergées dans `fonts/idfm/`. Conversion des TTF fournis en WOFF, sans dépendance à un fournisseur de polices distant. Le deuxième passage utilise une graisse normale.
 
-La feuille `mobili-display.css` met en place une hiérarchie explicite :
+Les symboles Bus, RER, RER A et information trafic proviennent de la bibliothèque fournie. Leur provenance est consignée dans `assets/idfm/README.md`. Le mode et l'indice de ligne restent deux informations différentes. Conserver les noms accessibles et les textes de secours.
 
-`situation > prochain départ > destination > alternatives`
+## index.html : tableau permanent
 
-Sur grand écran, Joinville occupe la colonne principale. Les blocs Hippodrome, Breuil, Vélib’ et Courses sont empilés dans une colonne secondaire.
+Une seule feuille liée, `mobili-display.css`, importe les tokens et les objets graphiques communs. Sections conservées : en-tête, actualités, trafic, Joinville (RER puis bus), Hippodrome, École du Breuil, Vélib' et courses.
 
-## Palette actuelle
+Les panneaux de données sont blancs avec en-têtes anthracite. L'heure atteignable reste dominante, puis la destination, l'attente et le statut. Le premier passage est gras, le second en graisse normale. Les deux sens de circulation et les alertes restent consultables.
 
-### Base historique
+Sur TV, les huit lignes de Joinville alternent sur deux pages de quatre lignes, en grille de deux colonnes et deux rangées. Un indicateur expose les lignes et la page en cours ; chaque page reste 12 secondes, sans transition décorative. Chaque ligne conserve ses deux directions et ses deux passages. Mobile : liste complète, lecture verticale et défilement.
 
-La palette historique `styles.css` utilise :
+## recette.html : écrans contextuels
 
-- fond bleu nuit `#07111f` ;
-- panneaux `#10213d` / `#132947` ;
-- texte clair `#f8fafc` ;
-- accent or `#f5a623` ;
-- RER rouge `#e41e26` ;
-- états vert / ambre / rouge.
+Voir `DESIGN-recette.md`. Les modes événementiels conservent leur canevas 1920 × 910 ; la mobilité utilise 1920 × 1080. Les sources et le moteur de sélection automatique sont conservés.
 
-### Couche Mobili 2026
+## États, limites et vérification
 
-La nouvelle feuille `mobili-display.css` conserve cette orientation avec :
+Les données théoriques, absentes, périmées, annulées et les destinations inconnues conservent leur qualification. Une réponse manquante ne devient jamais un trafic normal. Ne pas inventer une reprise de service, une desserte, une durée ou une alternative.
 
-- navy `#071729` ;
-- navy secondaire `#10243d` ;
-- encre `#102033` ;
-- fond général clair `#edf1f5` ;
-- lignes `#d7dee7` ;
-- vert `#087a4d` ;
-- ambre `#a85b00` ;
-- rouge `#b4232d` ;
-- bleu `#1677b8` ;
-- bleu pâle `#eef7fc`.
+Commandes : `npm test`, `npm run check:ui`. La seconde vérifie aussi les imports CSS, images statiques et polices locales. Les vérifications automatiques ne démontrent pas la lisibilité à distance ni l'absence de débordement.
 
-Les panneaux deviennent majoritairement blancs avec en-têtes anthracite / bleu nuit.
-
-## Typographie actuelle
-
-- Base : Inter / system UI dans `styles.css`.
-- La couche `mobili-2026.css` force Arial / Helvetica Neue sur le body.
-- Poids très forts (`900` / `950`) utilisés fréquemment pour l’information prioritaire.
-- Horaires et temps d’attente sont les éléments les plus grands.
-- La lecture TV prioritaire distingue une heure de départ entre environ 22 et 44 px selon l'écran ; les noms de direction et les états importants restent lisibles et les micro-légendes historiques de 6–7 px ne sont plus utilisées. Quelques annotations de faible priorité restent plus petites et doivent être vérifiées à distance.
-
-## Composants principaux
-
-### En-tête
-
-- marque `VH` dans un carré or ;
-- titre « Mobilité – Hippodrome Paris-Vincennes » ;
-- sous-titre ;
-- météo ;
-- heure ;
-- dernière mise à jour.
-
-### Bandeau actualités
-
-- label France Info ;
-- une actualité affichée à la fois ;
-- description masquée en paysage.
-
-### Bandeau trafic
-
-États visuels :
-
-- `ok` ;
-- `neutral` ;
-- `warn` ;
-- `alert`.
-
-### Panneaux transport
-
-- indice de ligne ;
-- direction ;
-- horaires ;
-- temps d’attente ;
-- statut ;
-- gestion des derniers passages ;
-- filtre d’accessibilité / départ atteignable ;
-- fallback si le temps réel est indisponible.
-
-### RER A
-
-- bloc Joinville-le-Pont ;
-- deux directions possibles ;
-- heure absolue dominante ;
-- premier départ visuellement mis en avant ;
-- statut et attente en second niveau.
-
-### Bus
-
-- cartes par ligne ;
-- deux passages maximum dans plusieurs variantes de mise en page ;
-- informations de direction et statut.
-
-### Vélib’
-
-- deux stations ;
-- données de disponibilité présentées sous forme de gros indicateurs.
-
-### Courses
-
-- bloc compact de prochaine réunion / courses ;
-- rôle aujourd’hui secondaire dans la grille générale.
-
-## Responsive actuel
-
-Une seule feuille dédiée à l'afficheur actif :
-
-1. **Base fluide** : sections verticales à lecture continue pour mobile et tailles intermédiaires.
-2. **Grille TV** : à partir de 1 200 px de large et 680 px de haut, colonnes principale/secondaire (Joinville à gauche, hippodrome, Breuil, Vélib' et courses à droite).
-3. **TV compacte** : à hauteur de 850 px et moins, densité recalibrée sans texte à 6–7 px.
-4. **Petits écrans** : RER et lignes de bus en colonnes adaptées avec leur deuxième passage conservé.
-
-Le nouveau CSS utilise les tokens du projet, limite les exceptions et évite la cascade de centaines de `!important`.
-
-## États et résilience déjà présents
-
-L’implémentation actuelle prévoit notamment :
-
-- cache du dernier état valide pour certains blocs ;
-- état « temps réel momentanément indisponible » ;
-- nouvelle tentative automatique ;
-- détection du service terminé / non commencé ;
-- horaires théoriques de secours ;
-- passages annulés / manqués / retardés / en avance ;
-- dernier passage ;
-- départs atteignables selon temps d’accès.
-
-## Dette de design à préserver comme contexte
-
-Cette refonte améliore la lisibilité de la grille fixe sans se substituer au cahier des charges V2 : le moteur contextuel ARRIVÉE / RÉUNION / TRANSITION / SORTIE / INCIDENT reste à valider avant de devenir l'entrée de production.
-
-L’existant reste néanmoins une source utile pour :
-
-- la logique PRIM ;
-- la gestion des statuts ;
-- les calculs de départ atteignable ;
-- la résilience ;
-- les données RER / bus / Vélib’ ;
-- les traitements de fin de service.
-
-## Principe pour la suite
-
-Toute refonte doit préserver la vérité fonctionnelle et les comportements transport déjà utiles, mais remplacer la composition fixe par lieux par des surfaces adaptées aux modes du cahier des charges.
-
-## Règles de finition et de publication (octobre 2026)
-
-- Affichage principal pour un visiteur qui cherche **un départ atteignable**, pas un tableau des seules prochaines arrivées.
-- Première donnée visuelle : heure absolue ; ensuite direction, temps d'attente et statut. Les annulations, perturbations et états dégradés restent visibles.
-- La grille TV à huit lignes ne doit jamais masquer les directions ou les libellés « dernière donnée connue » pour gagner de la place.
-- Les petites écrans conservent le défilement, sans couper des données métier.
-- L'afficheur ne doit charger qu'une feuille CSS. Les changements de couche visuelle doivent incrémenter la version de l'URL CSS.
-- Vérification avant fusion : `npm test` et `npm run check:ui` ; captures comparées en 1920×1080, 1366×768, 768×1024, 390×844, avec données chargées, absentes et périmées.
+Recette visuelle requise : 1920 × 1080, 1366 × 768, 768 × 1024 et 390 × 844, données disponibles, absentes et périmées. Les résultats et le blocage du navigateur sont consignés dans `docs/idfm-validation-2026-11-17.md`. Aucune conformité exhaustive à un équipement homologué n'est revendiquée.
