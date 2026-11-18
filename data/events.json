@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-18T07:19:38.136Z",
+  "updatedAt": "2026-11-18T17:12:14.978Z",
   "source": "https://www.letrot.com/hippodromes/vincennes/7500",
   "events": [
     {
@@ -25,6 +25,38 @@
       "summary": "La Fête des Régions à Paris",
       "url": "https://www.letrot.com/hippodromes/vincennes/7500",
       "image": "1920x1080-6af58aaf17667188758015.jpg"
+    },
+    {
+      "title": "Prix du Bourbonnais - Amérique Races Q2",
+      "start": "2026-12-13T00:00:00.000Z",
+      "end": "2026-12-13T00:00:00.000Z",
+      "summary": "Vivez en grand les Championnats du Monde de Sulky !",
+      "url": "https://www.letrot.com/hippodromes/vincennes/7500",
+      "image": "1920x1080-6afd830870eec714815626.jpg"
+    },
+    {
+      "title": "Crit. Continental & Px Ténor de Baune-Amérique Races Q3&Q4",
+      "start": "2026-12-27T00:00:00.000Z",
+      "end": "2026-12-27T00:00:00.000Z",
+      "summary": "Vivez en grand les Championnats du Monde de Sulky !",
+      "url": "https://www.letrot.com/hippodromes/vincennes/7500",
+      "image": "1920x1080-6afd840e6dc30700641239.jpg"
+    },
+    {
+      "title": "Prix de Bourgogne - Amérique Races Q5",
+      "start": "2027-01-03T00:00:00.000Z",
+      "end": "2027-01-03T00:00:00.000Z",
+      "summary": "Vivez en grand les Championnats du Monde de Sulky !",
+      "url": "https://www.letrot.com/hippodromes/vincennes/7500",
+      "image": "1920x1080-6afd85aeb498f309275762.jpg"
+    },
+    {
+      "title": "Prix de Belgique - Amérique Races Q6",
+      "start": "2027-01-17T00:00:00.000Z",
+      "end": "2027-01-17T00:00:00.000Z",
+      "summary": "Vivez en grand les Championnats du Monde de Sulky !",
+      "url": "https://www.letrot.com/hippodromes/vincennes/7500",
+      "image": "1920x1080-6afd861802d49598936230.jpg"
     }
   ],
   "errors": []
