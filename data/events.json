@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-11-19T01:51:26.612Z",
+  "updatedAt": "2026-11-19T23:01:31.588Z",
   "source": "https://www.letrot.com/hippodromes/vincennes/7500",
   "events": [
     {
-      "title": "Kermesse Festival",
+      "title": "Les hivernales",
       "start": "2026-11-22T00:00:00.000Z",
       "end": "2026-11-22T00:00:00.000Z",
-      "summary": "Vivez un dimanche unique entre frissons de la compétition, spectacle autour de la piste, animations et gastronomie !",
+      "summary": "La Kermesse Festival investit l&#039;hippodrome pour un dimanche unique entre frissons de la compétition, musique, animations et gastronomie !",
       "url": "https://www.letrot.com/hippodromes/vincennes/7500",
       "image": "les-hivernales-2026-digital-1920x1080-illustr-6aeb44cc85dda067424020.jpg"
     },
@@ -19,10 +19,18 @@
       "image": "1920x1080-6aec53b181110745273568.jpg"
     },
     {
+      "title": "Les hivernales",
+      "start": "2026-12-06T00:00:00.000Z",
+      "end": "2026-12-06T00:00:00.000Z",
+      "summary": "Terroir, musique et spectacle : les régions en fête",
+      "url": "https://www.letrot.com/hippodromes/vincennes/7500",
+      "image": "les-hivernales-2026-digital-1920x1080-illustr-6afec143c7d7a508048875.jpg"
+    },
+    {
       "title": "Finale du Grand National du Trot",
       "start": "2026-12-06T00:00:00.000Z",
       "end": "2026-12-06T00:00:00.000Z",
-      "summary": "La Fête des Régions à Paris",
+      "summary": "Le dénouement tant attendu du fameux circuit !",
       "url": "https://www.letrot.com/hippodromes/vincennes/7500",
       "image": "1920x1080-6af58aaf17667188758015.jpg"
     },
